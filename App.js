@@ -4,34 +4,23 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import UserServices from './src/services/UserServices';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from "@react-navigation/native";
+import AuthScreen from "./src/screens/AuthScreen";
+const Stack = createNativeStackNavigator();
 export function App() {
-  // Set an initializing state whilst Firebase connects
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((authUser) => {
-      if (authUser) {
-       UserServices.getUser(authUser.uid).then((user) => {
-          setUser(user);
-          setLoading(false);
-        });
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
-    });
 
-    return unsubscribe;
-  }, []);
-
-  if (loading) {
+  //return user ? <HomeScreen user={user} /> : <LoginScreen />;
     return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Auth"   screenOptions={{
+                headerShown: false
+            }}>
+                <Stack.Screen name="Auth" component={AuthScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen name="Home" component={HomeScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
     );
-  }
-
-  return user ? <HomeScreen user={user} /> : <LoginScreen />;
-}
+} export default App;
