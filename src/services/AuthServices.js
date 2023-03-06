@@ -18,7 +18,7 @@ class AuthServices {
       const userCredential = await auth().signInWithEmailAndPassword(email, password);
       return userCredential.user;
     } catch (error) {
-      console.error(error);
+
       return null;
     }
   }

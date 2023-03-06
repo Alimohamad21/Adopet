@@ -9,14 +9,14 @@ import {LoginScreenRoute} from '../utilities/constants';
 const HomeScreen = ({route,navigation}) => {
   const {user}= route.params
   const handleLogOut = () => {
-    AuthServices.signOut().then(navigation.navigate(LoginScreenRoute))
+    AuthServices.signOut().then(navigation.replace(LoginScreenRoute))
   }
   return (
-    <View style={styles.container}>
+      <View style={styles.container}>
 
-      <Text style={styles.text}>Welcome to Adopet Mr {capitalizeWords(user.fullName)}</Text>
-      <Button title="Log Out" onPress={handleLogOut}/>
-    </View>
+        <Text style={styles.text}>Welcome to Adopet Mr {capitalizeWords(user.fullName)}</Text>
+        <Button title="Log Out" onPress={handleLogOut}/>
+      </View>
   );
 };
 
@@ -32,5 +32,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
 
 export default HomeScreen;

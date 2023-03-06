@@ -7,26 +7,43 @@ import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator'
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 
 const LoginScreen = ({navigation}) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('alimohamadyoussef21@gmail.com');
+    const [password, setPassword] = useState('123456');
     const [isLoading, setIsLoading] = useState(false);
-
+    const [isWrongCredentials, setIsWrongCredentials] = useState(false);
+    const [isEmailEmpty,setIsEmailEmpty] = useState(false);
+    const [isPasswordEmpty,setIsPasswordEmpty] = useState(false);
     const handleEmailChange = (text) => {
+        setIsWrongCredentials(false)
         setEmail(text);
+        setIsEmailEmpty(false)
     };
 
     const handlePasswordChange = (text) => {
+        setIsWrongCredentials(false)
+        setIsPasswordEmpty(false)
         setPassword(text);
     };
 
     const handleLogin = () => {
-        setIsLoading(true);
-        AuthServices.signInWithEmailAndPassword(email, password).then(authUser => {
-            UserServices.getUser(authUser.uid).then((user) => {
-                navigation.navigate(HomeScreenRoute, {user});
-                setIsLoading(false);
+        if (email=="")
+            setIsEmailEmpty(true)
+        else if (password=="")
+            setIsPasswordEmpty(true)
+        else {
+            setIsLoading(true);
+            AuthServices.signInWithEmailAndPassword(email, password).then(authUser => {
+                if (!authUser) {
+                    setIsWrongCredentials(true)
+                    setIsLoading(false)
+                } else {
+                    UserServices.getUser(authUser.uid).then((user) => {
+                        navigation.replace(HomeScreenRoute, {user});
+                        setIsLoading(false);
+                    });
+                }
             });
-        });
+        }
 
     };
 
@@ -59,6 +76,9 @@ const LoginScreen = ({navigation}) => {
 
 
             </View>
+            {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
+            {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
+            {isWrongCredentials && <Text style={styles.wrongCredentialsText}>Wrong username or password</Text>}
             <View>
                 <TouchableOpacity style={styles.loginBtnContainer} onPress={handleLogin}>
                     <Text style={styles.loginBtnText}>Login</Text>
@@ -146,6 +166,10 @@ const styles = StyleSheet.create({
         fontFamily: 'sans-serif-medium',
         color: appPurpleDark,
     },
+    wrongCredentialsText:{
+    color:"red",
+    marginBottom:10
+    }
 });
 
 export default LoginScreen;

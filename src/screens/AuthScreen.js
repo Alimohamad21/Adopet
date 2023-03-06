@@ -6,6 +6,7 @@ import HomeScreen from './HomeScreen';
 import UserServices from '../services/UserServices';
 import {HomeScreenRoute, LoginScreenRoute} from '../utilities/constants';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
+import {StackActions} from "@react-navigation/native";
 
 export function AuthScreen({navigation}) {
 
@@ -13,10 +14,10 @@ export function AuthScreen({navigation}) {
         const unsubscribe = auth().onAuthStateChanged((authUser) => {
             if (authUser) {
                 UserServices.getUser(authUser.uid).then((user) => {
-                    navigation.navigate(HomeScreenRoute,{user});
+                    navigation.replace(HomeScreenRoute,{user});
                 });
             } else {
-                navigation.navigate(LoginScreenRoute);
+                navigation.replace(LoginScreenRoute);
             }
         });
 
@@ -24,6 +25,4 @@ export function AuthScreen({navigation}) {
     }, []);
 
     return <ScreenLoadingIndicator/>
-
-
 } export default AuthScreen;
