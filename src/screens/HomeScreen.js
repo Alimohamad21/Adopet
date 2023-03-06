@@ -4,21 +4,18 @@ import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from "../services/AuthServices";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {LoginScreenRoute} from '../utilities/constants';
 
 const HomeScreen = ({route,navigation}) => {
-
-  if (route.params === undefined)
-    const user= route
-  else
-    const user= route.params
-  const handLogOut = () => {
-    AuthServices.signOut().then(navigation.navigate('Login'))
+  const {user}= route.params
+  const handleLogOut = () => {
+    AuthServices.signOut().then(navigation.navigate(LoginScreenRoute))
   }
   return (
     <View style={styles.container}>
 
       <Text style={styles.text}>Welcome to Adopet Mr {capitalizeWords(user.fullName)}</Text>
-      <Button title="Log Out" onPress={handLogOut}></Button>
+      <Button title="Log Out" onPress={handleLogOut}/>
     </View>
   );
 };

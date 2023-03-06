@@ -1,5 +1,10 @@
-export const appPurple1="#8059F0"
-export const appPurple2="#C9BAF3"
-
+// COLORS
+export const appPurpleDark="#8059F0"
+export const appPurpleLight="#C9BAF3"
 export const borderGrey="#BBC1CF"
-export const adopet_logo='C:\\Users\\Fahmi\\IntelliJIDEAProjects\\Adopet\\src\\assets\\adopet_logo.png'
+
+//ROUTES
+export const HomeScreenRoute='/Home'
+export const AuthScreenRoute='/Auth'
+export const LoginScreenRoute='/Login'
+

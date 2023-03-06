@@ -4,36 +4,26 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from './LoginScreen';
 import HomeScreen from './HomeScreen';
 import UserServices from '../services/UserServices';
+import {HomeScreenRoute, LoginScreenRoute} from '../utilities/constants';
+import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 
-export function AuthScreen() {
-    // Set an initializing state whilst Firebase connects
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+export function AuthScreen({navigation}) {
 
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged((authUser) => {
             if (authUser) {
                 UserServices.getUser(authUser.uid).then((user) => {
-                    setUser(user);
-                    setLoading(false);
+                    navigation.navigate(HomeScreenRoute,{user});
                 });
             } else {
-                setUser(null);
-                setLoading(false);
+                navigation.navigate(LoginScreenRoute);
             }
         });
 
         return unsubscribe;
     }, []);
 
-    if (loading) {
-        return (
-            <View>
-                <Text>Loading...</Text>
-            </View>
-        );
-    }
+    return <ScreenLoadingIndicator/>
 
-    return user ? <HomeScreen user={user} /> : <LoginScreen />;
 
 } export default AuthScreen;
