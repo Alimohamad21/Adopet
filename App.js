@@ -7,7 +7,8 @@ import UserServices from './src/services/UserServices';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {NavigationContainer} from "@react-navigation/native";
 import AuthScreen from "./src/screens/AuthScreen";
-import {AuthScreenRoute, HomeScreenRoute, LoginScreenRoute} from './src/utilities/constants';
+import {AuthScreenRoute, HomeScreenRoute, LoginScreenRoute, SignupScreenRoute} from './src/utilities/constants';
+import SignupScreen from "./src/screens/SignupScreen";
 const Stack = createNativeStackNavigator();
 export function App() {
     return (
@@ -18,6 +19,7 @@ export function App() {
                 <Stack.Screen name={AuthScreenRoute} component={AuthScreen} />
                 <Stack.Screen name={LoginScreenRoute} component={LoginScreen} />
                 <Stack.Screen name={HomeScreenRoute} component={HomeScreen} />
+                <Stack.Screen name={SignupScreenRoute} component={SignupScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

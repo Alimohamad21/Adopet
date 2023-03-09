@@ -2,14 +2,17 @@ import React from 'react';
 import { View, Text, Button,StyleSheet } from 'react-native';
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from "../services/AuthServices";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import {LoginScreenRoute} from '../utilities/constants';
 
 const HomeScreen = ({route,navigation}) => {
+
   const {user}= route.params
+  console.log(user.fullName)
   const handleLogOut = () => {
-    AuthServices.signOut().then(navigation.replace(LoginScreenRoute))
+    AuthServices.signOut().then(
+        navigation.replace(LoginScreenRoute)
+    );
   }
   return (
       <View style={styles.container}>

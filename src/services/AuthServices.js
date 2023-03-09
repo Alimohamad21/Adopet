@@ -4,7 +4,8 @@ class AuthServices {
   // Register a new user with email and password
   static async registerWithEmailAndPassword(email, password) {
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+     await auth().createUserWithEmailAndPassword(email, password);
+      const userCredential =  await auth().signInWithEmailAndPassword(email, password);
       return userCredential.user;
     } catch (error) {
       console.error(error);
@@ -15,10 +16,12 @@ class AuthServices {
   // Sign in a user with email and password
   static async signInWithEmailAndPassword(email, password) {
     try {
+
       const userCredential = await auth().signInWithEmailAndPassword(email, password);
+
       return userCredential.user;
     } catch (error) {
-
+        console.log(error)
       return null;
     }
   }

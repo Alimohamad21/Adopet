@@ -1,20 +1,20 @@
 class User {
-    constructor(fullName, location, nationality, phoneNumber, address, email, username, uid, profilePicture, ownedPets) {
+    constructor(fullName, location, phoneNumber, email, profilePicture, ownedPets) {
         this.location = location;
-        this.nationality = nationality;
+
         this.phoneNumber = phoneNumber;
         this.fullName= fullName;
-        this.address = address;
+
         this.email = email;
-        this.username = username;
-        this.uid = uid;
+
+
         this.profilePicture = profilePicture;
         this.ownedPets = ownedPets;
     }
 
     static fromJson(json) {
-        console.log(json.fullName)
-        return new User(json.fullName, json.location, json.nationality, json.phoneNumber, json.address, json.email, json.username, json.uid, json.profilePicture, json.ownedPets);
+
+        return new User(json.fullName, json.location, json.phoneNumber, json.email, json.profilePicture, json.ownedPets);
     }
 
     static toJson(user) {

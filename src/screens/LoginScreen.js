@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
+import {View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import AuthServices from '../services/AuthServices';
 import UserServices from '../services/UserServices';
-import {appPurpleDark, appPurpleLight, borderGrey, HomeScreenRoute} from '../utilities/constants';
+import {appPurpleDark, appPurpleLight, borderGrey, HomeScreenRoute, SignupScreenRoute} from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 
 const LoginScreen = ({navigation}) => {
-    const [email, setEmail] = useState('alimohamadyoussef21@gmail.com');
-    const [password, setPassword] = useState('123456');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isWrongCredentials, setIsWrongCredentials] = useState(false);
     const [isEmailEmpty,setIsEmailEmpty] = useState(false);
@@ -38,18 +38,24 @@ const LoginScreen = ({navigation}) => {
                     setIsLoading(false)
                 } else {
                     UserServices.getUser(authUser.uid).then((user) => {
-                        navigation.replace(HomeScreenRoute, {user});
+
                         setIsLoading(false);
+                        navigation.replace(HomeScreenRoute, {user});
+
                     });
                 }
             });
         }
 
     };
+    const  handlePress = ()=>{
+        navigation.replace(SignupScreenRoute)
+    }
 
     return (
         <View style={styles.screen}>
             {isLoading && <TransparentLoadingIndicator/>}
+
             <View style={styles.header}>
                 <Image
                     style={styles.logo}
@@ -57,6 +63,7 @@ const LoginScreen = ({navigation}) => {
                 />
 
             </View>
+
             <View style={styles.container}>
 
                 <TextInput
@@ -89,7 +96,7 @@ const LoginScreen = ({navigation}) => {
             </TouchableOpacity>
             <Text style={styles.orText}>Or</Text>
             <View>
-                <TouchableOpacity style={styles.createAccBtnContainer}>
+                <TouchableOpacity style={styles.createAccBtnContainer} onPress={handlePress} >
                     <Text style={styles.createAccBtnText}>Create New Account</Text>
                 </TouchableOpacity>
             </View>
@@ -118,14 +125,16 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     logo: {
+
         marginTop: 60,
         width: 200,
         height: 110,
         resizeMode: 'contain',
     },
     header: {
+
         alignItems: 'center',
-        width: 400,
+        width: "100%",
         height: 180,
         backgroundColor: appPurpleDark,
     },
