@@ -64,7 +64,7 @@ const SignupScreen = ({navigation}) => {
     const handleSignup = () => {
         if (email=="")
             setIsEmailEmpty(true)
-        else if (password=="")
+        else if (password.length>5)
             setIsPasswordEmpty(true)
         else {
             setIsLoading(true);
