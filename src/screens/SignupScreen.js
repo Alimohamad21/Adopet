@@ -14,6 +14,8 @@ import {SelectList} from "react-native-dropdown-select-list/index";
 import AuthServices from "../services/AuthServices";
 import UserServices from "../services/UserServices";
 import User from "../models/User";
+import {Dropdown} from "react-native-element-dropdown";
+import DropdownComponent from "../widgets/DropdownComponent";
 
 
 const SignupScreen = ({navigation}) => {
@@ -89,6 +91,8 @@ const SignupScreen = ({navigation}) => {
 
     };
 
+
+
     return (
         <View style={styles.screen}>
             {isLoading && <TransparentLoadingIndicator/>}
@@ -100,7 +104,6 @@ const SignupScreen = ({navigation}) => {
                 />
 
             </View>
-
             <View style={styles.container}>
 
                 <TextInput
@@ -137,22 +140,27 @@ const SignupScreen = ({navigation}) => {
                     value={confirmPassword}
                     onChangeText={handleConfirmPasswordChange}
                 />
-                <View style={{alignItems:"center"}}>
-                <SelectList
-                    fontFamily={'sans-serif-medium'}
-                    boxStyles={styles.dropdownList}
-                    inputStyles={styles.dropdownInput}
-                    dropdownStyles={styles.dropdownView}
-                    search={false}
-                    setSelected={(val) => setLocation(val)}
-                    data={egyptianCities}
-                    save="value"
-
-                />
-                </View>
-
+                {/*<View style={{alignItems:"center"}}>*/}
+                {/*<SelectList*/}
+                {/*    fontFamily={'sans-serif-medium'}*/}
+                {/*    boxStyles={styles.dropdownList}*/}
+                {/*    inputStyles={styles.dropdownInput}*/}
+                {/*    dropdownStyles={styles.dropdownView}*/}
+                {/*    search={false}*/}
+                {/*    setSelected={(val) => setLocation(val)}*/}
+                {/*    data={egyptianCities}*/}
+                {/*    save="value"*/}
+                {/*/>*/}
+                
+                {/*</View>*/}
 
             </View>
+                <View style={{width:"85.5%",marginLeft:"7%",marginRight:"5%",
+                }}>
+                    <DropdownComponent  />
+
+                </View>
+
              <View style={{alignItems:'center'}}>
             {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
             {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
@@ -169,7 +177,9 @@ const SignupScreen = ({navigation}) => {
                 </TouchableOpacity>
             </View>
              </View>
+
             </ScrollView>
+
         </View>
     );
 };
@@ -188,7 +198,7 @@ const styles = StyleSheet.create({
     container: {
         marginTop: 40,
         alignItems: 'center',
-        justifyContent: 'center',
+       // justifyContent: 'center',
     },
     input: {
         borderColor: borderGrey,
@@ -234,8 +244,9 @@ const styles = StyleSheet.create({
 
         alignItems: 'center',
         width: "100%",
-        height: 180,
+        height: 190,
         backgroundColor: appPurpleDark,
+
     },
     signupBtnContainer: {
         backgroundColor: appPurpleDark,
@@ -273,7 +284,40 @@ const styles = StyleSheet.create({
     wrongCredentialsText:{
         color:"red",
         marginBottom:10
-    }
+    },
+    dropdown: {
+        height: 50,
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    label: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 22,
+        top: 8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 14,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+    },
 });
 
 export default SignupScreen;
