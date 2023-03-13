@@ -9,14 +9,18 @@ import {
     LoginScreenRoute
 } from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
-import SelectDropdown from 'react-native-select-dropdown';
-import {SelectList} from "react-native-dropdown-select-list/index";
 import AuthServices from "../services/AuthServices";
 import UserServices from "../services/UserServices";
 import User from "../models/User";
-import {Dropdown} from "react-native-element-dropdown";
 import DropdownComponent from "../widgets/DropdownComponent";
+import {
+    validateConfirmPassword,
+    validateEmail,
+    validatePassword,
+    validatePhoneNumber
+} from "../utilities/stringUtilities";
 
+import PhoneInput from 'react-native-phone-input';
 
 const SignupScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('');
@@ -25,69 +29,91 @@ const SignupScreen = ({navigation}) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [location,setLocation] = useState('');
-
     const [isLoading, setIsLoading] = useState(false);
-
     const [isFullNameEmpty,setIsFullNameEmpty] = useState(false);
     const [isEmailEmpty,setIsEmailEmpty] = useState(false);
     const [isPasswordEmpty,setIsPasswordEmpty] = useState(false);
-
-   // const [selected, setSelected] = useState("");
-
-    //const data= [["loc1", "loc2", "loc3"]]
+    const emailError = "Please enter a valid email address";
+    const phoneNumberError = "Please enter a valid phone number";
+    const passwordError = "Password must not be less than 6 digits "
+    const [isEmailNotValid,setIsEmailNotValid] = useState(false);
+    const [isPhoneNumberNotValid, setIsPhoneNumberNotValid] = useState(false);
+    const [passwordNotValid,setPasswordNotValid] = useState(false);
+    const [isCityEmpty,setIsCityEmpty] = useState(false);
+    const [isPasswordNotConfirmed,setIsPasswordNotConfirmed] = useState(false);
     const handleFullNameChange = (text) => {
 
         setFullName(text);
-        setIsEmailEmpty(false)
+        setIsFullNameEmpty(false)
     };
     const handleEmailChange = (text) => {
-
-        setEmail(text);
-        setIsEmailEmpty(false)
+            setEmail(text);
+            setIsEmailEmpty(false)
+        setIsEmailNotValid(false)
     };
     const handlePhoneNumberChange = (text) => {
 
         setPhoneNumber(text);
-        setIsEmailEmpty(false)
+        setIsPhoneNumberNotValid(false)
     };
 
     const handlePasswordChange = (text) => {
         setPassword(text);
         setIsPasswordEmpty(false)
+        setIsPasswordNotConfirmed(false)
 
     };
 
     const handleConfirmPasswordChange = (text) => {
         setConfirmPassword(text);
         setIsPasswordEmpty(false)
-
+        setIsPasswordNotConfirmed(false)
     };
-
+    const handleLocation = (value) => {
+       setLocation(value.value)
+        setIsCityEmpty(false);
+    };
     const handleSignup = () => {
-        if (email=="")
-            setIsEmailEmpty(true)
-        else if (password=="")
-            setIsPasswordEmpty(true)
-        else {
-            setIsLoading(true);
-            AuthServices.registerWithEmailAndPassword(email, password).then(authUser => {
-                if (!authUser) {
-                   console.log("7asal error fel signup")
-                } else {
-                    const user = new User(fullName,location,phoneNumber,email,"","")
-                    UserServices.addUser(user,authUser.uid).then(() => {
 
-                        UserServices.getUser(authUser.uid).then((user) => {
 
-                            setIsLoading(false);
-                            navigation.replace(HomeScreenRoute, {user});
+         if (fullName ==="")
+            setIsFullNameEmpty(true)
+         else if (email === "")
+              setIsEmailEmpty(true)
 
-                        });
-                    });
+          else if (password === "")
+              setIsPasswordEmpty(true)
+          else if (location === "")
+              setIsCityEmpty(true)
+          else if (!validateConfirmPassword(password,confirmPassword))
+              setIsPasswordNotConfirmed(true)
+          else if (!validateEmail(email))
+              setIsEmailNotValid(true)
+          else if (!validatePhoneNumber(phoneNumber))
+                setIsPhoneNumberNotValid(true)
+          else if (!validatePassword(password))
+              setPasswordNotValid(true)
 
-                }
-            });
-        }
+          else {
+              setIsLoading(true);
+              AuthServices.registerWithEmailAndPassword(email, password).then(authUser => {
+                  if (!authUser) {
+                      console.log("7asal error fel signup")
+                  } else {
+                      const user = new User(fullName, location, phoneNumber, email, "", "")
+                      UserServices.addUser(user, authUser.uid).then(() => {
+
+                          UserServices.getUser(authUser.uid).then((user) => {
+
+                              setIsLoading(false);
+                              navigation.replace(HomeScreenRoute, {user});
+
+                          });
+                      });
+                  }
+              });
+          }
+
 
     };
 
@@ -112,19 +138,17 @@ const SignupScreen = ({navigation}) => {
                     value={fullName}
                     onChangeText={handleFullNameChange}
                 />
-
+                {isFullNameEmpty && <Text style={styles.wrongCredentialsText}>Please Enter your name</Text>}
                 <TextInput
                     style={styles.input}
                     placeholder="Email"
                     value={email}
                     onChangeText={handleEmailChange}
                 />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Phone Number"
-                    value={phoneNumber}
-                    onChangeText={handlePhoneNumberChange}
-                />
+                {isEmailNotValid && <Text style={styles.wrongCredentialsText}>{emailError}</Text>}
+                {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
+
+
 
                 <TextInput
                     style={styles.input}
@@ -133,6 +157,8 @@ const SignupScreen = ({navigation}) => {
                     value={password}
                     onChangeText={handlePasswordChange}
                 />
+                {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
+                {passwordNotValid && <Text style={styles.wrongCredentialsText}>{passwordError}</Text>}
                 <TextInput
                     style={styles.input}
                     placeholder="Confirm Password"
@@ -140,30 +166,29 @@ const SignupScreen = ({navigation}) => {
                     value={confirmPassword}
                     onChangeText={handleConfirmPasswordChange}
                 />
-                {/*<View style={{alignItems:"center"}}>*/}
-                {/*<SelectList*/}
-                {/*    fontFamily={'sans-serif-medium'}*/}
-                {/*    boxStyles={styles.dropdownList}*/}
-                {/*    inputStyles={styles.dropdownInput}*/}
-                {/*    dropdownStyles={styles.dropdownView}*/}
-                {/*    search={false}*/}
-                {/*    setSelected={(val) => setLocation(val)}*/}
-                {/*    data={egyptianCities}*/}
-                {/*    save="value"*/}
-                {/*/>*/}
-                
-                {/*</View>*/}
+                {isPasswordNotConfirmed && <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
 
-            </View>
-                <View style={{width:"85.5%",marginLeft:"7%",marginRight:"5%",
-                }}>
-                    <DropdownComponent  />
+                <DropdownComponent onSelect={handleLocation} data={egyptianCities}  />
+                {isCityEmpty && <Text style={styles.wrongCredentialsText}>Please select a city</Text>}
+                <View style={styles.phoneNoContainer}>
+                    <PhoneInput
+                        style={styles.phoneInput}
+                        textStyle={styles.phoneInputText}
+                        flagStyle={styles.flag}
+                        offset={10}
+                        initialCountry="eg"
+                        allowZeroAfterCountryCode={false}
+                        editable={false}
+                        onChangePhoneNumber={handlePhoneNumberChange}
 
+                    />
                 </View>
+                {isPhoneNumberNotValid&& <Text style={styles.wrongCredentialsText}>{phoneNumberError}</Text>}
+            </View>
 
              <View style={{alignItems:'center'}}>
-            {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
-            {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
+
+
 
             <View style={{marginTop:10, flex:1,width:"100%",alignItems:"center"}}>
                 <TouchableOpacity style={styles.signupBtnContainer} onPress={handleSignup}>
@@ -196,16 +221,17 @@ const styles = StyleSheet.create({
 
     },
     container: {
-        marginTop: 40,
-        alignItems: 'center',
-       // justifyContent: 'center',
+        flex:1,
+        marginTop: "60%",
+        alignItems: "center"
+
     },
     input: {
         borderColor: borderGrey,
         fontFamily: 'sans-serif-medium',
         height: 40,
         width: "85%",
-        margin: 12,
+        margin: "3%",
         borderWidth: 1,
         padding: 10,
     },
@@ -241,7 +267,10 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     header: {
-
+        flex:1,
+        position: 'absolute',
+        left:     0,
+        top:      0,
         alignItems: 'center',
         width: "100%",
         height: 190,
@@ -317,6 +346,32 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
+    },
+    phoneNoContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+
+
+
+    },
+    phoneInput: {
+        margin: "3%",
+        width: '85%',
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 0,
+        paddingHorizontal: 10,
+    },
+    phoneInputText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    flag: {
+        width: 30,
+        height: 20,
+        resizeMode: 'contain',
     },
 });
 

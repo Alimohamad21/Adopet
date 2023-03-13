@@ -5,3 +5,23 @@ export function capitalizeWords(str) {
   }
   return words.join(' '); // Join the words back into a string
 }
+export const validateEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  console.log(regex.test(email))
+  return regex.test(email);
+}
+export const validatePhoneNumber = (phoneNumber) => {
+  console.log(phoneNumber.length)
+  const cleanedPhoneNumber = phoneNumber.replace(/[+]/g, '');
+  const phoneNumberPattern = /^\d{12}$/;  // regular expression to match a 10-digit phone number
+  return phoneNumberPattern.test(cleanedPhoneNumber);
+}
+export const validatePassword = (password) =>{
+  return password.length >= 6;
+}
+export const validateConfirmPassword = (password, confirmPassword) => {
+  return password === confirmPassword;
+}
+
+
+

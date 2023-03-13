@@ -2,21 +2,14 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import {borderGrey, egyptianCities} from "../utilities/constants";
-//import AntDesign from '@expo/vector-icons/AntDesign';
 
-const data = [
-    { label: 'Item 1', value: '1' },
-    { label: 'Item 2', value: '2' },
-    { label: 'Item 3', value: '3' },
-    { label: 'Item 4', value: '4' },
-    { label: 'Item 5', value: '5' },
-    { label: 'Item 6', value: '6' },
-    { label: 'Item 7', value: '7' },
-    { label: 'Item 8', value: '8' },
-];
 
-const DropdownComponent = () => {
+
+
+function DropdownComponent({onSelect,data}){
     const [value, setValue] = useState(null);
+
+
 
     const renderItem = item => {
         return (
@@ -34,16 +27,18 @@ const DropdownComponent = () => {
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
-            data={egyptianCities}
-            search
+            data={data}
+
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="Select item"
+            placeholder="City"
             searchPlaceholder="Search..."
             value={value}
             onChange={item => {
-                setValue(item.value);
+
+                onSelect(item)
+
             }}
             // renderLeftIcon={() => (
             //     //<AntDesign style={styles.icon} color="black" name="Safety" size={20} />
@@ -57,24 +52,17 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
     dropdown: {
-       // margin: 16,
-
+        margin: "3%",
+        fontFamily: 'sans-serif-medium',
+        minWidth:"85%",
         height: 40,
-        backgroundColor: 'white',
+
         borderRadius: 0,
         padding: 12,
         borderColor:borderGrey,
         borderStyle:"solid",
-        borderWidth:1
-        // shadowColor: '#000',
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 1,
-        // },
-        // shadowOpacity: 0.2,
-        // shadowRadius: 1.41,
+        borderWidth:1,
 
-       // elevation: 2,
     },
     icon: {
         marginRight: 5,
@@ -86,20 +74,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     textItem: {
+        fontFamily: 'sans-serif-medium',
         flex: 1,
-        fontSize: 16,
+        fontSize: 14,
     },
     placeholderStyle: {
-        fontSize: 16,
+        fontFamily: 'sans-serif-medium',
+        color:"grey",
+        fontSize: 14,
     },
     selectedTextStyle: {
-        fontSize: 16,
+        fontFamily: 'sans-serif-medium',
+        fontSize: 14,
     },
     iconStyle: {
+
         width: 20,
         height: 20,
     },
     inputSearchStyle: {
+        fontFamily: 'sans-serif-medium',
         height: 40,
         fontSize: 16,
     },

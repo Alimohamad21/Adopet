@@ -55,7 +55,7 @@ const LoginScreen = ({navigation}) => {
     return (
         <View style={styles.screen}>
             {isLoading && <TransparentLoadingIndicator/>}
-
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow : 1, justifyContent : 'center'}} style={styles.scrollView}>
             <View style={styles.header}>
                 <Image
                     style={styles.logo}
@@ -80,27 +80,27 @@ const LoginScreen = ({navigation}) => {
                     value={password}
                     onChangeText={handlePasswordChange}
                 />
-
-
-            </View>
-            {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
-            {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
-            {isWrongCredentials && <Text style={styles.wrongCredentialsText}>Wrong username or password</Text>}
-            <View>
-                <TouchableOpacity style={styles.loginBtnContainer} onPress={handleLogin}>
-                    <Text style={styles.loginBtnText}>Login</Text>
+                {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
+                {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
+                {isWrongCredentials && <Text style={styles.wrongCredentialsText}>Wrong username or password</Text>}
+                <View>
+                    <TouchableOpacity style={styles.loginBtnContainer} onPress={handleLogin}>
+                        <Text style={styles.loginBtnText}>Login</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity>
+                    <Text style={styles.forgotPassText}>Forgot Password?</Text>
                 </TouchableOpacity>
-            </View>
-            <TouchableOpacity>
-                <Text style={styles.forgotPassText}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <Text style={styles.orText}>Or</Text>
-            <View>
-                <TouchableOpacity style={styles.createAccBtnContainer} onPress={handlePress} >
-                    <Text style={styles.createAccBtnText}>Create New Account</Text>
-                </TouchableOpacity>
+                <Text style={styles.orText}>Or</Text>
+                <View>
+                    <TouchableOpacity style={styles.createAccBtnContainer} onPress={handlePress} >
+                        <Text style={styles.createAccBtnText}>Create New Account</Text>
+                    </TouchableOpacity>
+                </View>
+
             </View>
 
+                </ScrollView>
         </View>
     );
 };
@@ -110,16 +110,33 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
     },
-    container: {
-        marginTop: 100,
+    scrollView:{
+        flex:1,
+        width:"100%",
+
+
+    },
+    header: {
+        flex:1,
+        position: 'absolute',
+        left:     0,
+        top:      0,
         alignItems: 'center',
-        justifyContent: 'center',
+        width: "100%",
+        height: 190,
+        backgroundColor: appPurpleDark,
+
+    },
+    container: {
+        flex:1,
+        marginTop: "80%",
+        alignItems: "center"
     },
     input: {
         borderColor: borderGrey,
         fontFamily: 'sans-serif-medium',
         height: 40,
-        width: 350,
+        width: "85%",
         margin: 12,
         borderWidth: 1,
         padding: 10,
@@ -131,13 +148,7 @@ const styles = StyleSheet.create({
         height: 110,
         resizeMode: 'contain',
     },
-    header: {
 
-        alignItems: 'center',
-        width: "100%",
-        height: 180,
-        backgroundColor: appPurpleDark,
-    },
     loginBtnContainer: {
         backgroundColor: appPurpleDark,
         alignItems: 'center',
