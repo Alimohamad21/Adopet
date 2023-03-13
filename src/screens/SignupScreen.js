@@ -74,6 +74,7 @@ const SignupScreen = ({navigation}) => {
         setIsCityEmpty(false);
     };
     const handleSignup = () => {
+//<<<<<<< HEAD
 
 
          if (fullName ==="")
@@ -114,6 +115,32 @@ const SignupScreen = ({navigation}) => {
               });
           }
 
+//=======
+//         if (email=="")
+//             setIsEmailEmpty(true)
+//         else if (password.length>5)
+//             setIsPasswordEmpty(true)
+//         else {
+//             setIsLoading(true);
+//             AuthServices.registerWithEmailAndPassword(email, password).then(authUser => {
+//                 if (!authUser) {
+//                    console.log("7asal error fel signup")
+//                 } else {
+//                     const user = new User(fullName,location,phoneNumber,email,"","")
+//                     UserServices.addUser(user,authUser.uid).then(() => {
+//
+//                         UserServices.getUser(authUser.uid).then((user) => {
+//
+//                             setIsLoading(false);
+//                             navigation.replace(HomeScreenRoute, {user});
+//
+//                         });
+//                     });
+//
+//                 }
+//             });
+//         }
+//>>>>>>> adb4655c69b629664199d8ca19008a48d53fd993
 
     };
 
