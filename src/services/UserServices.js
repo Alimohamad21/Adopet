@@ -5,17 +5,20 @@ class UserServices {
     // Register a new user with email and password
     static async getUser(uid) {
         const userDoc = await firestore().collection('users').doc(uid).get();
-        return User.fromJson(userDoc.data())
+        const user=userDoc.data();
+        user.uid=uid;
+        return User.fromJson(user)
     }
 
     static async addUser(user,uid) {
         try {
-            await firestore().collection("users").doc(uid).set(user)
+            user.email=user.email.toLowerCase();
+            await firestore().collection("users").doc(uid).set(User.toJson(user))
         } catch (error) {
+            console.log(error.message)
             return false
         }
         return true;
-
     }
 
 }

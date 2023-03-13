@@ -9,7 +9,7 @@ class AuthServices {
       return userCredential.user;
     } catch (error) {
       console.error(error);
-      return null;
+      return error.message; // return the error message instead of null
     }
   }
 

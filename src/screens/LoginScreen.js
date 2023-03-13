@@ -5,6 +5,7 @@ import UserServices from '../services/UserServices';
 import {appPurpleDark, appPurpleLight, borderGrey, HomeScreenRoute, SignupScreenRoute} from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
+import {removeSpacesFromString} from '../utilities/stringUtilities';
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -26,13 +27,14 @@ const LoginScreen = ({navigation}) => {
     };
 
     const handleLogin = () => {
+        setEmail(removeSpacesFromString(email))
         if (email=="")
             setIsEmailEmpty(true)
         else if (password=="")
             setIsPasswordEmpty(true)
         else {
             setIsLoading(true);
-            AuthServices.signInWithEmailAndPassword(email, password).then(authUser => {
+            AuthServices.signInWithEmailAndPassword(removeSpacesFromString(email), password).then(authUser => {
                 if (!authUser) {
                     setIsWrongCredentials(true)
                     setIsLoading(false)

@@ -10,7 +10,6 @@ import {StackActions} from "@react-navigation/native";
 import AuthServices from "../services/AuthServices";
 
 export function AuthScreen({navigation}) {
-
     useEffect(() => {
 
         const unsubscribe = auth().onAuthStateChanged((authUser) => {

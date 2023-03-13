@@ -8,7 +8,6 @@ import {LoginScreenRoute} from '../utilities/constants';
 const HomeScreen = ({route,navigation}) => {
 
   const {user}= route.params
-  console.log(user.fullName)
   const handleLogOut = () => {
     AuthServices.signOut().then(
         navigation.replace(LoginScreenRoute)
