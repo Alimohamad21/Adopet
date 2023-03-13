@@ -1,11 +1,22 @@
 import React, {useState} from 'react';
-import {View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
+import {
+    View,
+    TextInput,
+    Button,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    Text,
+    ScrollView,
+    SafeAreaView
+} from 'react-native';
 import AuthServices from '../services/AuthServices';
 import UserServices from '../services/UserServices';
 import {appPurpleDark, appPurpleLight, borderGrey, HomeScreenRoute, SignupScreenRoute} from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import {removeSpacesFromString} from '../utilities/stringUtilities';
+import {StatusBar} from "native-base";
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -55,7 +66,9 @@ const LoginScreen = ({navigation}) => {
     }
 
     return (
+        <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.screen}>
+            <StatusBar backgroundColor={appPurpleDark} barStyle="light-content" />
             {isLoading && <TransparentLoadingIndicator/>}
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow : 1, justifyContent : 'center'}} style={styles.scrollView}>
             <View style={styles.header}>
@@ -85,16 +98,17 @@ const LoginScreen = ({navigation}) => {
                 {isEmailEmpty && <Text style={styles.wrongCredentialsText}>Please enter your email</Text>}
                 {isPasswordEmpty && <Text style={styles.wrongCredentialsText}>Please enter your password</Text>}
                 {isWrongCredentials && <Text style={styles.wrongCredentialsText}>Wrong username or password</Text>}
-                <View>
+                <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
                     <TouchableOpacity style={styles.loginBtnContainer} onPress={handleLogin}>
                         <Text style={styles.loginBtnText}>Login</Text>
                     </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text style={styles.forgotPassText}>Forgot Password?</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity>
-                    <Text style={styles.forgotPassText}>Forgot Password?</Text>
-                </TouchableOpacity>
+
                 <Text style={styles.orText}>Or</Text>
-                <View>
+                <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
                     <TouchableOpacity style={styles.createAccBtnContainer} onPress={handlePress} >
                         <Text style={styles.createAccBtnText}>Create New Account</Text>
                     </TouchableOpacity>
@@ -104,6 +118,7 @@ const LoginScreen = ({navigation}) => {
 
                 </ScrollView>
         </View>
+            </SafeAreaView>
     );
 };
 
@@ -154,7 +169,7 @@ const styles = StyleSheet.create({
     loginBtnContainer: {
         backgroundColor: appPurpleDark,
         alignItems: 'center',
-        width: 350,
+        width: "85%",
         height: 35,
         borderRadius: 7,
 
@@ -174,7 +189,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: appPurpleLight,
         alignItems: 'center',
-        width: 350,
+        width: "85%",
         height: 35,
         borderRadius: 7,
     },

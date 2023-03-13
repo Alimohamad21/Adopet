@@ -22,6 +22,7 @@ import {
 } from '../utilities/stringUtilities';
 
 import PhoneInput from 'react-native-phone-input';
+import {StatusBar} from "native-base";
 
 const SignupScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('');
@@ -122,6 +123,8 @@ const SignupScreen = ({navigation}) => {
 
     return (
         <View style={styles.screen}>
+
+            <StatusBar backgroundColor={appPurpleDark} barStyle="light-content" />
             {isLoading && <TransparentLoadingIndicator/>}
             <ScrollView showsVerticalScrollIndicator={false}
                         contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={styles.scrollView}>
