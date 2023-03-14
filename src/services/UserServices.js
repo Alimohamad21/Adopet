@@ -21,6 +21,15 @@ class UserServices {
         return true;
     }
 
+    static async uploadProfilePictureUrl(uid,url) {
+        try {
+            await firestore().collection("users").doc(uid).update({profilePicture:url})
+        } catch (error) {
+            console.log(error.message)
+            return false
+        }
+        return true;
+    }
 }
 
 export default UserServices;
