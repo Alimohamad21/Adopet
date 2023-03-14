@@ -5,21 +5,28 @@ import StorageServices from '../services/StorageServices';
 import {firebaseStoragePostsDirectory} from '../utilities/constants';
 import UserServices from '../services/UserServices';
 import {pickImage} from '../utilities/imageUtilities';
+import ImagePickerButton from "../widgets/ImagePickerButton";
 
 const UploadImageScreen = ({route,navigation}) => {
     const {user}=route.params;
     const [imageUri, setImageUri] = useState(null);
     const [imageFromFirebase,setImageFromFirebase] = useState(null);
 
-    const handlePickImage= async () => {
-        const options = {
-            mediaType: 'photo',
-            maxWidth: 700,
-            maxHeight: 700,
-            selectionLimit:1
-        };
-        const uri=await pickImage(options);
-        setImageUri(uri);
+    // const handlePickImage= async () => {
+    //     const options = {
+    //         mediaType: 'photo',
+    //         maxWidth: 700,
+    //         maxHeight: 700,
+    //         selectionLimit:1
+    //     };
+    //     const uri =  pickImage(options);
+    //     if(uri)
+    //         setImageUri(uri);
+    // }
+
+    const handleImageUriChange = async (value) => {
+        setImageUri(value);
+
     }
 
     const handleUploadImage = async () => {
@@ -36,23 +43,30 @@ const UploadImageScreen = ({route,navigation}) => {
     return (
         <View style={styles.container}>
             {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-            <Button title="Pick Image" onPress={handlePickImage} />
+            {/*/!*<Button title="Pick Image" onPress={handlePickImage} />*!/*/}
+
+
+            {/*<View style={styles.container}>*/}
+            {/*    {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}*/}
+            {/*    <Button title="Pick an image" onPress={handlePickImage} />*/}
+            {/*</View>*/}
+            <View style={{alignItems:"center"}}>
+                <ImagePickerButton onPick={handleImageUriChange} />
+                </View>
             <Button title="Upload Image" onPress={handleUploadImage} />
             {imageFromFirebase && <Image source={{ uri: imageFromFirebase }} style={styles.image} />}
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     image: {
         width: 200,
         height: 200,
-        marginBottom: 10,
+        resizeMode: 'cover',
+        borderRadius: 100,
+        marginVertical: 10,
     },
 });
 

@@ -42,7 +42,12 @@ const LoginScreen = ({navigation}) => {
         if (!validateEmail(email)) {
             isValidInputs = false;
             setIsEmailValid(true);
-        } else if (!validatePassword(password)) {
+        }
+        // else if (!validatePassword(password)) {   //Don't think that it should check length of password in login
+        //     setIsPasswordValid(true);
+        //     isValidInputs = false;
+        // }
+        else if (password ===""){
             setIsPasswordValid(true);
             isValidInputs = false;
         }
@@ -56,6 +61,7 @@ const LoginScreen = ({navigation}) => {
             setIsLoading(true);
             const authUser = await AuthServices.signInWithEmailAndPassword(email, password);
             if (!authUser) {
+                setIsLoading(false);
                 setIsWrongCredentials(true);
             } else {
                 const user = await UserServices.getUser(authUser.uid);
