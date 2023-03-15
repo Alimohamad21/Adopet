@@ -13,6 +13,7 @@
     "@react-native-firebase/app": "^17.3.1",
     "@react-native-firebase/auth": "^17.3.1",
     "@react-native-firebase/firestore": "^17.3.1",
+    "@react-native-firebase/storage": "^17.3.2",
     "@react-native-picker/picker": "^2.4.8",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
@@ -27,7 +28,8 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.20.0",
     "react-native-select-dropdown": "^3.3.0",
-    "react-native-svg": "^12.1.1"
+    "react-native-svg": "^12.1.1",
+    "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",
@@ -37,6 +39,7 @@
     "eslint": "7.14.0",
     "jest": "26.6.3",
     "metro-react-native-babel-preset": "0.66.2",
+    "react-native-image-picker": "^5.3.1",
     "react-test-renderer": "17.0.2"
   },
   "jest": {
