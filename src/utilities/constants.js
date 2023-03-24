@@ -6,11 +6,11 @@ export const borderGrey = '#BBC1CF';
 //DIRECTORIES
 export const firebaseStoragePostsDirectory = '/posts';
 //ROUTES
-export const HomeScreenRoute = '/Home';
-export const AuthScreenRoute = '/Auth';
-export const LoginScreenRoute = '/Login';
-export const SignupScreenRoute = '/Signup';
-export const UploadImageScreenRoute = '/UploadImage';
+export const HomeScreenRoute = 'Home';
+export const AuthScreenRoute = 'Auth';
+export const LoginScreenRoute = 'Login';
+export const SignupScreenRoute = 'Signup';
+export const UploadImageScreenRoute = 'UploadImage';
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Alexandria', value: 'Alexandria'},
@@ -34,3 +34,27 @@ export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Hurghada', value: 'Hurghada'},
 
 ];
+export const services = [
+    {serviceId: 1,
+        name: "Adoption",
+        imageUri: "src/assets/cat.jpg"
+    }
+    ,
+    {serviceId: 2,
+        name: "Hosting",
+        imageUri: "src/assets/cat.jpg"
+    },
+    {serviceId: 3,
+        name: "Lost and Found",
+        imageUri: "src/assets/cat.jpg"
+    },
+    {serviceId: 4,
+        name: "Breeding",
+        imageUri: "src/assets/cat.jpg"
+    },
+    {serviceId: 5,
+        name: "Market Place",
+        imageUri: "src/assets/cat.jpg"
+    }
+]
+

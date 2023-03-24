@@ -1,41 +1,101 @@
-import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import React, {useLayoutEffect} from 'react';
+import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighlight,Dimensions} from 'react-native';
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from '../services/AuthServices';
 
-import {LoginScreenRoute, UploadImageScreenRoute} from '../utilities/constants';
+import {LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
+import {FlatList, NativeBaseProvider} from "native-base";
+import MenuImage from "../widgets/MenuImage";
+// screen sizing
 
 const HomeScreen = ({route, navigation}) => {
 
-    const {user} = route.params;
-    const handleLogOut = () => {
-        AuthServices.signOut().then(
-            navigation.replace(LoginScreenRoute),
-        );
-    };
-    return (
-        <View style={styles.container}>
+    //const {user} = route.params;
 
-            <Text style={styles.text}>Welcome to Adopet Mr {capitalizeWords(user.fullName)}</Text>
-            <Button title="Log Out" onPress={handleLogOut}/>
-            <Button title="Upload an Image" onPress={() => {
-                navigation.navigate(UploadImageScreenRoute,{user});
-            }}/>
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <MenuImage
+                    onPress={() => {
+                        navigation.openDrawer();
+                    }}
+                />
+            ),
+            headerRight: () => <View />,
+        });
+    }, []);
+
+    const onPressService = (item) => {
+        // navigation.navigate("Recipe", { item });
+    };
+
+    const renderServices = ({ item }) => (
+        <TouchableHighlight underlayColor="rgba(73,182,77,0.9)" onPress={() => onPressService(item)}>
+            <View style={styles.container}>
+                <Image style={styles.photo} source={ require('../assets/cat.jpg') } />
+                <Text style={styles.title}>{item.name}</Text>
+
+            </View>
+        </TouchableHighlight>
+    );
+
+    return (
+
+        <View >
+
+
+            <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2}
+                      data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`} />
+
+
         </View>
+
     );
 };
+const { width, height } = Dimensions.get('window');
+// orientation must fixed
+const SCREEN_WIDTH = width < height ? width : height;
 
+const recipeNumColums = 2;
+// item size
+const RECIPE_ITEM_HEIGHT = 150;
+const RECIPE_ITEM_MARGIN = 20;
 const styles = StyleSheet.create({
+
     container: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: RECIPE_ITEM_MARGIN,
+        marginTop: 20,
+        width: (SCREEN_WIDTH - (recipeNumColums + 1) * RECIPE_ITEM_MARGIN) / recipeNumColums,
+        height: RECIPE_ITEM_HEIGHT + 75,
+        borderColor: '#cccccc',
+        borderWidth: 0.5,
+        borderRadius: 15
     },
-    text: {
-        fontSize: 24,
+    photo: {
+        width: (SCREEN_WIDTH - (recipeNumColums + 1) * RECIPE_ITEM_MARGIN) / recipeNumColums,
+        height: RECIPE_ITEM_HEIGHT,
+        borderRadius: 15,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0
+    },
+    title: {
+        flex: 1,
+        fontSize: 17,
         fontWeight: 'bold',
         textAlign: 'center',
+        color: '#444444',
+        marginTop: 3,
+        marginRight: 5,
+        marginLeft: 5,
     },
+    category: {
+        marginTop: 5,
+        marginBottom: 5
+    }
 });
 
 

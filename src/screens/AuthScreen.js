@@ -11,10 +11,10 @@ export function AuthScreen({navigation}) {
         const unsubscribe = auth().onAuthStateChanged((authUser) => {
             if (authUser) {
                 UserServices.getUser(authUser.uid).then((user) => {
-                    navigation.replace(HomeScreenRoute,{user});
+                    navigation.replace("App");
                 });
             } else {
-                navigation.replace(LoginScreenRoute);
+                navigation.replace("Auth");
             }
         });
         return unsubscribe;

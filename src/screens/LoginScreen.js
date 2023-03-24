@@ -65,12 +65,12 @@ const LoginScreen = ({navigation}) => {
                 setIsWrongCredentials(true);
             } else {
                 const user = await UserServices.getUser(authUser.uid);
-                navigation.replace(HomeScreenRoute, {user});
+                navigation.navigate("App");
             }
         }
     };
     const handlePress = () => {
-        navigation.replace(SignupScreenRoute);
+        navigation.navigate(SignupScreenRoute);
     };
 
     return (

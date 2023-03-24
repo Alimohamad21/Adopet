@@ -111,7 +111,7 @@ const SignupScreen = ({navigation}) => {
             } else {
                 const user = new User(response.uid, fullName, city, phoneNumber, email, '', '');
                 await UserServices.addUser(user, response.uid);
-                navigation.replace(HomeScreenRoute, {user});
+                navigation.navigate(HomeScreenRoute, {user});
             }
         }
     }
