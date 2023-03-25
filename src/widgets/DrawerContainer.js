@@ -14,7 +14,6 @@ import ScreenLoadingIndicator from './ScreenLoadingIndicator';
 export default function DrawerContainer(props) {
     const {navigation} = props;
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
-    const {isLoading, setIsLoading}=useState(true);
     const handleLogOut = async () => {
         await AuthServices.signOut();
         setCurrentUser(null);
@@ -36,7 +35,7 @@ export default function DrawerContainer(props) {
                             {
                                 currentUser.profilePicture !== '' ?
                                     <Image source={{uri: currentUser.profilePicture}} style={styles.profileBtnIcon}/> :
-                                    <Image source={{uri: require('../assets/default_user.png')}}
+                                    <Image source={require('../assets/default_user.png')}
                                            style={styles.profileBtnIcon}/>}
                         </View>
                         <View>

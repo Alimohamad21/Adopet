@@ -12,8 +12,6 @@ import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserP
 const HomeScreen = ({navigation}) => {
 
     //const {user} = route.params;
-    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
-    console.log(currentUser.fullName);
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
