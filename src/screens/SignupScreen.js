@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, ScrollView} from 'react-native';
 import {
     appPurpleDark,
@@ -6,7 +6,7 @@ import {
     borderGrey,
     egyptianCities,
     HomeScreenRoute,
-    LoginScreenRoute,
+    LoginScreenRoute, MainAppRoute,
 } from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import AuthServices from '../services/AuthServices';
@@ -23,6 +23,7 @@ import {
 
 import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
+import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 
 const SignupScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('');
@@ -41,6 +42,8 @@ const SignupScreen = ({navigation}) => {
     const [passwordNotValid, setPasswordNotValid] = useState(false);
     const [isCityEmpty, setIsCityEmpty] = useState(false);
     const [isPasswordNotConfirmed, setIsPasswordNotConfirmed] = useState(false);
+    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
+
     const handleFullNameChange = (text) => {
 
         setFullName(text);
@@ -98,6 +101,7 @@ const SignupScreen = ({navigation}) => {
         }
         return isValidInputs;
     };
+
     const handleSignup = async () => {
         setEmail(removeSpacesFromString(email));
         setFullName(fullName.trim());
@@ -111,7 +115,8 @@ const SignupScreen = ({navigation}) => {
             } else {
                 const user = new User(response.uid, fullName, city, phoneNumber, email, '', '');
                 await UserServices.addUser(user, response.uid);
-                navigation.navigate(HomeScreenRoute, {user});
+                setCurrentUser(user);
+                navigation.navigate(MainAppRoute);
             }
         }
     }

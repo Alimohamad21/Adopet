@@ -1,4 +1,4 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useContext, useLayoutEffect} from 'react';
 import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighlight,Dimensions} from 'react-native';
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from '../services/AuthServices';
@@ -6,13 +6,14 @@ import AuthServices from '../services/AuthServices';
 import {LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
 import {FlatList, NativeBaseProvider} from "native-base";
 import MenuImage from "../widgets/MenuImage";
+import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 // screen sizing
 
-const HomeScreen = ({route, navigation}) => {
+const HomeScreen = ({navigation}) => {
 
     //const {user} = route.params;
-
-
+    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
+    console.log(currentUser.fullName);
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
@@ -35,7 +36,6 @@ const HomeScreen = ({route, navigation}) => {
             <View style={styles.container}>
                 <Image style={styles.photo} source={ require('../assets/cat.jpg') } />
                 <Text style={styles.title}>{item.name}</Text>
-
             </View>
         </TouchableHighlight>
     );

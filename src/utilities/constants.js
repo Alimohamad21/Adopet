@@ -6,8 +6,8 @@ export const borderGrey = '#BBC1CF';
 //DIRECTORIES
 export const firebaseStoragePostsDirectory = '/posts';
 //ROUTES
+export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';
-export const AuthScreenRoute = 'Auth';
 export const LoginScreenRoute = 'Login';
 export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';

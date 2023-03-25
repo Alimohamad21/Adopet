@@ -8,7 +8,6 @@ class User {
 
         this.email = email;
 
-
         this.profilePicture = profilePicture;
         this.ownedPets = ownedPets;
     }

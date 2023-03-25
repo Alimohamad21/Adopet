@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
     View,
     TextInput,
@@ -12,11 +12,19 @@ import {
 } from 'react-native';
 import AuthServices from '../services/AuthServices';
 import UserServices from '../services/UserServices';
-import {appPurpleDark, appPurpleLight, borderGrey, HomeScreenRoute, SignupScreenRoute} from '../utilities/constants';
+import {
+    appPurpleDark,
+    appPurpleLight,
+    borderGrey,
+    HomeScreenRoute,
+    MainAppRoute,
+    SignupScreenRoute,
+} from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import {removeSpacesFromString, validateEmail, validatePassword} from '../utilities/stringUtilities';
 import {StatusBar} from 'native-base';
+import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -25,6 +33,8 @@ const LoginScreen = ({navigation}) => {
     const [isWrongCredentials, setIsWrongCredentials] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
+    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
+
     const handleEmailChange = (text) => {
         setIsWrongCredentials(false);
         setEmail(text);
@@ -65,7 +75,8 @@ const LoginScreen = ({navigation}) => {
                 setIsWrongCredentials(true);
             } else {
                 const user = await UserServices.getUser(authUser.uid);
-                navigation.navigate("App");
+                setCurrentUser(user);
+                navigation.navigate(MainAppRoute);
             }
         }
     };
