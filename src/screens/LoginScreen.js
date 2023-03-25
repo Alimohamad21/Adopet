@@ -76,7 +76,7 @@ const LoginScreen = ({navigation}) => {
             } else {
                 const user = await UserServices.getUser(authUser.uid);
                 setCurrentUser(user);
-                navigation.navigate(MainAppRoute);
+                navigation.replace(MainAppRoute);
             }
         }
     };
