@@ -3,8 +3,8 @@ import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighli
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from '../services/AuthServices';
 
-import {LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
-import {FlatList, NativeBaseProvider} from "native-base";
+import {appPurpleDark, LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
+import {FlatList, NativeBaseProvider, StatusBar} from "native-base";
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 // screen sizing
@@ -41,7 +41,7 @@ const HomeScreen = ({navigation}) => {
     return (
 
         <View >
-
+            <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
 
             <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2}
                       data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`} />

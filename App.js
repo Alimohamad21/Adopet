@@ -10,7 +10,6 @@ import AuthScreen from './src/screens/AuthScreen';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
     appPurpleDark,
-    AuthScreenRoute,
     HomeScreenRoute,
     LoginScreenRoute, MainAppRoute,
     SignupScreenRoute,
