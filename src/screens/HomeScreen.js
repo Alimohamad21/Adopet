@@ -6,8 +6,7 @@ import AuthServices from '../services/AuthServices';
 import {appPurpleDark, LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
 import {FlatList, NativeBaseProvider, StatusBar} from "native-base";
 import MenuImage from "../widgets/MenuImage";
-import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
-// screen sizing
+
 
 const HomeScreen = ({navigation}) => {
 
@@ -30,12 +29,14 @@ const HomeScreen = ({navigation}) => {
     };
 
     const renderServices = ({ item }) => (
-        <TouchableHighlight underlayColor="rgba(73,182,77,0.9)" onPress={() => onPressService(item)}>
+
+        <TouchableHighlight style={styles.serviceContainer} activeOpacity={0.6} underlayColor="transparent" onPress={() => onPressService(item)}>
             <View style={styles.container}>
-                <Image style={styles.photo} source={ require('../assets/cat.jpg') } />
+                <Image style={styles.photo} source={  item.imageUri  } />
                 <Text style={styles.title}>{item.name}</Text>
             </View>
         </TouchableHighlight>
+
     );
 
     return (
@@ -55,28 +56,28 @@ const { width, height } = Dimensions.get('window');
 // orientation must fixed
 const SCREEN_WIDTH = width < height ? width : height;
 
-const recipeNumColums = 2;
+const ServiceNumColums = 2;
 // item size
-const RECIPE_ITEM_HEIGHT = 150;
-const RECIPE_ITEM_MARGIN = 20;
+const SERVICE_ITEM_HEIGHT = 150;
+const SERVICE_ITEM_MARGIN = 15;
 const styles = StyleSheet.create({
 
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: RECIPE_ITEM_MARGIN,
+        marginLeft: SERVICE_ITEM_MARGIN,
         marginTop: 20,
-        width: (SCREEN_WIDTH - (recipeNumColums + 1) * RECIPE_ITEM_MARGIN) / recipeNumColums,
-        height: RECIPE_ITEM_HEIGHT + 75,
+        width: (SCREEN_WIDTH - (ServiceNumColums + 1) * SERVICE_ITEM_MARGIN) / ServiceNumColums,
+        height: SERVICE_ITEM_HEIGHT + 50,
         borderColor: '#cccccc',
         borderWidth: 0.5,
         borderRadius: 15
     },
     photo: {
-        width: (SCREEN_WIDTH - (recipeNumColums + 1) * RECIPE_ITEM_MARGIN) / recipeNumColums,
-        height: RECIPE_ITEM_HEIGHT,
-        borderRadius: 15,
+        width: (SCREEN_WIDTH - (ServiceNumColums + 1) * SERVICE_ITEM_MARGIN) / ServiceNumColums,
+        height: SERVICE_ITEM_HEIGHT,
+        borderRadius: 12,
         borderBottomLeftRadius: 0,
         borderBottomRightRadius: 0
     },
@@ -86,13 +87,19 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#444444',
-        marginTop: 3,
+        marginTop: 10,
         marginRight: 5,
         marginLeft: 5,
     },
     category: {
-        marginTop: 5,
-        marginBottom: 5
+
+
+    },
+    serviceContainer:{
+
+
+        borderRadius:15,
+
     }
 });
 

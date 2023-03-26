@@ -40,7 +40,9 @@ function AuthStackScreens() {
 
 function AppStackScreens() {
     return (
-        <AppStack.Navigator>
+        <AppStack.Navigator screenOptions={{headerTintColor: "white" ,    headerStyle: {
+                backgroundColor: appPurpleDark,
+            }}} >
             <AppStack.Screen name={HomeScreenRoute} component={HomeScreen}/>
             <AppStack.Screen name={UploadImageScreenRoute} component={UploadImageScreen}/>
         </AppStack.Navigator>
