@@ -7,6 +7,7 @@ import UserServices from './src/services/UserServices';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import AuthScreen from './src/screens/AuthScreen';
+import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
     appPurpleDark,
@@ -77,6 +78,31 @@ const DrawerNavigator = () => (
 );
 
 export function App() {
+    useEffect(() => {
+        // Request permission to receive push notifications
+        messaging()
+            .requestPermission()
+            .then(() => {
+
+                console.log('Permission granted!');
+
+            })
+            .catch(error => {
+                console.log('Permission denied:', error);
+            });
+        messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+            console.log('Message handled in the background!', remoteMessage);
+        });
+        messaging().onNotificationOpenedApp((notificationOpen) => {
+            console.log('Notification opened: ', notificationOpen);
+        });
+
+         messaging().onMessage(async (remoteMessage) => {
+            console.log('FCM message received:', remoteMessage);
+        });
+
+    }, []);
+
     return (
         <CurrentUserProvider>
         <NativeBaseProvider>
