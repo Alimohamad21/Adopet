@@ -1,5 +1,5 @@
 class User {
-    constructor(uid, fullName, city, phoneNumber, email, profilePicture, ownedPets) {
+    constructor(uid, fullName, city, phoneNumber, email, profilePicture, ownedPets,fcmTokens) {
         this.uid=uid;
         this.city = city;
 
@@ -10,10 +10,11 @@ class User {
 
         this.profilePicture = profilePicture;
         this.ownedPets = ownedPets;
+        this.fcmTokens = fcmTokens
     }
 
     static fromJson(json) {
-        return new User(json.uid,json.fullName, json.city, json.phoneNumber, json.email, json.profilePicture, json.ownedPets);
+        return new User(json.uid,json.fullName, json.city, json.phoneNumber, json.email, json.profilePicture, json.ownedPets, json.fcmTokens);
     }
     static toJson(user) {
         return {
@@ -22,7 +23,8 @@ class User {
             phoneNumber: user.phoneNumber,
             profilePicture: user.profilePicture,
             email:user.email,
-            ownedPets: user.ownedPets
+            ownedPets: user.ownedPets,
+            fcmTokens : user.fcmTokens
         };
     }
 }

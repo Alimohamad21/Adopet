@@ -37,24 +37,24 @@ export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
 export const services = [
     {serviceId: 1,
         name: "Adoption",
-        imageUri: "src/assets/cat.jpg"
+        imageUri: require('../assets/adoption.jpg')
     }
     ,
     {serviceId: 2,
         name: "Hosting",
-        imageUri: "src/assets/cat.jpg"
+        imageUri: require('../assets/neo.jpg')
     },
     {serviceId: 3,
         name: "Lost and Found",
-        imageUri: "src/assets/cat.jpg"
+        imageUri: require('../assets/lost.png')
     },
     {serviceId: 4,
         name: "Breeding",
-        imageUri: "src/assets/cat.jpg"
+        imageUri: require('../assets/breeding.jpg')
     },
     {serviceId: 5,
         name: "Market Place",
-        imageUri: "src/assets/cat.jpg"
+        imageUri: require('../assets/market.png')
     }
 ]
 
