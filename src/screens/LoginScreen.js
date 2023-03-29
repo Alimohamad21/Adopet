@@ -24,7 +24,6 @@ import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator'
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import {removeSpacesFromString, validateEmail, validatePassword} from '../utilities/stringUtilities';
 import {StatusBar} from 'native-base';
-import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -33,7 +32,6 @@ const LoginScreen = ({navigation}) => {
     const [isWrongCredentials, setIsWrongCredentials] = useState(false);
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
-    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
 
     const handleEmailChange = (text) => {
         setIsWrongCredentials(false);
@@ -74,9 +72,7 @@ const LoginScreen = ({navigation}) => {
                 setIsLoading(false);
                 setIsWrongCredentials(true);
             } else {
-                const user = await UserServices.getUser(authUser.uid);
-                setCurrentUser(user);
-                navigation.replace(MainAppRoute);
+                navigation.replace("AuthLoading");
             }
         }
     };

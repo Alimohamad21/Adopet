@@ -24,7 +24,7 @@ class User {
             profilePicture: user.profilePicture,
             email:user.email,
             ownedPets: user.ownedPets,
-            fcmTokens : user.fcmTokens
+            fcmTokens: user.fcmTokens
         };
     }
 }

@@ -23,7 +23,6 @@ import {
 
 import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
-import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 
 const SignupScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('');
@@ -42,10 +41,8 @@ const SignupScreen = ({navigation}) => {
     const [passwordNotValid, setPasswordNotValid] = useState(false);
     const [isCityEmpty, setIsCityEmpty] = useState(false);
     const [isPasswordNotConfirmed, setIsPasswordNotConfirmed] = useState(false);
-    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
 
     const handleFullNameChange = (text) => {
-
         setFullName(text);
         setIsFullNameEmpty(false);
     };
@@ -112,11 +109,11 @@ const SignupScreen = ({navigation}) => {
             if (typeof response === 'string') {
                 setIsEmailNotValid(true);
                 setEmailError(extractSubstringAfterDelimiter(response, ']'));
+                setIsLoading(false);
             } else {
-                const user = new User(response.uid, fullName, city, phoneNumber, email, '', '');
+                const user = new User(response.uid, fullName, city, phoneNumber, email, '', '',[]);
                 await UserServices.addUser(user, response.uid);
-                setCurrentUser(user);
-                navigation.replace(MainAppRoute);
+                navigation.replace("AuthLoading");
             }
         }
     }

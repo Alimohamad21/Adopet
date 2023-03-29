@@ -9,13 +9,21 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AuthServices from '../services/AuthServices';
 import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import ScreenLoadingIndicator from './ScreenLoadingIndicator';
+import NotificationServices from '../services/NotificationServices';
+import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 
 
 export default function DrawerContainer(props) {
     const {navigation} = props;
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleLogOut = async () => {
+        setIsLoading(true);
+        const token=await NotificationServices.getToken();
+        await UserServices.removeFcmToken(currentUser.uid, token);
         await AuthServices.signOut();
+        setIsLoading(false);
         setCurrentUser(null);
         navigation.closeDrawer();
         navigation.reset({
@@ -28,6 +36,7 @@ export default function DrawerContainer(props) {
     else
     return (
         <View style={styles.content}>
+            {isLoading && <TransparentLoadingIndicator/>}
             <View style={styles.profileContainer}>
                 <TouchableHighlight style={styles.profileBtnClickContain} underlayColor={appPurpleLight}>
                     <View style={styles.profileBtnContainer}>

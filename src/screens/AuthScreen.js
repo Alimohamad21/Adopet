@@ -6,13 +6,13 @@ import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserProvider';
 import NotificationServices from "../services/NotificationServices";
 import user from "../models/User";
+import AuthServices from '../services/AuthServices';
 
 export function AuthScreen({navigation}) {
 
     const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
 
     useEffect(() => {
-
         const unsubscribe = auth().onAuthStateChanged(async (authUser) => {
             if (authUser) {
                 const fcmToken = await NotificationServices.getToken();
@@ -22,7 +22,6 @@ export function AuthScreen({navigation}) {
                     navigation.replace(MainAppRoute);
                 });
             } else {
-
                 navigation.replace("Auth");
             }
         });
