@@ -22,6 +22,7 @@ import UploadImageScreen from './src/screens/UploadImageScreen';
 import {NativeBaseProvider} from 'native-base';
 import DrawerContainer from './src/widgets/DrawerContainer';
 import {CurrentUserContext,CurrentUserProvider} from './src/providers/CurrentUserProvider';
+import NotificationServices from './src/services/NotificationServices';
 
 const AppStack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
@@ -79,28 +80,8 @@ const DrawerNavigator = () => (
 
 export function App() {
     useEffect(() => {
-        // Request permission to receive push notifications
-        messaging()
-            .requestPermission()
-            .then(() => {
-
-                console.log('Permission granted!');
-
-            })
-            .catch(error => {
-                console.log('Permission denied:', error);
-            });
-        messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-            console.log('Message handled in the background!', remoteMessage);
-        });
-        messaging().onNotificationOpenedApp((notificationOpen) => {
-            console.log('Notification opened: ', notificationOpen);
-        });
-
-         messaging().onMessage(async (remoteMessage) => {
-            console.log('FCM message received:', remoteMessage);
-        });
-
+        NotificationServices.requestNotificationsPermission().then(()=>{console.log("requested notification permission")});
+        NotificationServices.listenToNotifications();
     }, []);
 
     return (

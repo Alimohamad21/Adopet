@@ -1,16 +1,15 @@
 import React, {useContext, useLayoutEffect} from 'react';
-import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighlight,Dimensions} from 'react-native';
+import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighlight, Dimensions} from 'react-native';
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from '../services/AuthServices';
 
 import {appPurpleDark, LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
-import {FlatList, NativeBaseProvider, StatusBar} from "native-base";
-import MenuImage from "../widgets/MenuImage";
+import {FlatList, NativeBaseProvider, StatusBar} from 'native-base';
+import MenuImage from '../widgets/MenuImage';
+import NotificationServices from '../services/NotificationServices';
 
 
 const HomeScreen = ({navigation}) => {
-
-    //const {user} = route.params;
     useLayoutEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
@@ -20,7 +19,7 @@ const HomeScreen = ({navigation}) => {
                     }}
                 />
             ),
-            headerRight: () => <View />,
+            headerRight: () => <View/>,
         });
     }, []);
 
@@ -28,11 +27,12 @@ const HomeScreen = ({navigation}) => {
         // navigation.navigate("Recipe", { item });
     };
 
-    const renderServices = ({ item }) => (
+    const renderServices = ({item}) => (
 
-        <TouchableHighlight style={styles.serviceContainer} activeOpacity={0.6} underlayColor="transparent" onPress={() => onPressService(item)}>
+        <TouchableHighlight style={styles.serviceContainer} activeOpacity={0.6} underlayColor="transparent"
+                            onPress={() => onPressService(item)}>
             <View style={styles.container}>
-                <Image style={styles.photo} source={  item.imageUri  } />
+                <Image style={styles.photo} source={item.imageUri}/>
                 <Text style={styles.title}>{item.name}</Text>
             </View>
         </TouchableHighlight>
@@ -41,18 +41,18 @@ const HomeScreen = ({navigation}) => {
 
     return (
 
-        <View >
+        <View>
             <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
 
             <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2}
-                      data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`} />
+                      data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`}/>
 
 
         </View>
 
     );
 };
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 // orientation must fixed
 const SCREEN_WIDTH = width < height ? width : height;
 
@@ -72,14 +72,14 @@ const styles = StyleSheet.create({
         height: SERVICE_ITEM_HEIGHT + 50,
         borderColor: '#cccccc',
         borderWidth: 0.5,
-        borderRadius: 15
+        borderRadius: 15,
     },
     photo: {
         width: (SCREEN_WIDTH - (ServiceNumColums + 1) * SERVICE_ITEM_MARGIN) / ServiceNumColums,
         height: SERVICE_ITEM_HEIGHT,
         borderRadius: 12,
         borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0
+        borderBottomRightRadius: 0,
     },
     title: {
         flex: 1,
@@ -91,16 +91,13 @@ const styles = StyleSheet.create({
         marginRight: 5,
         marginLeft: 5,
     },
-    category: {
+    category: {},
+    serviceContainer: {
 
+
+        borderRadius: 15,
 
     },
-    serviceContainer:{
-
-
-        borderRadius:15,
-
-    }
 });
 
 
