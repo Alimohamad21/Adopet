@@ -5,6 +5,7 @@ class User {
 
         this.phoneNumber = phoneNumber;
         this.fullName= fullName;
+        this.gender = gender;
 
         this.email = email;
 
@@ -14,13 +15,14 @@ class User {
     }
 
     static fromJson(json) {
-        return new User(json.uid,json.fullName, json.city, json.phoneNumber, json.email, json.profilePicture, json.ownedPets, json.fcmTokens);
+        return new User(json.uid,json.fullName, json.city, json.phoneNumber,json.gender, json.email, json.profilePicture, json.ownedPets, json.fcmTokens);
     }
     static toJson(user) {
         return {
             fullName:user.fullName,
             city: user.city,
             phoneNumber: user.phoneNumber,
+            gender:user.gender,
             profilePicture: user.profilePicture,
             email:user.email,
             ownedPets: user.ownedPets,
