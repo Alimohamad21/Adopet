@@ -34,6 +34,8 @@ export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Hurghada', value: 'Hurghada'},
 
 ];
+export const genders = [{label:'Female' ,value:'Female'},{label: 'Male', value: 'Male'}]
+
 export const services = [
     {serviceId: 1,
         name: "Adoption",

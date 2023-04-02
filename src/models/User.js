@@ -1,5 +1,5 @@
 class User {
-    constructor(uid, fullName, city, phoneNumber, email, profilePicture, ownedPets,fcmTokens) {
+    constructor(uid, fullName, city, phoneNumber,gender, email, profilePicture, ownedPets,fcmTokens) {
         this.uid=uid;
         this.city = city;
 

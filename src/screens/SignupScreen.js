@@ -4,7 +4,7 @@ import {
     appPurpleDark,
     appPurpleLight,
     borderGrey,
-    egyptianCities,
+    egyptianCities, genders,
     HomeScreenRoute,
     LoginScreenRoute, MainAppRoute,
 } from '../utilities/constants';
@@ -28,6 +28,7 @@ const SignupScreen = ({navigation}) => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [gender, setGender] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [city, setCity] = useState('');
@@ -38,6 +39,7 @@ const SignupScreen = ({navigation}) => {
     const passwordError = 'Password must not be less than 6 digits';
     const [isEmailNotValid, setIsEmailNotValid] = useState(false);
     const [isPhoneNumberNotValid, setIsPhoneNumberNotValid] = useState(false);
+    const [isGenderEmpty, setIsGenderEmpty] = useState(false);
     const [passwordNotValid, setPasswordNotValid] = useState(false);
     const [isCityEmpty, setIsCityEmpty] = useState(false);
     const [isPasswordNotConfirmed, setIsPasswordNotConfirmed] = useState(false);
@@ -53,6 +55,10 @@ const SignupScreen = ({navigation}) => {
     const handlePhoneNumberChange = (text) => {
         setPhoneNumber(text);
         setIsPhoneNumberNotValid(false);
+    };
+    const handleGenderChange = (text) => {
+        setGender(text);
+        setIsGenderEmpty(false);
     };
 
     const handlePasswordChange = (text) => {
@@ -111,7 +117,7 @@ const SignupScreen = ({navigation}) => {
                 setEmailError(extractSubstringAfterDelimiter(response, ']'));
                 setIsLoading(false);
             } else {
-                const user = new User(response.uid, fullName, city, phoneNumber, email, '', '',[]);
+                const user = new User(response.uid, fullName, city, phoneNumber, gender, email, '', '',[]);
                 await UserServices.addUser(user, response.uid);
                 navigation.replace("AuthLoading");
             }
@@ -185,7 +191,10 @@ const SignupScreen = ({navigation}) => {
                             />
                         </View>
                         {isPhoneNumberNotValid && <Text style={styles.wrongCredentialsText}>{phoneNumberError}</Text>}
+
                     </View>
+                    <DropdownComponent onSelect={handleGenderChange()} data={genders}/>
+                    {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please state your gender</Text>}
 
                     <View style={{alignItems: 'center'}}>
 
