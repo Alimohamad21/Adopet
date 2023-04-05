@@ -175,7 +175,7 @@ const SignupScreen = ({navigation}) => {
                         {isPasswordNotConfirmed &&
                         <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
 
-                        <DropdownComponent onSelect={handleCityChange} data={egyptianCities}/>
+                        <DropdownComponent onSelect={handleCityChange} data={egyptianCities} placeholder="City"/>
                         {isCityEmpty && <Text style={styles.wrongCredentialsText}>Please select a city</Text>}
                         <View style={styles.phoneNoContainer}>
                             <PhoneInput
@@ -193,7 +193,7 @@ const SignupScreen = ({navigation}) => {
                         {isPhoneNumberNotValid && <Text style={styles.wrongCredentialsText}>{phoneNumberError}</Text>}
 
                     </View>
-                    <DropdownComponent onSelect={handleGenderChange()} data={genders}/>
+                    <DropdownComponent onSelect={handleGenderChange} data={genders} placeholder="Gender"/>
                     {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please state your gender</Text>}
 
                     <View style={{alignItems: 'center'}}>

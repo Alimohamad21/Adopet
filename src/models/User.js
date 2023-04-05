@@ -11,7 +11,7 @@ class User {
 
         this.profilePicture = profilePicture;
         this.ownedPets = ownedPets;
-        this.fcmTokens = fcmTokens
+        this.fcmTokens = fcmTokensc
     }
 
     static fromJson(json) {
