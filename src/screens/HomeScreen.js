@@ -3,7 +3,13 @@ import {View, Text, Button, StyleSheet, TouchableOpacity, Image, TouchableHighli
 import {capitalizeWords} from '../utilities/stringUtilities';
 import AuthServices from '../services/AuthServices';
 
-import {appPurpleDark, LoginScreenRoute, services, UploadImageScreenRoute} from '../utilities/constants';
+import {
+    AdoptionScreenRoute,
+    appPurpleDark,
+    LoginScreenRoute,
+    services,
+    UploadImageScreenRoute
+} from '../utilities/constants';
 import {FlatList, NativeBaseProvider, StatusBar} from 'native-base';
 import MenuImage from '../widgets/MenuImage';
 import NotificationServices from '../services/NotificationServices';
@@ -23,14 +29,15 @@ const HomeScreen = ({navigation}) => {
         });
     }, []);
 
-    const onPressService = (item) => {
-        // navigation.navigate("Recipe", { item });
+    const onPressService = (route) => {
+
+        navigation.navigate(route);
     };
 
     const renderServices = ({item}) => (
 
-        <TouchableHighlight style={styles.serviceContainer} activeOpacity={0.6} underlayColor="transparent"
-                            onPress={() => onPressService(item)}>
+        <TouchableHighlight  style={styles.serviceContainer} activeOpacity={0.6} underlayColor="transparent"
+                            onPress={() => onPressService(item.name)}>
             <View style={styles.container}>
                 <Image style={styles.photo} source={item.imageUri}/>
                 <Text style={styles.title}>{item.name}</Text>

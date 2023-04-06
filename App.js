@@ -10,6 +10,7 @@ import AuthScreen from './src/screens/AuthScreen';
 import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
+    AdoptionScreenRoute,
     appPurpleDark,
     HomeScreenRoute,
     LoginScreenRoute, MainAppRoute,
@@ -23,6 +24,7 @@ import {NativeBaseProvider} from 'native-base';
 import DrawerContainer from './src/widgets/DrawerContainer';
 import {CurrentUserContext,CurrentUserProvider} from './src/providers/CurrentUserProvider';
 import NotificationServices from './src/services/NotificationServices';
+import AdoptionScreen from "./src/screens/AdoptionScreen";
 
 const AppStack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
@@ -46,6 +48,7 @@ function AppStackScreens() {
                 backgroundColor: appPurpleDark,
             }}} >
             <AppStack.Screen name={HomeScreenRoute} component={HomeScreen}/>
+            <AppStack.Screen name={AdoptionScreenRoute} component={AdoptionScreen}/>
             <AppStack.Screen name={UploadImageScreenRoute} component={UploadImageScreen}/>
         </AppStack.Navigator>
     );

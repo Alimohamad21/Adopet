@@ -8,6 +8,7 @@ export const firebaseStoragePostsDirectory = '/posts';
 //ROUTES
 export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';
+export  const AdoptionScreenRoute = 'Adoption';
 export const LoginScreenRoute = 'Login';
 export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';
