@@ -23,7 +23,7 @@ const SearchBar = ({clicked, searchPhrase, setSearchPhrase, setClicked}) => {
                     name="search"
                     size={18}
                     color="black"
-
+                    style={{color:appPurpleDark}}
                 />
                 {/* Input field */}
                 <TextInput
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         paddingRight:"5%",
         flexDirection: "row",
         width: "97%",
-        height:"85%",
+        height:"87%",
         backgroundColor: "#d9dbda",
         borderRadius: 15,
         alignItems: "center",
@@ -95,16 +95,24 @@ const styles = StyleSheet.create({
         paddingRight:"5%",
         flexDirection: "row",
         width: "80%",
-        height:"85%",
+        height:"87%",
         backgroundColor: "#d9dbda",
         borderRadius: 15,
         alignItems: "center",
+        textAlignVertical:'center',
+
 
     },
     input: {
-        paddingTop:"10%",
+        height:"100%",
+
+        marginTop:"1%",
+        textAlignVertical:'center',
+        justifyContent:"center",
+        flex:1,
+
         fontSize: 15,
-        marginLeft:"5%",
+        marginLeft:"2%",
 
         width: "85%",
     },

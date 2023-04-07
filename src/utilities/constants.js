@@ -2,6 +2,7 @@
 export const appPurpleDark = '#8059F0';
 export const appPurpleLight = '#C9BAF3';
 export const borderGrey = '#BBC1CF';
+export  const postGrey= '#F1F1F6';
 
 //DIRECTORIES
 export const firebaseStoragePostsDirectory = '/posts';
