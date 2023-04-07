@@ -3,11 +3,20 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {appPurpleDark} from '../utilities/constants';
 import React from 'react';
 import {blueGrey100} from 'react-native-paper/src/styles/themes/v2/colors';
+import call from 'react-native-phone-call';
 
 /**
  * @param {AdoptionPost} adoptionPost
  */
 const AdoptionPostCard = ({adoptionPost}) => {
+    const callPhoneNumber = () => {
+        call({
+            number: adoptionPost.userThatPostedPhoneNumber,
+            prompt: false,
+            skipCanOpen: true,
+        });
+    };
+
     return (
         <View style={styles.postContainer}>
             <View style={styles.postHeader}>
@@ -54,7 +63,7 @@ const AdoptionPostCard = ({adoptionPost}) => {
             </View>
             <View style={styles.horizontalSeparator}/>
             <View style={styles.postFooter}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={callPhoneNumber}>
                     <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                 </TouchableOpacity>
                 <View style={styles.verticalSeparator}/>
@@ -94,7 +103,7 @@ const styles = StyleSheet.create({
         height: POST_ITEM_HEIGHT + 50,
         //backgroundColor: "#e4e5eb",
         backgroundColor: '#e6e9fa',
-
+        marginBottom:'13%',
         borderRadius: 5,
 
     },

@@ -28,13 +28,15 @@ const AdoptionScreen = ({navigation}) => {
     const [searchPhrase, setSearchPhrase] = useState('');
     const [clicked, setClicked] = useState(false);
     const [adoptionPosts, setAdoptionPosts] = useState(null);
+    const [prevLastDocument, setPrevLastDocument] = useState();
+    const [isAllPostsLoaded, setIsAllPostsLoaded] = useState(false);
+    const [isPaginating, setIsPaginating] = useState(false);
 
-
-    const renderPost = ({item}) =>{
-        return  (
+    const renderPost = ({item}) => {
+        return (
             <AdoptionPostCard adoptionPost={item}/>
         );
-    }
+    };
 
     function NoPostsAvailable() {
         return (
@@ -46,12 +48,26 @@ const AdoptionScreen = ({navigation}) => {
         );
     }
 
+    const onEndReached = async () => {
+        if (!adoptionPosts.length || isAllPostsLoaded) {
+            // don't load more data if scrolling up or if no data has been loaded yet
+            return;
+        }
+        setIsPaginating(true);
+        const {newPosts, lastDocument} = await PostServices.getAdoptionPostsPaginated(prevLastDocument);
+        setAdoptionPosts([...adoptionPosts, ...newPosts]);
+        setIsPaginating(false);
+        setPrevLastDocument(lastDocument);
+        if(newPosts<5)
+            setIsAllPostsLoaded(true);
+    };
 
 
     useEffect(() => {
         const getPosts = async () => {
-            const posts = await PostServices.getAdoptionPosts();
-            setAdoptionPosts(posts);
+            const {newPosts, lastDocument} = await PostServices.getAdoptionPostsInitial();
+            setAdoptionPosts(newPosts);
+            setPrevLastDocument(lastDocument);
         };
         getPosts();
     }, []);
@@ -73,19 +89,27 @@ const AdoptionScreen = ({navigation}) => {
                     />
                 </View>
 
-               <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
-                          data={adoptionPosts} renderItem={renderPost} keyExtractor={(adoptionPost) => `${adoptionPost.id}`}/>
+                <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                          data={adoptionPosts} renderItem={renderPost}
+                          keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                          onEndReached={onEndReached}
+                />
+               {isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View>}
             </SafeAreaView>
-
         );
     }
 };
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    paginationIndicator: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginBottom:'10%'
     },
     searchBarContainer: {
         marginTop: '1%',
