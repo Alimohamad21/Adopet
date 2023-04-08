@@ -48,7 +48,11 @@ function AppStackScreens() {
                 backgroundColor: appPurpleDark,
             }}} >
             <AppStack.Screen name={HomeScreenRoute} component={HomeScreen}/>
-            <AppStack.Screen name={AdoptionScreenRoute} component={AdoptionScreen}/>
+            <AppStack.Screen  name={AdoptionScreenRoute} component={AdoptionScreen}         options={{
+                presentation: 'modal',
+                animationTypeForReplace: 'push',
+                animation:'slide_from_right'
+            }}/>
             <AppStack.Screen name={UploadImageScreenRoute} component={UploadImageScreen}/>
         </AppStack.Navigator>
     );
