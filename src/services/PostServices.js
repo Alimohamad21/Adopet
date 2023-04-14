@@ -8,6 +8,7 @@ class PostServices {
             .orderBy('createdAt', 'desc')
             .limit(5)
             .get();
+
         const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
         return {newPosts: adoptionPosts, lastDocument: lastDocument};

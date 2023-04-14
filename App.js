@@ -15,7 +15,7 @@ import {
     HomeScreenRoute,
     LoginScreenRoute, MainAppRoute,
     SignupScreenRoute,
-    UploadImageScreenRoute,
+    UploadImageScreenRoute, ViewPetScreenRoute,
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
@@ -25,6 +25,7 @@ import DrawerContainer from './src/widgets/DrawerContainer';
 import {CurrentUserContext,CurrentUserProvider} from './src/providers/CurrentUserProvider';
 import NotificationServices from './src/services/NotificationServices';
 import AdoptionScreen from "./src/screens/AdoptionScreen";
+import ViewPetScreen from './src/screens/ViewPetScreen';
 
 const AppStack = createNativeStackNavigator();
 const AuthStack = createNativeStackNavigator();
@@ -50,6 +51,7 @@ function AppStackScreens() {
             <AppStack.Screen name={HomeScreenRoute} component={HomeScreen}/>
             <AppStack.Screen name={AdoptionScreenRoute} component={AdoptionScreen}/>
             <AppStack.Screen name={UploadImageScreenRoute} component={UploadImageScreen}/>
+            <AppStack.Screen name={ViewPetScreenRoute} component={ViewPetScreen}/>
         </AppStack.Navigator>
     );
 }

@@ -1,14 +1,16 @@
 import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {appPurpleDark} from '../utilities/constants';
+import {appPurpleDark, ViewPetScreenRoute} from '../utilities/constants';
 import React from 'react';
 import {blueGrey100} from 'react-native-paper/src/styles/themes/v2/colors';
 import call from 'react-native-phone-call';
+import {useNavigation} from '@react-navigation/native';
 
 /**
  * @param {AdoptionPost} adoptionPost
  */
 const AdoptionPostCard = ({adoptionPost}) => {
+    const navigation=useNavigation();
     const callPhoneNumber = () => {
         call({
             number: adoptionPost.userThatPostedPhoneNumber,
@@ -16,6 +18,10 @@ const AdoptionPostCard = ({adoptionPost}) => {
             skipCanOpen: true,
         });
     };
+
+    const handleViewDetails= ()=>{
+        navigation.navigate(ViewPetScreenRoute,{pet:adoptionPost.pet});
+    }
 
     return (
         <View style={styles.postContainer}>
@@ -56,7 +62,7 @@ const AdoptionPostCard = ({adoptionPost}) => {
                     paddingRight: '2%',
                     color: 'black',
                 }}>{adoptionPost.pet.description}</Text>
-                <TouchableOpacity style={styles.detailsButton}>
+                <TouchableOpacity onPress={handleViewDetails} style={styles.detailsButton}>
                     <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
