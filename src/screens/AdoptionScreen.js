@@ -86,6 +86,7 @@ const AdoptionScreen = ({navigation}) => {
                         setSearchPhrase={setSearchPhrase}
                         clicked={clicked}
                         setClicked={setClicked}
+
                     />
                 </View>
 
