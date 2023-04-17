@@ -1,16 +1,21 @@
 import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {appPurpleDark, ViewPetScreenRoute} from '../utilities/constants';
-import React from 'react';
-import {blueGrey100} from 'react-native-paper/src/styles/themes/v2/colors';
+import {appPurpleDark, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
+import React, {useContext, useState} from 'react';
 import call from 'react-native-phone-call';
 import {useNavigation} from '@react-navigation/native';
+import ChatServices from '../services/ChatServices';
+import Chat from '../models/Chat';
+import {CurrentUserContext} from '../providers/CurrentUserProvider';
+import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 
 /**
  * @param {AdoptionPost} adoptionPost
  */
 const AdoptionPostCard = ({adoptionPost}) => {
-    const navigation=useNavigation();
+    const navigation = useNavigation();
+    const {currentUser} = useContext(CurrentUserContext);
+    const [isLoading,setIsLoading]= useState(false);
     const callPhoneNumber = () => {
         call({
             number: adoptionPost.userThatPostedPhoneNumber,
@@ -19,20 +24,46 @@ const AdoptionPostCard = ({adoptionPost}) => {
         });
     };
 
-    const handleViewDetails= ()=>{
-        navigation.navigate(ViewPetScreenRoute,{pet:adoptionPost.pet});
-    }
-
+    const handleViewDetails = () => {
+        navigation.navigate(ViewPetScreenRoute, {pet: adoptionPost.pet});
+    };
+    const handleChatNavigation = async () => {
+        setIsLoading(true);
+        let chat = await ChatServices.getChat(adoptionPost.userThatPostedId, currentUser.uid,adoptionPost.id);
+        if (chat) {
+            setIsLoading(false);
+            navigation.navigate(ChatScreenRoute, {chat: chat});
+        } else {
+            const newChat = new Chat('',
+                [],
+                adoptionPost.pet.name,
+                'Adoption',
+                adoptionPost.userThatPostedFullName,
+                adoptionPost.userThatPostedId,
+                adoptionPost.userThatPostedProfilePicture,
+                currentUser.fullName,
+                currentUser.uid,
+                currentUser.profilePicture,
+                adoptionPost.id
+            );
+            newChat.id = await ChatServices.initializeChat(newChat);
+            setIsLoading(false);
+            navigation.navigate(ChatScreenRoute, {chat: newChat});
+        }
+    };
     return (
         <View style={styles.postContainer}>
+            {isLoading && <TransparentLoadingIndicator/>}
             <View style={styles.postHeader}>
                 <View style={styles.profileContainer}>
                     {adoptionPost.userThatPostedProfilePicture == '' ?
-                        <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+                        <Image style={styles.profileBtnIcon}
+                               source={require('../assets/default_user.png')}></Image> :
                         <Image source={{uri: adoptionPost.userThatPostedProfilePicture}}
                                style={styles.profileBtnIcon}/>}
                     <View>
-                        <Text style={{marginTop: '2%', marginLeft: '2%'}}>{adoptionPost.userThatPostedFullName}</Text>
+                        <Text
+                            style={{marginTop: '2%', marginLeft: '2%'}}>{adoptionPost.userThatPostedFullName}</Text>
                         <View style={{flexDirection: 'row'}}>
                             <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
                             <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
@@ -63,7 +94,8 @@ const AdoptionPostCard = ({adoptionPost}) => {
                     color: 'black',
                 }}>{adoptionPost.pet.description}</Text>
                 <TouchableOpacity onPress={handleViewDetails} style={styles.detailsButton}>
-                    <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+                    <FontAwesome name={'paw'}
+                                 style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
             </View>
@@ -73,7 +105,7 @@ const AdoptionPostCard = ({adoptionPost}) => {
                     <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                 </TouchableOpacity>
                 <View style={styles.verticalSeparator}/>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleChatNavigation}>
                     <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                 </TouchableOpacity>
             </View>
@@ -109,7 +141,7 @@ const styles = StyleSheet.create({
         height: POST_ITEM_HEIGHT + 50,
         //backgroundColor: "#e4e5eb",
         backgroundColor: '#e6e9fa',
-        marginBottom:'13%',
+        marginBottom: '13%',
         borderRadius: 5,
 
     },
