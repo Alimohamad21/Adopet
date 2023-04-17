@@ -2,15 +2,19 @@
 export const appPurpleDark = '#8059F0';
 export const appPurpleLight = '#C9BAF3';
 export const borderGrey = '#BBC1CF';
+export  const postGrey= '#F1F1F6';
 
 //DIRECTORIES
 export const firebaseStoragePostsDirectory = '/posts';
 //ROUTES
 export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';
+export  const AdoptionScreenRoute = 'Adoption';
 export const LoginScreenRoute = 'Login';
 export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';
+export const ViewPetScreenRoute = 'Pet Details';
+
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Alexandria', value: 'Alexandria'},

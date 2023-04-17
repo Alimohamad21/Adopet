@@ -1,16 +1,16 @@
 class Pet {
-  constructor(image, name, age) {
-    this.image = image;
-    this.name = name;
-    this.age = age;
-  }
-
-  static fromJson(json) {
-    const { image, name, age } = JSON.parse(json);
-    return new Pet(image, name, age);
-  }
-
-  static toJson(post) {
-    return JSON.stringify(post);
-  }
+    constructor(type, image, name, description, age, color, breed, gender, isNeutered, vaccinations) {
+        this.type = type;
+        this.image = image;
+        this.name = name;
+        this.description = description;
+        this.age = age;
+        this.color = color;
+        this.breed = breed;
+        this.gender = gender;
+        this.isNeutered = isNeutered;
+        this.vaccinations = vaccinations;
+    }
 }
+
+export default Pet;
