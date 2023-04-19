@@ -19,8 +19,7 @@ export function ChatScreen() {
     const [messages, setMessages] = useState([]);
     const {currentUser} = useContext(CurrentUserContext);
     const route = useRoute();
-    const {adoptionPost} = route.params;
-    const [chat,setChat] = useState(null);
+    const {chat} = route.params;
     const navigation = useNavigation();
     const [hasEarlierMessages, setHasEarlierMessages] = useState(true);
     const [isLoadingEarlierMessages, setIsLoadingEarlierMessages] = useState(false);
@@ -30,58 +29,28 @@ export function ChatScreen() {
     let imageUri = ""
 
 
-    useEffect(()=>{
-        console.log("1st UseEffect")
-
-        ChatServices.getChat(adoptionPost.userThatPostedId, currentUser.uid,adoptionPost.id).then(async (data) => {
-                if (data) {
-                    setChat(data)
-                }
-                else {
-                    const newChat = new Chat('',
-                        [],
-                        adoptionPost.pet.name,
-                        'Adoption',
-                        adoptionPost.userThatPostedFullName,
-                        adoptionPost.userThatPostedId,
-                        adoptionPost.userThatPostedProfilePicture,
-                        currentUser.fullName,
-                        currentUser.uid,
-                        currentUser.profilePicture,
-                        adoptionPost.id
-                    );
-                    newChat.id = await ChatServices.initializeChat(newChat);
-
-                    setChat(newChat)
-                }
-
-            }
-        )
-    },[]);
-
     useEffect(() => {
         console.log("2nd UseEffect")
         if(chat) {
-        handleChat();
-        navigation.setOptions({
+            handleChat();
+            navigation.setOptions({
+                headerTitle: "",
+                headerRight: () => <View>
+                    <View style={{flexDirection: 'row',marginRight:"55%",marginTop:"3%"}}>
+                        <Image source={{uri: imageUri}} style={{
+                            marginRight: "5%",
+                            borderRadius: 50,
+                            height: 40,
+                            width: 40,
+                        }}></Image>
+                        <Text style={{fontSize:17, marginTop:"5%",color:"white",fontWeight:"bold"}}>{name}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row',marginRight:"35%"}}>
+                        <Text style={{fontSize:15, marginTop:"3%",color:"white",fontWeight:"600",marginLeft:"1%",marginBottom:"2%"}}>{`${chat.petName} ${chat.postType} `}</Text>
+                    </View>
 
-            headerTitle: "",
-            headerRight: () => <View>
-                <View style={{flexDirection: 'row',marginRight:"55%",marginTop:"3%"}}>
-                <Image source={{uri: imageUri}} style={{
-                    marginRight: "5%",
-                    borderRadius: 50,
-                    height: 40,
-                    width: 40,
-                }}></Image>
-                <Text style={{fontSize:17, marginTop:"5%",color:"white",fontWeight:"bold"}}>{name}</Text>
-                </View>
-                <View style={{flexDirection: 'row',marginRight:"35%"}}>
-                    <Text style={{fontSize:15, marginTop:"3%",color:"white",fontWeight:"600",marginLeft:"1%",marginBottom:"2%"}}>{`${chat.petName} ${chat.postType} `}</Text>
-                </View>
-
-            </View>,
-        });
+                </View>,
+            });
 
             const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived).then(() => {
                 return () => {
@@ -93,7 +62,7 @@ export function ChatScreen() {
 
 
 
-    }, [chat, chat  != null ]);
+    }, []);
     const onMessageReceived = (newMessage,index) => {
         const formattedMessage = getFormattedMessage(newMessage,index);
         if (!messages.some((message) => message._id === formattedMessage._id)) {
@@ -197,7 +166,6 @@ export function ChatScreen() {
 
 
         return (
-
             <GiftedChat
                 messages={messages}
                 onSend={messages => onSend(messages)}
@@ -216,8 +184,6 @@ export function ChatScreen() {
                 isLoadingEarlierMessages={true}
                 scrollToBottom={true}
                // renderLoading={() => <TransparentLoadingIndicator />}
-
-
             />
 
         );

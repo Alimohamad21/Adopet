@@ -2,7 +2,8 @@ import firestore from '@react-native-firebase/firestore';
 import Chat from '../models/Chat';
 import NotificationServices from './NotificationServices';
 
-import {firebase} from "@react-native-firebase/auth";
+import {firebase} from '@react-native-firebase/auth';
+
 const {FieldValue} = firestore;
 
 class ChatServices {
@@ -17,6 +18,34 @@ class ChatServices {
             return null;
         }
         return snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}))[0];
+    }
+
+    static async getUserPostsChats(uid) {
+        const snapshot = await firestore().collection('chats')
+            .where('userThatPostedId', '==', uid)
+            .get();
+        let nonEmptyChats = [];
+        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}));
+        for (const chat of allChats) {
+            if (chat.messages.length > 0) {
+                nonEmptyChats.push(chat);
+            }
+        }
+        return nonEmptyChats;
+    }
+
+    static async getUserRequestsChats(uid) {
+        const snapshot = await firestore().collection('chats')
+            .where('userThatRequestedId', '==', uid)
+            .get();
+        let nonEmptyChats = [];
+        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}));
+        for (const chat of allChats) {
+            if (chat.messages.length > 0) {
+                nonEmptyChats.push(chat);
+            }
+        }
+        return nonEmptyChats;
     }
 
     static async initializeChat(chat) {
@@ -35,23 +64,25 @@ class ChatServices {
         const doc = await firestore().collection('chats').doc(chatId);
         return Chat.fromJson({id: doc.id, ...doc.data()});
     }
+
     static async listenForChatMessages(chatId, onMessageReceived) {
         let firstTime = true;
         const chatRoomRef = firestore().collection('chats').doc(chatId);
-         console.log("test")
+        console.log('test');
         const unsubscribe = chatRoomRef.onSnapshot((doc) => {
             const messages = doc.data().messages;
-                 console.log("added message: ",messages[messages.length - 1])
+            console.log('added message: ', messages[messages.length - 1]);
             const index = messages.length - 1;
             if (firstTime) {
                 firstTime = false;
                 return;
             }
-            onMessageReceived(messages[index],index +1  );
+            onMessageReceived(messages[index], index + 1);
         });
-         return unsubscribe;
+        return unsubscribe;
 
     }
+
     // static async loadEarlierMessages(chatId, oldestMessageTimestamp) {
     //     const chatRef = firestore().collection('chats').doc(chatId);
     //     const chatDoc = await chatRef.get();
@@ -87,7 +118,7 @@ class ChatServices {
 
                 return message.createdAt.toDate().getTime() === oldestMessageTimestamp.getTime();
             });
-            console.log(oldestMessageIndex)
+            console.log(oldestMessageIndex);
             // If the oldest message is not found in the array, return an empty array
             if (oldestMessageIndex === -1) {
                 return [];
