@@ -52,6 +52,59 @@ class ChatServices {
          return unsubscribe;
 
     }
+    // static async loadEarlierMessages(chatId, oldestMessageTimestamp) {
+    //     const chatRef = firestore().collection('chats').doc(chatId);
+    //     const chatDoc = await chatRef.get();
+    //     const messages = chatDoc.data().messages;
+    //     const newMessages = [];
+    //     for (let i = messages.length - 1; i >= 0; i--) {
+    //         const message = messages[i];
+    //         if (message.createdAt < oldestMessageTimestamp) {
+    //             break;
+    //         }
+    //         newMessages.unshift(message);
+    //     }
+    //     return newMessages;
+    // }
+    // static async loadEarlierMessages(chatId, oldestMessageTimestamp, limit ) {
+    //     console.log("loadint")
+    //     const chat =  await firestore().collection('chats').doc(chatId).get();
+    //     console.log(chat.data().messages)
+    //
+    //
+    //
+    //
+    //
+    //
+    // }
+    static async loadEarlierMessages(chatId, oldestMessageTimestamp, limit) {
+        try {
+            const chatDoc = await firestore().collection('chats').doc(chatId).get();
+            const messagesArray = chatDoc.data().messages;
+
+            // Find the index of the oldest message in the array
+            const oldestMessageIndex = messagesArray.findIndex((message) => {
+
+                return message.createdAt.toDate().getTime() === oldestMessageTimestamp.getTime();
+            });
+            console.log(oldestMessageIndex)
+            // If the oldest message is not found in the array, return an empty array
+            if (oldestMessageIndex === -1) {
+                return [];
+            }
+
+            // Slice the array to get the desired page of messages
+            const startIndex = Math.max(oldestMessageIndex - limit, 0);
+            const endIndex = oldestMessageIndex;
+            const pageOfMessages = messagesArray.slice(startIndex, endIndex);
+
+            return pageOfMessages;
+        } catch (error) {
+            console.error('Error loading earlier messages:', error);
+            return [];
+        }
+    }
+
 }
 
 export default ChatServices;

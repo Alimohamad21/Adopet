@@ -10,6 +10,9 @@ import {View, Text, Image, Button, TouchableOpacity} from "react-native";
 import {appPurpleDark, ChatScreenRoute} from "../utilities/constants";
 import ImagePickerButton from "../widgets/ImagePickerButton";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import uuid from "uuid";
+import { v4 as uuidv4 } from 'uuid';
+import TransparentLoadingIndicator from "../widgets/TransparentLoadingIndicator";
 
 
 export function ChatScreen() {
@@ -18,9 +21,10 @@ export function ChatScreen() {
     const route = useRoute();
     const {adoptionPost} = route.params;
     const [chat,setChat] = useState(null);
-    const [isFirstTime,setIsFirstTime] = useState(true);
     const navigation = useNavigation();
-    const [isLoading,setIsLoading] = useState(true);
+    const [hasEarlierMessages, setHasEarlierMessages] = useState(true);
+    const [isLoadingEarlierMessages, setIsLoadingEarlierMessages] = useState(false);
+
 
     let name = ""
     let imageUri = ""
@@ -56,9 +60,9 @@ export function ChatScreen() {
     },[]);
 
     useEffect(() => {
-        console.log("2nd UseEffect",chat)
+        console.log("2nd UseEffect")
         if(chat) {
-        test();
+        handleChat();
         navigation.setOptions({
 
             headerTitle: "",
@@ -97,28 +101,28 @@ export function ChatScreen() {
         }
 
     };
-    function test(){
+    function handleChat(){
         if (currentUser === chat.userThatPostedId ){
-            // setName(chat.userThatRequestedFullName)
-            // setImageUri(chat.userThatRequestedProfilePicture)
+
             name = chat.userThatRequestedFullName
             imageUri = chat.userThatRequestedProfilePicture
         }else {
-            // setName(chat.userThatPostedFullName)
-            // setImageUri(chat.userThatPostedProfilePicture)
+
             name = chat.userThatPostedFullName
             imageUri = chat.userThatPostedProfilePicture
         }
         if (chat.messages.length > 0) {
             const formattedMessages = chat.messages.map((message,index) => getFormattedMessage(message,index));
             formattedMessages.sort((a, b) => b.createdAt - a.createdAt)
-            setMessages(formattedMessages);
+            let slicedMessages = formattedMessages.slice(0,15)
+
+            setMessages(slicedMessages);
         }
     }
 
     const getFormattedMessage = (message,index) => {
         return {
-            _id: index,
+            _id: uuidv4(),
             text: message.text,
             createdAt: message.createdAt.toDate(),
             user: {
@@ -128,13 +132,41 @@ export function ChatScreen() {
             },
         };
     };
+
+
+    const loadEarlierMessages = useCallback(() => {
+
+
+        if (isLoadingEarlierMessages || !hasEarlierMessages) {
+            return;
+        }
+
+        setIsLoadingEarlierMessages(true);
+
+            console.log(messages[messages.length-1].createdAt)
+
+            ChatServices.loadEarlierMessages(chat.id, messages[messages.length-1].createdAt,10).then((newMessages) => {
+                console.log(newMessages)
+                if (newMessages.length > 0) {
+                    const formattedMessages = newMessages.map((message,index) => getFormattedMessage(message,index));
+                    formattedMessages.sort((a, b) => b.createdAt - a.createdAt)
+                    setMessages((previousMessages) => GiftedChat.prepend(previousMessages, formattedMessages));
+                } else {
+                    setHasEarlierMessages(false);
+                }
+
+                setIsLoadingEarlierMessages(false);
+            });
+
+    }, [chat,isLoadingEarlierMessages, hasEarlierMessages, messages]);
+
     const onSend = useCallback((messages = []) => {
         //setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
         if (!chat) {
             return;
         }
+        console.log(messages.length)
         const message = messages[messages.length - 1];
-        console.log("onSend chat obj",chat)
         console.log("OnSebd chat id",chat.id)
         ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
             currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
@@ -165,6 +197,7 @@ export function ChatScreen() {
 
 
         return (
+
             <GiftedChat
                 messages={messages}
                 onSend={messages => onSend(messages)}
@@ -178,9 +211,15 @@ export function ChatScreen() {
                 renderInputToolbar={(props) => (
                     <InputToolbar {...props} renderSend={renderSend}   />
                 )}
+                loadEarlier={hasEarlierMessages && messages.length>14}
+                onLoadEarlier={loadEarlierMessages}
+                isLoadingEarlierMessages={true}
+                scrollToBottom={true}
+               // renderLoading={() => <TransparentLoadingIndicator />}
 
 
             />
+
         );
 
 }
