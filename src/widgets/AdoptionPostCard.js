@@ -27,29 +27,10 @@ const AdoptionPostCard = ({adoptionPost}) => {
     const handleViewDetails = () => {
         navigation.navigate(ViewPetScreenRoute, {pet: adoptionPost.pet});
     };
-    const handleChatNavigation = async () => {
-        setIsLoading(true);
-        let chat = await ChatServices.getChat(adoptionPost.userThatPostedId, currentUser.uid,adoptionPost.id);
-        if (chat) {
-            setIsLoading(false);
-            navigation.navigate(ChatScreenRoute, {chat: chat});
-        } else {
-            const newChat = new Chat('',
-                [],
-                adoptionPost.pet.name,
-                'Adoption',
-                adoptionPost.userThatPostedFullName,
-                adoptionPost.userThatPostedId,
-                adoptionPost.userThatPostedProfilePicture,
-                currentUser.fullName,
-                currentUser.uid,
-                currentUser.profilePicture,
-                adoptionPost.id
-            );
-            newChat.id = await ChatServices.initializeChat(newChat);
-            setIsLoading(false);
-            navigation.navigate(ChatScreenRoute, {chat: newChat});
-        }
+    const handleChatNavigation = () => {
+        console.log("before")
+        navigation.navigate(ChatScreenRoute, {adoptionPost: adoptionPost});
+        console.log("after")
     };
     return (
         <View style={styles.postContainer}>

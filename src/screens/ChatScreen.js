@@ -7,7 +7,7 @@ import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import MenuImage from "../widgets/MenuImage";
 import {View, Text, Image, Button, TouchableOpacity} from "react-native";
-import {appPurpleDark} from "../utilities/constants";
+import {appPurpleDark, ChatScreenRoute} from "../utilities/constants";
 import ImagePickerButton from "../widgets/ImagePickerButton";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -16,26 +16,49 @@ export function ChatScreen() {
     const [messages, setMessages] = useState([]);
     const {currentUser} = useContext(CurrentUserContext);
     const route = useRoute();
-    const {chat} = route.params;
+    const {adoptionPost} = route.params;
+    const [chat,setChat] = useState(null);
+    const [isFirstTime,setIsFirstTime] = useState(true);
     const navigation = useNavigation();
-   // const [name,setName] = useState("")
-   // const [imageUri,setImageUri] = useState("")
+    const [isLoading,setIsLoading] = useState(true);
+
     let name = ""
     let imageUri = ""
-    if (currentUser === chat.userThatPostedId ){
-        // setName(chat.userThatRequestedFullName)
-        // setImageUri(chat.userThatRequestedProfilePicture)
-        name = chat.userThatRequestedFullName
-        imageUri = chat.userThatRequestedProfilePicture
-    }else {
-        // setName(chat.userThatPostedFullName)
-        // setImageUri(chat.userThatPostedProfilePicture)
-        name = chat.userThatPostedFullName
-        imageUri = chat.userThatPostedProfilePicture
-    }
-    useLayoutEffect(() => {
 
 
+    useEffect(()=>{
+        console.log("1st UseEffect")
+
+        ChatServices.getChat(adoptionPost.userThatPostedId, currentUser.uid,adoptionPost.id).then(async (data) => {
+                if (data) {
+                    setChat(data)
+                }
+                else {
+                    const newChat = new Chat('',
+                        [],
+                        adoptionPost.pet.name,
+                        'Adoption',
+                        adoptionPost.userThatPostedFullName,
+                        adoptionPost.userThatPostedId,
+                        adoptionPost.userThatPostedProfilePicture,
+                        currentUser.fullName,
+                        currentUser.uid,
+                        currentUser.profilePicture,
+                        adoptionPost.id
+                    );
+                    newChat.id = await ChatServices.initializeChat(newChat);
+
+                    setChat(newChat)
+                }
+
+            }
+        )
+    },[]);
+
+    useEffect(() => {
+        console.log("2nd UseEffect",chat)
+        if(chat) {
+        test();
         navigation.setOptions({
 
             headerTitle: "",
@@ -55,29 +78,18 @@ export function ChatScreen() {
 
             </View>,
         });
-    }, []);
-
-    useEffect(() => {
-
-
-        if (chat.messages.length > 0) {
-            const formattedMessages = chat.messages.map((message,index) => getFormattedMessage(message,index));
-            formattedMessages.sort((a, b) => b.createdAt - a.createdAt)
-            setMessages(formattedMessages);
-        }
 
             const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived).then(() => {
                 return () => {
                     unsubscribe();
                 };
             });
+        }
 
 
 
 
-
-
-    }, []);
+    }, [chat, chat  != null ]);
     const onMessageReceived = (newMessage,index) => {
         const formattedMessage = getFormattedMessage(newMessage,index);
         if (!messages.some((message) => message._id === formattedMessage._id)) {
@@ -85,15 +97,25 @@ export function ChatScreen() {
         }
 
     };
-    function generateRandomId(length) {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    function test(){
+        if (currentUser === chat.userThatPostedId ){
+            // setName(chat.userThatRequestedFullName)
+            // setImageUri(chat.userThatRequestedProfilePicture)
+            name = chat.userThatRequestedFullName
+            imageUri = chat.userThatRequestedProfilePicture
+        }else {
+            // setName(chat.userThatPostedFullName)
+            // setImageUri(chat.userThatPostedProfilePicture)
+            name = chat.userThatPostedFullName
+            imageUri = chat.userThatPostedProfilePicture
         }
-        return result;
+        if (chat.messages.length > 0) {
+            const formattedMessages = chat.messages.map((message,index) => getFormattedMessage(message,index));
+            formattedMessages.sort((a, b) => b.createdAt - a.createdAt)
+            setMessages(formattedMessages);
+        }
     }
+
     const getFormattedMessage = (message,index) => {
         return {
             _id: index,
@@ -108,12 +130,17 @@ export function ChatScreen() {
     };
     const onSend = useCallback((messages = []) => {
         //setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+        if (!chat) {
+            return;
+        }
         const message = messages[messages.length - 1];
+        console.log("onSend chat obj",chat)
+        console.log("OnSebd chat id",chat.id)
         ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
             currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
             message.user.name
         ).then(()=>console.log("Message sent"));
-    }, []);
+    }, [chat]);
     const renderBubble = (props) => {
         return (
             <Bubble
