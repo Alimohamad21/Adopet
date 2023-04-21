@@ -59,6 +59,12 @@ class ChatServices {
         });
         await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: ${text}`);
     }
+    static async sendImageMessage(chatId, imageUri, uid, createdAt, receiverId, senderFullName) {
+        await firestore().collection('chats').doc(chatId).update({
+            'messages': FieldValue.arrayUnion({image: imageUri, uid: uid, createdAt: createdAt}),
+        });
+        await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: sent an image`);
+    }
 
     static async getChatById(chatId) {
         const doc = await firestore().collection('chats').doc(chatId);

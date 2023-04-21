@@ -13,6 +13,8 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import uuid from "uuid";
 import { v4 as uuidv4 } from 'uuid';
 import TransparentLoadingIndicator from "../widgets/TransparentLoadingIndicator";
+import {Modal} from "native-base";
+import StorageServices from "../services/StorageServices";
 
 
 export function ChatScreen() {
@@ -23,7 +25,8 @@ export function ChatScreen() {
     const navigation = useNavigation();
     const [hasEarlierMessages, setHasEarlierMessages] = useState(true);
     const [isLoadingEarlierMessages, setIsLoadingEarlierMessages] = useState(false);
-
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
 
     let name = ""
     let imageUri = ""
@@ -90,16 +93,32 @@ export function ChatScreen() {
     }
 
     const getFormattedMessage = (message,index) => {
+        if (!message.image) {
+
         return {
             _id: uuidv4(),
             text: message.text,
             createdAt: message.createdAt.toDate(),
             user: {
                 _id: message.uid,
-                name: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedFullName: chat.userThatPostedFullName ,
-                avatar: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedProfilePicture: chat.userThatPostedProfilePicture  ,
+                name: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedFullName : chat.userThatPostedFullName,
+                avatar: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedProfilePicture : chat.userThatPostedProfilePicture,
             },
         };
+      }
+        else if (message.image){
+            return {
+                _id: uuidv4(),
+                createdAt: message.createdAt.toDate(),
+                user: {
+                    _id: message.uid,
+                    name: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedFullName : chat.userThatPostedFullName,
+                    avatar: currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedProfilePicture : chat.userThatPostedProfilePicture,
+                },
+                image: message.image,
+                text: message.text
+            };
+        }
     };
 
 
@@ -137,11 +156,20 @@ export function ChatScreen() {
         console.log(messages.length)
         const message = messages[messages.length - 1];
         console.log("OnSebd chat id",chat.id)
-        ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
-            currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
-            message.user.name
-        ).then(()=>console.log("Message sent"));
-    }, [chat]);
+        console.log(message.text)
+        if(!message.image)
+            ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
+                currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
+                message.user.name
+            ).then(()=>console.log("Message sent"));
+        else if (message.image)
+            ChatServices.sendImageMessage(chat.id, message.image , message.user._id, message.createdAt,
+                currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
+                message.user.name
+            ).then(()=>console.log("Message sent"));
+
+        }, [chat]);
+
     const renderBubble = (props) => {
         return (
             <Bubble
@@ -154,17 +182,77 @@ export function ChatScreen() {
             />
         );
     };
-    const renderSend = (props) => {
-        return (
-            <Send {...props} disabled={!props.text}>
 
-                    <FontAwesome name={"paper-plane"} style={{fontSize:27,marginRight:"5%",marginBottom:"15%",color:appPurpleDark}}></FontAwesome>
+    // const renderInputToolbar = (props) => {
+    //
+    //
+    //     return (
+    //         <InputToolbar {...props} >
+    //             <View>
+    //          {/*<ImagePickerButton></ImagePickerButton>*/}
+    //             <ImagePickerButton onPick={handleImageSelect}/>
+    //                  <Send {...props} disabled={!props.text}>
+    //                          <FontAwesome name={"paper-plane"} style={{fontSize:27,marginRight:"5%",marginBottom:"15%",color:appPurpleDark}}></FontAwesome>
+    //                  </Send>
+    //             </View>
+    //         </InputToolbar>
+    //     );
+    // };
 
-            </Send>
-        );
+    // const handleImageSelect = (chatImageUri) =>{
+    //     console.log(chatImageUri)
+    //     const message = {
+    //         image: chatImageUri,
+    //         user: {
+    //             _id: currentUser.uid,
+    //             name: currentUser.fullName,
+    //             avatar: currentUser.profilePicture,
+    //         },
+    //         createdAt: new Date(),
+    //     };
+    //     onSend([message]);
+    // }
+    const handleImageSelect = (chatImageUri) => {
+
+        setSelectedImage(chatImageUri);
+        setIsConfirmationModalVisible(true);
+
+    };
+    const handleImageSend = async () => {
+        const chatImageUrl = await StorageServices.uploadImageToFirebase("chat", selectedImage)
+        const message = {
+            image: chatImageUrl,
+            createdAt: new Date(),
+            user: {
+                _id: currentUser.uid,
+                name: currentUser.fullName,
+                avatar: currentUser.profilePicture,
+            },
+        };
+        onSend([message]);
+        setSelectedImage(null);
+        setIsConfirmationModalVisible(false);
     };
 
+    const handleImageCancel = () => {
+        setSelectedImage(null);
+        setIsConfirmationModalVisible(false);
+    };
 
+    const renderSend = (props) => {
+
+            return (
+                <View style={{ height:"100%", flexDirection: "row", alignItems: "center" }}>
+                    <View style={{ marginRight: "3%" }}>
+                        <ImagePickerButton onPick={handleImageSelect} />
+                    </View>
+                    <Send {...props} disabled={!props.text} containerStyle={{  }}>
+                        <FontAwesome name={"paper-plane"} style={{ fontSize: 27, paddingBottom:"1.5%",paddingLeft:"1.5%",color: appPurpleDark }}></FontAwesome>
+                    </Send>
+                </View>
+            );
+
+    };
         return (
             <GiftedChat
                 messages={messages}
@@ -176,9 +264,69 @@ export function ChatScreen() {
                 }}
                 renderBubble={renderBubble}
 
-                renderInputToolbar={(props) => (
-                    <InputToolbar {...props} renderSend={renderSend}   />
-                )}
+                // renderInputToolbar={(props) => (
+                //
+                //     <InputToolbar {...props} renderSend={renderSend}   >
+                //         <ImagePickerButton onPick={handleImageSelect}></ImagePickerButton>
+                //         <InputToolbar {...props}/>
+                //     </InputToolbar>
+                // )}
+                renderSend={renderSend}
+                //renderInputToolbar={renderInputToolbar}
+                renderInputToolbar={(props) => {
+                    if (selectedImage) {
+                        return (
+                            <View
+                                visible={isConfirmationModalVisible}
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    flex: 1,
+                                    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                <TouchableOpacity
+                                    style={{
+                                        position: 'absolute',
+                                        top: 20,
+                                        right: 20
+                                    }}
+                                    onPress={handleImageCancel}
+                                >
+                                    <FontAwesome name={"times"} style={{fontSize: 27, color: "white"}}></FontAwesome>
+                                </TouchableOpacity>
+                                <Image
+                                    source={{ uri: selectedImage }}
+                                    style={{
+                                        height: "80%",
+                                        width: "80%",
+                                        resizeMode: "contain"
+                                    }}
+                                />
+                                <TouchableOpacity
+                                    onPress={handleImageSend}
+                                    style={{
+                                        backgroundColor: appPurpleDark,
+                                        paddingVertical: 10,
+                                        paddingHorizontal: 30,
+                                        borderRadius: 10,
+                                        marginTop: 20
+                                    }}
+                                >
+                                    <Text style={{ color: "white" }}>Send</Text>
+                                </TouchableOpacity>
+                            </View>
+                        );
+
+                    } else {
+                        return <InputToolbar {...props} />;
+                    }
+                }}
                 loadEarlier={hasEarlierMessages && messages.length>14}
                 onLoadEarlier={loadEarlierMessages}
                 isLoadingEarlierMessages={true}
