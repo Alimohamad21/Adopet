@@ -14,6 +14,7 @@ import {firestoreTimeStampToDateString} from '../utilities/stringUtilities';
  */
 const ChatCard = ({chat, isPoster}) => {
     const lastMessage = chat.messages[chat.messages.length - 1];
+    const lastMessageText = lastMessage.image ? "Sent an image": lastMessage.text;
     let fullName = isPoster ? chat.userThatRequestedFullName : chat.userThatPostedFullName;
     let profilePicture = isPoster ? chat.userThatRequestedProfilePicture : chat.userThatPostedProfilePicture;
     const navigation = useNavigation();
@@ -30,10 +31,10 @@ const ChatCard = ({chat, isPoster}) => {
                                style={styles.profileBtnIcon}/>}
                 <View style={styles.textContainer}>
                     <Text h4>{fullName}</Text>
-                    <Text style={styles.purpleText}>{`${chat.petName} ${chat.postType} `}</Text>
+                    <Text style={styles.purpleText}>{`${chat.petName}'s ${chat.postType} `}</Text>
                     <View style={styles.lastMessageContainer}>
-                        <Text style={styles.lastMessage}>{lastMessage.text}</Text>
-                        <Text style={styles.time}>{firestoreTimeStampToDateString(lastMessage.createdAt)}</Text>
+                        <Text style={styles.lastMessage}>{`${lastMessageText}`}</Text>
+                        <Text style={styles.time}>{`${firestoreTimeStampToDateString(lastMessage.createdAt)}`}</Text>
                     </View>
                 </View>
             </View>
