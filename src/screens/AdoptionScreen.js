@@ -22,9 +22,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import PostServices from '../services/PostServices';
 import AdoptionPostCard from '../widgets/AdoptionPostCard';
+import NoDataAvailable from '../widgets/NoDataAvailable';
 
 
-const AdoptionScreen = ({navigation}) => {
+const AdoptionScreen = () => {
     const [searchPhrase, setSearchPhrase] = useState('');
     const [clicked, setClicked] = useState(false);
     const [adoptionPosts, setAdoptionPosts] = useState(null);
@@ -37,16 +38,6 @@ const AdoptionScreen = ({navigation}) => {
             <AdoptionPostCard adoptionPost={item}/>
         );
     };
-
-    function NoPostsAvailable() {
-        return (
-            <SafeAreaView style={styles.root}>
-                <View style={styles.container}>
-                    <Text style={styles.text}>No posts available</Text>
-                </View>
-            </SafeAreaView>
-        );
-    }
 
     const onEndReached = async () => {
         if (!adoptionPosts.length || isAllPostsLoaded) {
@@ -75,7 +66,7 @@ const AdoptionScreen = ({navigation}) => {
     if (!adoptionPosts) {
         return <ScreenLoadingIndicator/>;
     } else if (adoptionPosts.length === 0) {
-        return <NoPostsAvailable/>;
+        return <NoDataAvailable text="No posts available"/>;
     } else {
         return (
             <SafeAreaView style={styles.root}>
@@ -86,6 +77,7 @@ const AdoptionScreen = ({navigation}) => {
                         setSearchPhrase={setSearchPhrase}
                         clicked={clicked}
                         setClicked={setClicked}
+
                     />
                 </View>
 
