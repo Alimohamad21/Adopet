@@ -14,7 +14,7 @@ export const LoginScreenRoute = 'Login';
 export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';
 export const ViewPetScreenRoute = 'Pet Details';
-
+export const ProfileScreenRoute = 'Profile';
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Alexandria', value: 'Alexandria'},

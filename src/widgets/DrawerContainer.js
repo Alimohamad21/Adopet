@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import PropTypes from 'prop-types';
 
-import {appPurpleLight, HomeScreenRoute, LoginScreenRoute} from '../utilities/constants';
+import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ProfileScreenRoute} from '../utilities/constants';
 import auth from '@react-native-firebase/auth';
 import UserServices from '../services/UserServices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -18,6 +18,9 @@ export default function DrawerContainer(props) {
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleProfileNavigation = () =>{
+        navigation.navigate(ProfileScreenRoute);
+    }
     const handleLogOut = async () => {
         setIsLoading(true);
         const token=await NotificationServices.getToken();
@@ -38,7 +41,7 @@ export default function DrawerContainer(props) {
         <View style={styles.content}>
             {isLoading && <TransparentLoadingIndicator/>}
             <View style={styles.profileContainer}>
-                <TouchableHighlight style={styles.profileBtnClickContain} underlayColor={appPurpleLight}>
+                <TouchableHighlight style={styles.profileBtnClickContain} onPress={handleProfileNavigation} underlayColor="transparent">
                     <View style={styles.profileBtnContainer}>
                         <View style={styles.imageContainer}>
                             {
