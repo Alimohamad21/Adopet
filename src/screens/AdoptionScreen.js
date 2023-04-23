@@ -34,7 +34,7 @@ const AdoptionScreen = ({navigation}) => {
 
     const renderPost = ({item}) => {
         return (
-            <AdoptionPostCard adoptionPost={item}/>
+            <AdoptionPostCard adoptionPost={item} isPoster={false}/>
         );
     };
 

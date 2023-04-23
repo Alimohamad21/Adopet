@@ -1,4 +1,4 @@
-import React, {Component, useContext, useEffect, useLayoutEffect, useState} from 'react';
+import React, {Component, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {
     StyleSheet,
     View,
@@ -8,7 +8,7 @@ import {
     Dimensions,
     Image,
     TouchableOpacity,
-    TouchableHighlight,
+    TouchableHighlight, Animated,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
@@ -17,20 +17,46 @@ import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {appPurpleDark} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
+import AdoptionPostCard from "../widgets/AdoptionPostCard";
+import PostServices from "../services/PostServices";
+import {FlatList} from "native-base";
 
 const ProfileScreen = () => {
     const [view,setView] = useState(1)
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
-    const  navigation = useNavigation();
+    const navigation = useNavigation();
+    const [userPosts,setUserPosts] = useState(null);
+    const [hideComponents, setHideComponents] = useState(false);
+    const [previousOffset,setPreviousOffset] = useState(0);
+    const animatedValue = useRef(new Animated.Value(1)).current;
+    const fadeOut = useRef(null);
+    const fadeIn = useRef(null);
+    useMemo(() => {
+        fadeOut.current = Animated.timing(animatedValue, { toValue: 0, useNativeDriver: true });
+        fadeIn.current = Animated.timing(animatedValue, { toValue: 1, useNativeDriver: true });
+    }, []);
 
+    const handleScroll = (event) => {
+        console.log(animatedValue)
+        const currentOffset = event.nativeEvent.contentOffset.y;
+        const direction = currentOffset > 0 && currentOffset > previousOffset ? 'down' : 'up';
+        setHideComponents(direction === 'down');
+        setPreviousOffset(currentOffset);
+
+        if (direction === 'down' && fadeIn.current) {
+            fadeIn.current.stop();
+            fadeOut.current.start();
+        } else if (direction === 'up' && fadeOut.current) {
+            fadeOut.current.stop();
+            fadeIn.current.start();
+        }
+    };
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShadowVisible: false,
 
             headerTitle:"",
-            // headerTitle:() => (
-            //     <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
-            // ),
+
             headerLeft: () => (
 
                     <MenuImage
@@ -49,6 +75,18 @@ const ProfileScreen = () => {
         });
         console.log(currentUser)
     }, []);
+    useEffect(  () => {
+        const getUserPosts = async () => {
+            const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
+            console.log(res)
+            setUserPosts(res)
+        }
+         getUserPosts().then()
+
+
+    },[])
+
+
     const handlePostsSelect =() =>{
         console.log("Posts")
         setView(1)
@@ -57,29 +95,57 @@ const ProfileScreen = () => {
         setView(2)
         console.log("Pets")
     }
+    const renderPost = ({item}) => {
+        return (
+            <AdoptionPostCard adoptionPost={item} isPoster={true}/>
+        );
+    };
     return(
-        <View>
-
-
+        <SafeAreaView style={{flex:1}}>
+            { !hideComponents &&
+                <Animated.View style={{ opacity: animatedValue }}>
             <View style={styles.profileIconContainer}>
-                <Image  source={{uri: currentUser.profilePicture}} style={styles.profileIcon} ></Image>
-            </View>
-            <View style={{flexDirection:"row",justifyContent:"center"}}>
-            <Text style={styles.nameText}>{currentUser.fullName}</Text>
-            </View>
-            <View style={{flexDirection:"row",justifyContent:"center"}}>
-                <Text style={styles.location}>{currentUser.city}</Text>
-            </View>
-            <View style={{flexDirection:"row",justifyContent:"center"}}>
-                <FontAwesome style={{fontSize: 20, color: appPurpleDark}} name={"phone"}></FontAwesome>
-                <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
+
+                {
+                    currentUser.profilePicture !== '' ?
+                        <Image source={{uri: currentUser.profilePicture}} style={styles.profileIcon}/> :
+                        <Image source={require('../assets/default_user.png') }
+                               style={styles.profileIcon}/>}
             </View>
 
-            <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
+
+            <View>
+                <View style={{flexDirection:"row",justifyContent:"center"}}>
+                    <Text style={styles.nameText}>{currentUser.fullName}</Text>
+                </View>
+                <View style={{flexDirection:"row",justifyContent:"center"}}>
+                    <Text style={styles.location}>{currentUser.city}</Text>
+                </View>
+                <View style={{flexDirection:"row",justifyContent:"center"}}>
+                    <FontAwesome style={{fontSize: 20, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                    <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
+                </View>
+
+            </View>
+
+                </Animated.View>
+            }
+            <View style={{flex:1}}>
+                <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
+            </View>
+
+
 
             {view === 1 &&
-                <View >
-                <Text>Posts</Text>
+                <View  style={{alignItems:"center",marginTop:"15%"}}>
+                    {userPosts &&
+
+                        <FlatList showsVerticalScrollIndicator={true} vertical={true} numColumns={1}
+                        data={userPosts} renderItem={renderPost}
+                        keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                            onScroll={handleScroll}
+                        />
+                    }
                 </View>
             }
             { view ===2  &&
@@ -89,7 +155,7 @@ const ProfileScreen = () => {
 
             }
 
-        </View>
+        </SafeAreaView>
 
 
 
@@ -109,6 +175,7 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     profileIconContainer: {
+
         backgroundColor:appPurpleDark,
         width:"100%",
         height:height/6,
@@ -116,12 +183,13 @@ const styles = StyleSheet.create({
         justifyContent:"center"
     },
     profileIcon: {
+
         position:"absolute",
         borderRadius: borderRadius,
         width:imageSize,
         height:imageSize,
 
-        resizeMode: 'cover',
+        resizeMode: 'contain',
     },
     nameText:{
         marginTop:"7%",
