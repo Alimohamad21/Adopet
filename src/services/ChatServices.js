@@ -31,6 +31,9 @@ class ChatServices {
                 nonEmptyChats.push(chat);
             }
         }
+        nonEmptyChats.sort((a, b) => {
+            return b.messages[b.messages.length - 1].createdAt - a.messages[a.messages.length - 1].createdAt;
+        });
         return nonEmptyChats;
     }
 
@@ -45,6 +48,9 @@ class ChatServices {
                 nonEmptyChats.push(chat);
             }
         }
+        nonEmptyChats.sort((a, b) => {
+            return b.messages[b.messages.length - 1].createdAt - a.messages[a.messages.length - 1].createdAt;
+        });
         return nonEmptyChats;
     }
 
@@ -59,6 +65,7 @@ class ChatServices {
         });
         await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: ${text}`);
     }
+
     static async sendImageMessage(chatId, imageUri, uid, createdAt, receiverId, senderFullName) {
         await firestore().collection('chats').doc(chatId).update({
             'messages': FieldValue.arrayUnion({image: imageUri, uid: uid, createdAt: createdAt}),

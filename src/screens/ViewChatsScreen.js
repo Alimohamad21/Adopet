@@ -26,6 +26,7 @@ const ViewChatsScreen = () => {
             setMyRequestsChats(chats);
         };
         const unsubscribe = navigation.addListener('focus', () => {
+            setIsLoading(true);
             fetchMyPostsChats();
             fetchMyRequestsChats().then(() => {
                 setIsLoading(false);
