@@ -20,7 +20,7 @@ import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
-
+import firestore from '@react-native-firebase/firestore';
 const ProfileScreen = () => {
     const [view,setView] = useState(1)
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
@@ -77,7 +77,31 @@ const ProfileScreen = () => {
     }, []);
     useEffect(  () => {
         const getUserPosts = async () => {
-            const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
+            const pet = {
+                type: "dog",
+                image: "https://example.com/dog.jpg",
+                name: "Buddy",
+                description: "A friendly and energetic dog who loves to play fetch.",
+                age: 3,
+                color: "brown",
+                breed: "Golden Retriever",
+                gender: "male",
+                isNeutered: true,
+                vaccinations: ["Rabies", "Distemper", "Parvovirus"]
+            };
+
+            const userDocRef = firestore.collection('users').doc(currentUser.uid);
+
+            // Use update() method to add the pet object to the "pets" array field
+            await userDocRef.update({
+                pets: firestore.FieldValue.arrayUnion(pet) // Add the pet object to the "pets" array field
+            });
+
+            console.log('Pet added to user successfully');
+
+
+
+        const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
             console.log(res)
             setUserPosts(res)
         }
