@@ -6,7 +6,7 @@ import {borderGrey, egyptianCities} from "../utilities/constants";
 
 
 
-function DropdownComponent({onSelect,data}){
+function DropdownComponent({onSelect,data, placeholder}){
     const [value, setValue] = useState(null);
 
 
@@ -32,7 +32,7 @@ function DropdownComponent({onSelect,data}){
             maxHeight={300}
             labelField="label"
             valueField="value"
-            placeholder="City"
+            placeholder={placeholder}
             searchPlaceholder="Search..."
             value={value}
             onChange={item => {

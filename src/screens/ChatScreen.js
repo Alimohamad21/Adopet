@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect, useContext, useLayoutEffect} from 'react';
 import {Bubble, Composer, GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
-import {CurrentUserContext} from '../providers/CurrentUserProvider';
+
 import ChatServices from '../services/ChatServices';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {View, Text, Image, TouchableOpacity} from "react-native";

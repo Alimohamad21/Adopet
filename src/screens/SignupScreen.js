@@ -169,7 +169,7 @@ const SignupScreen = ({navigation}) => {
                         {isPasswordNotConfirmed &&
                         <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
 
-                        <DropdownComponent onSelect={handleCityChange} data={egyptianCities}/>
+                        <DropdownComponent onSelect={handleCityChange} data={egyptianCities} placeholder={"city"}/>
                         {isCityEmpty && <Text style={styles.wrongCredentialsText}>Please select a city</Text>}
                         <View style={styles.phoneNoContainer}>
                             <PhoneInput
