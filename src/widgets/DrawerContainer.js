@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import PropTypes from 'prop-types';
 
-import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ViewChatsScreenRoute} from '../utilities/constants';
+
+import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ViewChatsScreenRoute, ProfileScreenRoute} from '../utilities/constants';
 import auth from '@react-native-firebase/auth';
 import UserServices from '../services/UserServices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -17,8 +18,15 @@ export default function DrawerContainer(props) {
     const {navigation} = props;
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const [isLoading, setIsLoading] = useState(false);
+    const handleProfileNavigation = () =>{
+        navigation.navigate(ProfileScreenRoute);
+    }
+    const handleHomeNavigation = () =>{
+        navigation.navigate(HomeScreenRoute);
+
     const handleChatsNavigation = () =>{
         navigation.navigate(ViewChatsScreenRoute)
+
     }
     const handleLogOut = async () => {
         setIsLoading(true);
@@ -26,12 +34,13 @@ export default function DrawerContainer(props) {
         await UserServices.removeFcmToken(currentUser.uid, token);
         await AuthServices.signOut();
         setIsLoading(false);
-        setCurrentUser(null);
+
         navigation.closeDrawer();
         navigation.reset({
             index: 0,
             routes: [{name: 'AuthLoading'}],
         });
+        setCurrentUser(null);
     };
     if(!currentUser)
         return <ScreenLoadingIndicator/>
@@ -40,7 +49,7 @@ export default function DrawerContainer(props) {
         <View style={styles.content}>
             {isLoading && <TransparentLoadingIndicator/>}
             <View style={styles.profileContainer}>
-                <TouchableHighlight style={styles.profileBtnClickContain} underlayColor={appPurpleLight}>
+                <TouchableHighlight style={styles.profileBtnClickContain} onPress={handleProfileNavigation} underlayColor="transparent">
                     <View style={styles.profileBtnContainer}>
                         <View style={styles.imageContainer}>
                             {
@@ -60,7 +69,7 @@ export default function DrawerContainer(props) {
             </View>
 
             <View style={styles.buttonsContainer}>
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                <TouchableHighlight onPress={handleHomeNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
                     <View style={styles.btnContainer}>
                         {/*<Image source={source} style={styles.btnIcon} />*/}
                         <FontAwesome name="home" style={styles.btnIcon}/>

@@ -12,8 +12,8 @@ import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 /**
  * @param {AdoptionPost} adoptionPost
  */
-const AdoptionPostCard = ({adoptionPost}) => {
-    const navigation = useNavigation();
+const AdoptionPostCard = ({adoptionPost,isPoster}) => {
+    const navigation=useNavigation();
     const {currentUser} = useContext(CurrentUserContext);
     const [isLoading,setIsLoading]= useState(false);
     const callPhoneNumber = () => {
@@ -57,9 +57,8 @@ const AdoptionPostCard = ({adoptionPost}) => {
             {isLoading && <TransparentLoadingIndicator/>}
             <View style={styles.postHeader}>
                 <View style={styles.profileContainer}>
-                    {adoptionPost.userThatPostedProfilePicture == '' ?
-                        <Image style={styles.profileBtnIcon}
-                               source={require('../assets/default_user.png')}></Image> :
+                    {adoptionPost.userThatPostedProfilePicture === ""  ?
+                        <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                         <Image source={{uri: adoptionPost.userThatPostedProfilePicture}}
                                style={styles.profileBtnIcon}/>}
                     <View>
@@ -100,7 +99,11 @@ const AdoptionPostCard = ({adoptionPost}) => {
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.horizontalSeparator}/>
+
+
+            {!isPoster &&
+            <View>
+                <View style={styles.horizontalSeparator}/>
             <View style={styles.postFooter}>
                 <TouchableOpacity onPress={callPhoneNumber}>
                     <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
@@ -110,6 +113,8 @@ const AdoptionPostCard = ({adoptionPost}) => {
                     <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                 </TouchableOpacity>
             </View>
+            </View>
+            }
         </View>
     );
 };
