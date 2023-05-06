@@ -34,3 +34,7 @@ export function removeSpacesFromString(str) {
     return str.replace(/\s/g, '');
 }
 
+export function firestoreTimeStampToDateString(timestamp) {
+    return   timestamp.toDate().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+}

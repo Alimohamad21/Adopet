@@ -6,7 +6,7 @@ class PostServices {
         const snapshot = await firestore()
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
-            .limit(5)
+            .limit(15)
             .get();
 
         const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
@@ -19,7 +19,7 @@ class PostServices {
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
             .startAfter(prevLastDocument)
-            .limit(5)
+            .limit(15)
             .get();
 
         const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));

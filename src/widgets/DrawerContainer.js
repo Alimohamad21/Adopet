@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import PropTypes from 'prop-types';
 
-import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ProfileScreenRoute} from '../utilities/constants';
+
+import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ViewChatsScreenRoute, ProfileScreenRoute} from '../utilities/constants';
 import auth from '@react-native-firebase/auth';
 import UserServices from '../services/UserServices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -17,12 +18,15 @@ export default function DrawerContainer(props) {
     const {navigation} = props;
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const [isLoading, setIsLoading] = useState(false);
-
     const handleProfileNavigation = () =>{
         navigation.navigate(ProfileScreenRoute);
     }
     const handleHomeNavigation = () =>{
         navigation.navigate(HomeScreenRoute);
+
+    const handleChatsNavigation = () =>{
+        navigation.navigate(ViewChatsScreenRoute)
+
     }
     const handleLogOut = async () => {
         setIsLoading(true);
@@ -73,11 +77,11 @@ export default function DrawerContainer(props) {
                     </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                <TouchableHighlight onPress={handleChatsNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
                     <View style={styles.btnContainer}>
                         {/*<Image source={source} style={styles.btnIcon} />*/}
                         <FontAwesome name="commenting" style={styles.btnIcon}/>
-                        <Text style={styles.btnText}>Messages</Text>
+                        <Text style={styles.btnText}>Chats</Text>
                     </View>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
