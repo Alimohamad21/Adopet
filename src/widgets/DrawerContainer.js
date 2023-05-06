@@ -21,8 +21,9 @@ export default function DrawerContainer(props) {
     const handleProfileNavigation = () =>{
         navigation.navigate(ProfileScreenRoute);
     }
-    const handleHomeNavigation = () =>{
+    const handleHomeNavigation = () => {
         navigation.navigate(HomeScreenRoute);
+    }
 
     const handleChatsNavigation = () =>{
         navigation.navigate(ViewChatsScreenRoute)

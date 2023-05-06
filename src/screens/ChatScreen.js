@@ -37,12 +37,17 @@ export function ChatScreen() {
                 headerTitle: "",
                 headerRight: () => <View style={{flex:0.85,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
                     <View style={{flexDirection: 'row',marginTop:"0%",justifyContent:"flex-start",alignItems:"center"}}>
-                        <Image source={{uri: imageUri}} style={{
-                            marginRight: "5%",
+                        {imageUri!==""?<Image source={{uri: imageUri}} style={{
+                            marginRight: '5%',
                             borderRadius: 50,
                             height: 40,
                             width: 40,
-                        }}></Image>
+                        }}/>:<Image source={require('../assets/default_user.png')} style={{
+                            marginRight: '5%',
+                            borderRadius: 50,
+                            height: 40,
+                            width: 40,
+                        }}/>}
                         <Text style={{fontSize:17,color:"white",fontWeight:"bold"}}>{name}</Text>
                     </View>
                     <TouchableOpacity style={{ flexDirection: 'row'}}>
@@ -64,7 +69,7 @@ export function ChatScreen() {
     //Identify sender and receiver in the chat
     //Format messages to be to view them on screen
     function handleChat(){
-        if (currentUser === chat.userThatPostedId ){
+        if (currentUser.uid === chat.userThatPostedId ){
             name = chat.userThatRequestedFullName
             imageUri = chat.userThatRequestedProfilePicture
         }else {
