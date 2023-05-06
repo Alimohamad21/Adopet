@@ -82,7 +82,9 @@ const ProfileScreen = () => {
             console.log(res)
             setUserPosts(res)
         }
-        const cats = [
+
+        //TO DO:  load Pets from database or from current user object
+        const pets = [
             {   id:0,
                 age: 1,
                 breed: "Persian",
@@ -113,37 +115,9 @@ const ProfileScreen = () => {
 
 
             },
-            {   id:2,
-                age: 1,
-                breed: "Persian",
-                color: "orange",
-                description: "Cute",
-                gender: "Female",
-                isNeutered: false,
-                name: "Cheeto",
-                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-                type: "Cat",
-                vaccinations: ["Basic"]
 
-
-            },     {   id:3,
-                age: 1,
-                breed: "Persian",
-                color: "orange",
-                description: "Cute",
-                gender: "Female",
-                isNeutered: false,
-                name: "Cheeto",
-                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-                type: "Cat",
-                vaccinations: ["Basic"]
-
-
-            },
         ];
-         setUserPets(cats)
+         setUserPets(pets)
          getUserPosts().then()
 
 
@@ -161,6 +135,9 @@ const ProfileScreen = () => {
     const handleViewDetails= (pet)=>{
         navigation.navigate(ViewPetScreenRoute,{pet:pet});
     }
+    const handleAddPetNavigation = ()=>{
+       // navigation.navigate(AddPetScreenRoute);
+    }
     const renderPost = ({item}) => {
         return (
             <AdoptionPostCard adoptionPost={item} isPoster={true}/>
@@ -168,7 +145,7 @@ const ProfileScreen = () => {
     };
     const renderPet = ({item}) => {
         return (
-            <View style={{  alignItems:"center",marginTop:"5%",marginBottom:"10%"}}>
+            <View style={{  alignItems:"center",paddingTop:"5%",paddingBottom:"10%"}}>
             <Image  source={{uri: item.image}} style={styles.petIcon}/>
                 <Text style={{fontWeight:"bold",fontSize:18}}>{item.name}</Text>
         <TouchableOpacity onPress={()=>{
@@ -177,7 +154,18 @@ const ProfileScreen = () => {
             <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
             <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
         </TouchableOpacity>
+
             </View>
+        );
+    };
+    const renderFooter = () => {
+        return (
+            <TouchableOpacity onPress={handleAddPetNavigation} style={{  alignItems:"center",marginTop:"15%"}}>
+              <View style={{alignItems:"center",flexDirection:"row"}}>
+                <FontAwesome name={'plus-circle'} style={{fontSize: 30,color:appPurpleDark}}></FontAwesome>
+                <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"7%"}}>Add Pet</Text>
+              </View>
+            </TouchableOpacity>
         );
     };
 
@@ -195,15 +183,15 @@ const ProfileScreen = () => {
             </View>
 
 
-            <View>
+            <View style={{alignItems:"center"}}>
                 <View style={{flexDirection:"row",justifyContent:"center"}}>
                     <Text style={styles.nameText}>{currentUser.fullName}</Text>
                 </View>
                 <View style={{flexDirection:"row",justifyContent:"center"}}>
                     <Text style={styles.location}>{currentUser.city}</Text>
                 </View>
-                <View style={{flexDirection:"row",justifyContent:"center"}}>
-                    <FontAwesome style={{fontSize: 20, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
+                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
                     <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
                 </View>
 
@@ -211,39 +199,39 @@ const ProfileScreen = () => {
 
                 </Animated.View>
             }
-            <View style={{flex:0.2}}>
+            <View style={{flex:0.2,marginTop:"2%"}}>
                 <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
             </View>
 
 
 
             {view === 1 &&
-                <View  style={{alignItems:"center",marginTop:"15%"}}>
+                <View  style={{alignItems:"center",paddingTop:"15%"}}>
                     {userPosts &&
 
                         <FlatList showsVerticalScrollIndicator={true} vertical={true} numColumns={1}
                         data={userPosts} renderItem={renderPost}
                         keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
                             onScroll={handleScroll}
+
                         />
                     }
                 </View>
             }
             { view ===2  &&
-                <View style={{  alignItems:"center"}}>
-
-                    <FlatList  showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                <View style={{ alignItems:"center",marginTop:"15%"}}>
+                    {userPets && userPets.length > 0 ? (
+                        <FlatList  showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
                               data = {userPets} renderItem={renderPet}
                               keyExtractor={(pet) => `${pet.id}`}
                               onScroll={handleScroll}
-                        style={{marginTop:"15%"}}
 
-                    />
+                             // contentContainerStyle={{}}
 
-                    <View>
-                        <FontAwesome name={'plus'} style={{fontSize: 10}}></FontAwesome>
-                    </View>
+                               ListFooterComponent={renderFooter}
 
+                    />) : (renderFooter())
+                    }
 
                 </View>
 
