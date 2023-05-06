@@ -14,7 +14,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
-import {appPurpleDark} from "../utilities/constants";
+import {appPurpleDark, ViewPetScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
@@ -26,6 +26,7 @@ const ProfileScreen = () => {
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const navigation = useNavigation();
     const [userPosts,setUserPosts] = useState(null);
+    const [userPets,setUserPets] = useState(null);
     const [hideComponents, setHideComponents] = useState(false);
     const [previousOffset,setPreviousOffset] = useState(0);
     const animatedValue = useRef(new Animated.Value(1)).current;
@@ -81,6 +82,68 @@ const ProfileScreen = () => {
             console.log(res)
             setUserPosts(res)
         }
+        const cats = [
+            {   id:0,
+                age: 1,
+                breed: "Persian",
+                color: "orange",
+                description: "Cute",
+                gender: "Female",
+                isNeutered: false,
+                name: "Cheeto",
+                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+                type: "Cat",
+                vaccinations: ["Basic"]
+
+
+            },
+            {   id:1,
+                age: 1,
+                breed: "Persian",
+                color: "orange",
+                description: "Cute",
+                gender: "Female",
+                isNeutered: false,
+                name: "Cheeto",
+                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+                type: "Cat",
+                vaccinations: ["Basic"]
+
+
+            },
+            {   id:2,
+                age: 1,
+                breed: "Persian",
+                color: "orange",
+                description: "Cute",
+                gender: "Female",
+                isNeutered: false,
+                name: "Cheeto",
+                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+                type: "Cat",
+                vaccinations: ["Basic"]
+
+
+            },     {   id:3,
+                age: 1,
+                breed: "Persian",
+                color: "orange",
+                description: "Cute",
+                gender: "Female",
+                isNeutered: false,
+                name: "Cheeto",
+                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+                type: "Cat",
+                vaccinations: ["Basic"]
+
+
+            },
+        ];
+         setUserPets(cats)
          getUserPosts().then()
 
 
@@ -95,11 +158,29 @@ const ProfileScreen = () => {
         setView(2)
         console.log("Pets")
     }
+    const handleViewDetails= (pet)=>{
+        navigation.navigate(ViewPetScreenRoute,{pet:pet});
+    }
     const renderPost = ({item}) => {
         return (
             <AdoptionPostCard adoptionPost={item} isPoster={true}/>
         );
     };
+    const renderPet = ({item}) => {
+        return (
+            <View style={{  alignItems:"center",marginTop:"5%",marginBottom:"10%"}}>
+            <Image  source={{uri: item.image}} style={styles.petIcon}/>
+                <Text style={{fontWeight:"bold",fontSize:18}}>{item.name}</Text>
+        <TouchableOpacity onPress={()=>{
+            handleViewDetails(item)
+        }} style={styles.petDetailsButton}>
+            <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
+        </TouchableOpacity>
+            </View>
+        );
+    };
+
     return(
         <SafeAreaView style={{flex:1}}>
             { !hideComponents &&
@@ -130,7 +211,7 @@ const ProfileScreen = () => {
 
                 </Animated.View>
             }
-            <View style={{flex:1}}>
+            <View style={{flex:0.2}}>
                 <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
             </View>
 
@@ -149,8 +230,21 @@ const ProfileScreen = () => {
                 </View>
             }
             { view ===2  &&
-                <View>
-                    <Text>Pets</Text>
+                <View style={{  alignItems:"center"}}>
+
+                    <FlatList  showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                              data = {userPets} renderItem={renderPet}
+                              keyExtractor={(pet) => `${pet.id}`}
+                              onScroll={handleScroll}
+                        style={{marginTop:"15%"}}
+
+                    />
+
+                    <View>
+                        <FontAwesome name={'plus'} style={{fontSize: 10}}></FontAwesome>
+                    </View>
+
+
                 </View>
 
             }
@@ -166,6 +260,8 @@ const ProfileScreen = () => {
 const { width, height } = Dimensions.get('window');
 const imageSize = Math.min(width, height) * 0.4; // adjust the factor as needed
 const borderRadius = imageSize / 2;
+const petImageSize = Math.min(width, height) * 0.18; // adjust the factor as needed
+const petBorderRadius = imageSize / 2;
 const styles = StyleSheet.create({
     logo: {
 
@@ -189,7 +285,7 @@ const styles = StyleSheet.create({
         width:imageSize,
         height:imageSize,
 
-        resizeMode: 'contain',
+
     },
     nameText:{
         marginTop:"7%",
@@ -206,6 +302,23 @@ const styles = StyleSheet.create({
         marginLeft:"2%",
         fontSize:15,
         fontWeight:"500"
-    }
+    },
+    petIcon:{
+
+        borderRadius: petBorderRadius,
+        height: petImageSize,
+        width: petImageSize,
+
+    },
+    petDetailsButton: {
+        flexDirection: 'row',
+        marginTop: '2%',
+        backgroundColor: appPurpleDark,
+        borderRadius: 5,
+        paddingLeft: '4%',
+        paddingRight: '4%',
+        paddingTop: '3%',
+        paddingBottom: '3%',
+    },
 })
 export default ProfileScreen;

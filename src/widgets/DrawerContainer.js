@@ -21,18 +21,22 @@ export default function DrawerContainer(props) {
     const handleProfileNavigation = () =>{
         navigation.navigate(ProfileScreenRoute);
     }
+    const handleHomeNavigation = () =>{
+        navigation.navigate(HomeScreenRoute);
+    }
     const handleLogOut = async () => {
         setIsLoading(true);
         const token=await NotificationServices.getToken();
         await UserServices.removeFcmToken(currentUser.uid, token);
         await AuthServices.signOut();
         setIsLoading(false);
-        setCurrentUser(null);
+
         navigation.closeDrawer();
         navigation.reset({
             index: 0,
             routes: [{name: 'AuthLoading'}],
         });
+        setCurrentUser(null);
     };
     if(!currentUser)
         return <ScreenLoadingIndicator/>
@@ -61,7 +65,7 @@ export default function DrawerContainer(props) {
             </View>
 
             <View style={styles.buttonsContainer}>
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                <TouchableHighlight onPress={handleHomeNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
                     <View style={styles.btnContainer}>
                         {/*<Image source={source} style={styles.btnIcon} />*/}
                         <FontAwesome name="home" style={styles.btnIcon}/>
