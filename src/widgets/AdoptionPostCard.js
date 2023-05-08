@@ -44,7 +44,9 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
                 currentUser.fullName,
                 currentUser.uid,
                 currentUser.profilePicture,
-                adoptionPost.id
+                adoptionPost.id,
+                0,
+                0
             );
             newChat.id = await ChatServices.initializeChat(newChat);
             setIsLoading(false);

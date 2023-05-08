@@ -32,7 +32,7 @@ export function ChatScreen() {
         console.log("2nd UseEffect")
         if(chat) {
             handleChat();
-
+            resetUnReadMessages();
             navigation.setOptions({
                 headerTitle: "",
                 headerRight: () => <View style={{flex:0.85,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
@@ -84,15 +84,25 @@ export function ChatScreen() {
         }
     }
 
+   function resetUnReadMessages(){
+        if(currentUser.uid===chat.userThatPostedId)
+        ChatServices.resetUnReadMessagesCountForPoster(chat.id);
+        else
+       ChatServices.resetUnReadMessagesCountForRequester(chat.id);
+    }
 
-
-
+    function incrementUnReadMessages(){
+        if(currentUser.uid===chat.userThatPostedId)
+            ChatServices.incrementUnReadMessagesCountForRequester(chat.id);
+        else
+            ChatServices.incrementUnReadMessagesCountForPoster(chat.id);
+    }
 
 
     const getFormattedMessage = (message,index) => {
         if (!message.image) {
             return {
-                _id: uuidv4(),
+                _id: message._id,
                 text: message.text,
                 createdAt: message.createdAt.toDate(),
                 user: {
@@ -104,7 +114,7 @@ export function ChatScreen() {
       }
         else if (message.image){
             return {
-                _id: uuidv4(),
+                _id: message._id,
                 createdAt: message.createdAt.toDate(),
                 user: {
                     _id: message.uid,
@@ -118,9 +128,19 @@ export function ChatScreen() {
     };
 
     const onMessageReceived = (newMessage,index) => {
+        if(newMessage.uid!==currentUser.uid)
+            resetUnReadMessages();
         const formattedMessage = getFormattedMessage(newMessage,index);
-        if (!messages.some((message) => message._id === formattedMessage._id)) {
+        const isDuplicate=messages.some((message) => {
+            console.log(`COMPARING: ${message._id} - ${formattedMessage._id}`)
+            return message._id === formattedMessage._id;
+        });
+        if (!isDuplicate) {
+            console.log("NOT A DUPE")
             setMessages(previousMessages => GiftedChat.append(previousMessages, [formattedMessage]));
+        }
+        else{
+            console.log("DETECTED DUPES")
         }
     };
 
@@ -151,15 +171,16 @@ export function ChatScreen() {
         }
         const message = messages[messages.length - 1];
         if(!message.image)
-            ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
+            ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
             ).then(()=>console.log("Message sent"));
         else if (message.image)
-            ChatServices.sendImageMessage(chat.id, message.image , message.user._id, message.createdAt,
+            ChatServices.sendImageMessage(chat.id,message._id, message.image , message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
             ).then(()=>console.log("Message sent"));
+        incrementUnReadMessages();
         }, [chat]);
 
     const renderBubble = (props) => {
@@ -282,7 +303,6 @@ export function ChatScreen() {
                                 </TouchableOpacity>
                             </View>
                         );
-
                     } else {
                         return <InputToolbar {...props} />;
                     }

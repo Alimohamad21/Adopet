@@ -1,5 +1,5 @@
 class Chat {
-    constructor(id, messages, petName, postType, userThatPostedFullName, userThatPostedId, userThatPostedProfilePicture, userThatRequestedFullName, userThatRequestedId, userThatRequestedProfilePicture, postId) {
+    constructor(id, messages, petName, postType, userThatPostedFullName, userThatPostedId, userThatPostedProfilePicture, userThatRequestedFullName, userThatRequestedId, userThatRequestedProfilePicture, postId,userThatPostedUnReadMessagesCount,userThatRequestedUnReadMessagesCount) {
         this.id = id;
         this.messages = messages;
         this.petName = petName;
@@ -11,6 +11,8 @@ class Chat {
         this.userThatRequestedId = userThatRequestedId;
         this.userThatRequestedProfilePicture = userThatRequestedProfilePicture;
         this.postId=postId;
+        this.userThatPostedUnReadMessagesCount=userThatPostedUnReadMessagesCount;
+        this.userThatRequestedUnReadMessagesCount=userThatRequestedUnReadMessagesCount;
     }
 
     static fromJson(json) {
@@ -25,7 +27,9 @@ class Chat {
             json.userThatRequestedFullName,
             json.userThatRequestedId,
             json.userThatRequestedProfilePicture,
-            json.postId
+            json.postId,
+            json.userThatPostedUnReadMessagesCount,
+            json.userThatRequestedUnReadMessagesCount,
         );
     }
 
@@ -40,7 +44,9 @@ class Chat {
             userThatRequestedFullName: chat.userThatRequestedFullName,
             userThatRequestedId: chat.userThatRequestedId,
             userThatRequestedProfilePicture: chat.userThatRequestedProfilePicture,
-            postId:chat.postId
+            postId:chat.postId,
+            userThatPostedUnReadMessagesCount:chat.userThatPostedUnReadMessagesCount,
+            userThatRequestedUnReadMessagesCount:chat.userThatRequestedUnReadMessagesCount,
         };
     }
 
