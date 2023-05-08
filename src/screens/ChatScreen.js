@@ -92,6 +92,7 @@ export function ChatScreen() {
     }
 
     function incrementUnReadMessages(){
+        console.log("increment")
         if(currentUser.uid===chat.userThatPostedId)
             ChatServices.incrementUnReadMessagesCountForRequester(chat.id);
         else
@@ -174,13 +175,19 @@ export function ChatScreen() {
             ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
-            ).then(()=>console.log("Message sent"));
+            ).then(()=>{
+                console.log("Message sent")
+                incrementUnReadMessages();
+            });
         else if (message.image)
             ChatServices.sendImageMessage(chat.id,message._id, message.image , message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
-            ).then(()=>console.log("Message sent"));
-        incrementUnReadMessages();
+            ).then(()=>{
+                console.log("Message sent")
+                incrementUnReadMessages();
+            });
+
         }, [chat]);
 
     const renderBubble = (props) => {

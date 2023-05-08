@@ -168,6 +168,7 @@ class ChatServices {
         });
     }
     static async incrementUnReadMessagesCountForRequester(chatId){
+        console.log("increment in service")
         await firestore().collection('chats').doc(chatId).update({
             'userThatRequestedUnReadMessagesCount':FieldValue.increment(1)
         });
