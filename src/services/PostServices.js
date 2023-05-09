@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import AdoptionPost from '../models/AdoptionPost';
+import {firebase} from "@react-native-firebase/auth";
 
 class PostServices {
     static async getAdoptionPostsInitial() {
@@ -37,6 +38,32 @@ class PostServices {
             .get();
         console.log("userposts:",snapshot)
         return snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+    }
+    static async getAdoptionPostsByID(postIds) {
+        try {
+            console.log("post service id:",postIds)
+            // Get a reference to the adoption posts collection
+            const collectionRef = firestore().collection('adoption-posts');
+
+            // Create a query to filter by post IDs
+            const query = collectionRef.where(firestore.FieldPath.documentId(), 'in', postIds);
+
+            // Retrieve the query results
+            const querySnapshot = await query.get();
+
+            // Convert the query results to an array of post objects
+            // const posts = [];
+            // querySnapshot.forEach((doc) => {
+            //     posts.push({ id: doc.id, ...doc.data() });
+            // });
+
+            const adoptionPosts = querySnapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+            //console.log(adoptionPosts)
+            return adoptionPosts;
+        } catch (error) {
+            console.error('Error getting adoption posts:', error);
+            return false;
+        }
     }
 }
 

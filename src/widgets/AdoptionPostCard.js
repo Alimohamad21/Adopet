@@ -215,11 +215,11 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
 
             <View style={styles.postContainer}>
 
-
+                {isLoading && <TransparentLoadingIndicator/>}
 
             <View style={styles.postHeader}>
 
-            {isLoading && <TransparentLoadingIndicator/>}
+
 
                 <View style={styles.profileContainer}>
                     {adoptionPost.userThatPostedProfilePicture === ""  ?

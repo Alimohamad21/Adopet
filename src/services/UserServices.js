@@ -114,6 +114,33 @@ class UserServices {
             return false;
         }
     }
+    static async getSavedPosts(uid) {
+        try {
+            // Get a reference to the user document
+            const userDoc = (await firestore().collection('users').doc(uid).get()).data();
+
+            const savedPosts = userDoc.savedPosts
+
+
+            // If the savedPosts array is empty or doesn't exist, the post is not saved
+            if (!savedPosts || savedPosts.length === 0) {
+                return [];
+            }
+            // // Convert the Firestore document snapshots into JSON objects
+            // const savedPostsData = await Promise.all(
+            //     savedPosts.map(async (postRef) => {
+            //         const postSnapshot = await postRef.get();
+            //         return { id: postSnapshot.id, ...postSnapshot.data() };
+            //     })
+            // );
+            //
+            return savedPosts;
+        } catch (error) {
+            console.error('Error getting saved posts Ids:', error);
+            return ;
+        }
+    }
+
 }
 
 
