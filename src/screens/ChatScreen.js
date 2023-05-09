@@ -32,17 +32,22 @@ export function ChatScreen() {
         console.log("2nd UseEffect")
         if(chat) {
             handleChat();
-
+            resetUnReadMessages();
             navigation.setOptions({
                 headerTitle: "",
                 headerRight: () => <View style={{flex:0.85,flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
                     <View style={{flexDirection: 'row',marginTop:"0%",justifyContent:"flex-start",alignItems:"center"}}>
-                        <Image source={{uri: imageUri}} style={{
-                            marginRight: "5%",
+                        {imageUri!==""?<Image source={{uri: imageUri}} style={{
+                            marginRight: '5%',
                             borderRadius: 50,
                             height: 40,
                             width: 40,
-                        }}></Image>
+                        }}/>:<Image source={require('../assets/default_user.png')} style={{
+                            marginRight: '5%',
+                            borderRadius: 50,
+                            height: 40,
+                            width: 40,
+                        }}/>}
                         <Text style={{fontSize:17,color:"white",fontWeight:"bold"}}>{name}</Text>
                     </View>
                     <TouchableOpacity style={{ flexDirection: 'row'}}>
@@ -64,7 +69,7 @@ export function ChatScreen() {
     //Identify sender and receiver in the chat
     //Format messages to be to view them on screen
     function handleChat(){
-        if (currentUser === chat.userThatPostedId ){
+        if (currentUser.uid === chat.userThatPostedId ){
             name = chat.userThatRequestedFullName
             imageUri = chat.userThatRequestedProfilePicture
         }else {
@@ -79,15 +84,26 @@ export function ChatScreen() {
         }
     }
 
+   function resetUnReadMessages(){
+        if(currentUser.uid===chat.userThatPostedId)
+        ChatServices.resetUnReadMessagesCountForPoster(chat.id);
+        else
+       ChatServices.resetUnReadMessagesCountForRequester(chat.id);
+    }
 
-
-
+    function incrementUnReadMessages(){
+        console.log("increment")
+        if(currentUser.uid===chat.userThatPostedId)
+            ChatServices.incrementUnReadMessagesCountForRequester(chat.id);
+        else
+            ChatServices.incrementUnReadMessagesCountForPoster(chat.id);
+    }
 
 
     const getFormattedMessage = (message,index) => {
         if (!message.image) {
             return {
-                _id: uuidv4(),
+                _id: message._id,
                 text: message.text,
                 createdAt: message.createdAt.toDate(),
                 user: {
@@ -99,7 +115,7 @@ export function ChatScreen() {
       }
         else if (message.image){
             return {
-                _id: uuidv4(),
+                _id: message._id,
                 createdAt: message.createdAt.toDate(),
                 user: {
                     _id: message.uid,
@@ -113,9 +129,19 @@ export function ChatScreen() {
     };
 
     const onMessageReceived = (newMessage,index) => {
+        if(newMessage.uid!==currentUser.uid)
+            resetUnReadMessages();
         const formattedMessage = getFormattedMessage(newMessage,index);
-        if (!messages.some((message) => message._id === formattedMessage._id)) {
+        const isDuplicate=messages.some((message) => {
+            console.log(`COMPARING: ${message._id} - ${formattedMessage._id}`)
+            return message._id === formattedMessage._id;
+        });
+        if (!isDuplicate) {
+            console.log("NOT A DUPE")
             setMessages(previousMessages => GiftedChat.append(previousMessages, [formattedMessage]));
+        }
+        else{
+            console.log("DETECTED DUPES")
         }
     };
 
@@ -146,15 +172,22 @@ export function ChatScreen() {
         }
         const message = messages[messages.length - 1];
         if(!message.image)
-            ChatServices.sendMessage(chat.id, message.text, message.user._id, message.createdAt,
+            ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
-            ).then(()=>console.log("Message sent"));
+            ).then(()=>{
+                console.log("Message sent")
+                incrementUnReadMessages();
+            });
         else if (message.image)
-            ChatServices.sendImageMessage(chat.id, message.image , message.user._id, message.createdAt,
+            ChatServices.sendImageMessage(chat.id,message._id, message.image , message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId?chat.userThatRequestedId:chat.userThatPostedId,
                 message.user.name
-            ).then(()=>console.log("Message sent"));
+            ).then(()=>{
+                console.log("Message sent")
+                incrementUnReadMessages();
+            });
+
         }, [chat]);
 
     const renderBubble = (props) => {
@@ -277,7 +310,6 @@ export function ChatScreen() {
                                 </TouchableOpacity>
                             </View>
                         );
-
                     } else {
                         return <InputToolbar {...props} />;
                     }

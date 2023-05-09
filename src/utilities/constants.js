@@ -14,6 +14,7 @@ export const LoginScreenRoute = 'Login';
 export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';
 export const ViewPetScreenRoute = 'Pet Details';
+export const ProfileScreenRoute = 'Profile';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
 

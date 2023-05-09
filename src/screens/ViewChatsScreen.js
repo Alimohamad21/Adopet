@@ -8,6 +8,7 @@ import ChatCard from '../widgets/ChatCard';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {ScrollView} from 'native-base';
 
 const ViewChatsScreen = () => {
     const {currentUser} = useContext(CurrentUserContext);
@@ -41,6 +42,7 @@ const ViewChatsScreen = () => {
         return <NoDataAvailable text="No Chats"/>;
     } else {
         return (
+            <ScrollView>
             <View style={styles.container}>
                 {myPostsChats.length > 0 && (
                     <View style={styles.section}>
@@ -59,6 +61,7 @@ const ViewChatsScreen = () => {
                     </View>
                 )}
             </View>
+            </ScrollView>
         );
     }
 };

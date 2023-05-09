@@ -352,8 +352,6 @@ const SignupScreen = ({navigation}) => {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-
-
         },
         phoneInput: {
             margin: '3%',

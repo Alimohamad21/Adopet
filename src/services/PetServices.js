@@ -14,3 +14,5 @@ class PetServices{
         return true;
     }
 }
+
+export default PetServices

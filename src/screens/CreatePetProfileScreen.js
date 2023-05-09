@@ -26,6 +26,7 @@ import UserServices from '../services/UserServices';
 import PetServices from '../services/PetServices';
 import User from '../models/User';
 import Pet from '../models/Pet'
+import RadioButtonComponent from "../widgets/RadioButtonComponent";
 import DropdownComponent from '../widgets/DropdownComponent';
 import {
     extractSubstringAfterDelimiter, removeSpacesFromString,
@@ -41,20 +42,38 @@ import firestore from "@react-native-firebase/firestore";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const CreatePetProfileScreen = ({navigation}) => {
+
+    const types = [
+        { label: 'Cat', value: 'cat' },
+        { label: 'Dog', value: 'dog' },
+    ];
+
+    const isSpayedOptions = [
+        { label: 'Yes', value: 'yes' },
+        { label: 'No', value: 'no' },
+    ];
+
+
+    const genderOptions = [
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+    ];
+
     const {currentUser} = useContext(CurrentUserContext);
 
     const [photo, setPhoto] = useState('');
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
-    const [type, setType] = useState('');
+    const [type, setType] = useState(types[0]);
     const [color, setColor] = useState('');
     const [breed, setBreed] = useState('');
-    const [gender, setGender] = useState('');
-    const [isSpayed, setIsSpayed] = useState(false);
+    const [gender, setGender] = useState(genderOptions[0]);
+    const [isSpayed, setIsSpayed] = useState(isSpayedOptions[0]);
     const [vaccinations, setVaccinations] = useState('');
     const [description, setDescription] = useState('');
-    let [breedsOfType, setBreedOfType] = useState('');
+    // let [breedsOfType, setBreedOfType] = useState('');
 
+    let breedsOfType = 'egyptianDogBreeds';
     const [isLoading, setIsLoading] = useState(false);
     const [isNameEmpty, setIsNameEmpty] = useState(false);
     const [isAgeEmpty, setIsAgeEmpty] = useState(false);
@@ -82,10 +101,16 @@ const CreatePetProfileScreen = ({navigation}) => {
         setShowCalendar(!showCalendar);
     }
 
-    const handleBreedChange = (text) => {
-        setBreed(text);
+
+    const handleBreedChange = (value) => {
+        setBreed(value);
         setIsBreedEmpty(false);
     };
+
+    // const handleBreedChange = (text) => {
+    //     setBreed(text);
+    //     setIsBreedEmpty(false);
+    // };
 
     const handleVaccinationsChange = (text) => {
         setVaccinations(text);
@@ -96,8 +121,9 @@ const CreatePetProfileScreen = ({navigation}) => {
         setDescription(text);
     };
 
+
     const handleTypeChange = (value) => {
-        setType(value.value);
+        setType(value);
         setIsTypeEmpty(false);
         if (value === "dog"){
             breedsOfType = egyptianDogBreeds;
@@ -107,9 +133,11 @@ const CreatePetProfileScreen = ({navigation}) => {
         }
     };
     const handleGenderChange = (value) => {
-        setGender(value.value);
+        setGender(value);
         setIsGenderEmpty(false);
     };
+
+
     const handleIsSpayedChange = (value) => {
         setIsSpayed(value.value);
         setIsSpayedEmpty(false);
@@ -190,15 +218,20 @@ const CreatePetProfileScreen = ({navigation}) => {
             {isLoading && <TransparentLoadingIndicator/>}
             <ScrollView showsVerticalScrollIndicator={false}
                         contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={styles.scrollView}>
-                {/*<View style={styles.header}>*/}
-                {/*    <Image*/}
-                {/*        style={styles.logo}*/}
-                {/*        source={require('../assets/adopet_logo.png')}*/}
-                {/*    />*/}
 
-                {/*</View>*/}
                 <View style={styles.container}>
 
+
+
+                    <View >
+                        <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
+                            <View style={{ flexDirection: 'row'}}>
+                                <Text style={styles.titles} >Add photo</Text>
+                                <FontAwesome name="plus" size={24} />
+                            </View>
+                        </TouchableHighlight>
+
+                    </View>
 
                     <TextInput
                         style={styles.input}
@@ -208,22 +241,25 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
                     {isNameEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's name</Text>}
 
-                    <View>
+                    <View >
                         <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
                             <View style={{ flexDirection: 'row'}}>
-                                <FontAwesome name="calendar" size={25} style={{alignItems: "flex-start"}} icon="fa-solid fa-calendar-lines"/>
-                                <Text style={styles.btnText} >Birthdate</Text>
+                                <Text style={styles.titles} >Birthdate</Text>
+                                <FontAwesome name="calendar" size={23} style={styles.calendar} icon="fa-solid fa-calendar-lines"/>
                             </View>
                         </TouchableHighlight>
 
-                        {showCalendar && <Calendar style={styles.calendar}
-                                                   onDayPress={handleAgeChange}
-                                                   markedDates={{[age]: {selected: true}}}/>}
                         {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
 
                     </View>
 
 
+                    <Text style={styles.titles} >Pet Type </Text>
+                    <RadioButtonComponent
+                        options={types}
+                        selectedOption={type}
+                        onSelect={handleTypeChange}
+                    />
 
                     <TextInput
                         style={styles.input}
@@ -233,13 +269,24 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
                     {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
 
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Breed"
-                        value={breed}
-                        onChangeText={handleBreedChange}
+                    <DropdownComponent onSelect={handleBreedChange} data={breedsOfType === 'egyptianCatBreeds'? egyptianCatBreeds: egyptianDogBreeds} placeholder={"Breed"}/>
+                    {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
+
+
+                    <Text style={styles.titles} >Pet gender</Text>
+                    <RadioButtonComponent
+                        options={genderOptions}
+                        selectedOption={gender}
+                        onSelect={handleGenderChange}
                     />
-                    {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's breed</Text>}
+
+                    <Text style={styles.titles} >Is your pet spayed? </Text>
+                    <RadioButtonComponent
+                        options={isSpayedOptions}
+                        selectedOption={isSpayed}
+                        onSelect={handleIsSpayedChange}
+                    />
+
 
                     <TextInput
                         style={styles.input}
@@ -251,15 +298,13 @@ const CreatePetProfileScreen = ({navigation}) => {
 
                     <TextInput
                         style={styles.input}
-                        placeholder="Description"
+                        placeholder="Describe your pet. ie playful, likes to cuddle, etc"
                         value={description}
                         onChangeText={handleDescriptionChange}
                     />
 
 
 
-                    <DropdownComponent onSelect={handleBreedChange} data={breedsOfType} placeholder={"Breed"}/>
-                    {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
 
                 </View>
 
@@ -303,7 +348,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        marginTop: '60%',
+        marginTop: '10%',
         alignItems: 'center',
 
     },
@@ -316,6 +361,26 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
     },
+    titles: {
+        // borderColor: borderGrey,
+        fontFamily: 'sans-serif-medium',
+        // height: 80,
+        fontSize: 15,
+        width: '85%',
+        margin: '3%',
+        marginBottom: -10,
+        // borderWidth: 1,
+        padding: 10,
+    },
+    //
+    // radioBtnContainer: {
+    //     flexDirection: 'row',
+    //
+    //     // flex: 1,
+    //     // alignItems: 'flex-start',
+    //     // marginLeft: 50,
+    //     // justifyContent: 'center',
+    // },
     dropdownList: {
         borderColor: borderGrey,
         fontFamily: 'sans-serif-medium',
@@ -360,8 +425,11 @@ const styles = StyleSheet.create({
     },
 
     calendar: {
-        width: '100%',
-        height: 350,
+        // width: '10%',
+        // height: 50,
+        color: appPurpleDark,
+        right: 240,
+        top: 18,
     },
     signupBtnContainer: {
         backgroundColor: appPurpleDark,

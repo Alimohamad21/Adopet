@@ -9,8 +9,6 @@ import {borderGrey, egyptianCities} from "../utilities/constants";
 function DropdownComponent({onSelect,data, placeholder}){
     const [value, setValue] = useState(null);
 
-
-
     const renderItem = item => {
         return (
             <View style={styles.item}>

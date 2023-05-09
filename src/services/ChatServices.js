@@ -59,14 +59,14 @@ class ChatServices {
         return doc.id;
     }
 
-    static async sendMessage(chatId, text, uid, createdAt, receiverId, senderFullName) {
+    static async sendMessage(chatId, messageId,text, uid, createdAt, receiverId, senderFullName) {
         await firestore().collection('chats').doc(chatId).update({
-            'messages': FieldValue.arrayUnion({text: text, uid: uid, createdAt: createdAt}),
+            'messages': FieldValue.arrayUnion({text: text, uid: uid, createdAt: createdAt,_id:messageId}),
         });
         await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: ${text}`);
     }
 
-    static async sendImageMessage(chatId, imageUri, uid, createdAt, receiverId, senderFullName) {
+    static async sendImageMessage(chatId, messageId, imageUri, uid, createdAt, receiverId, senderFullName) {
         await firestore().collection('chats').doc(chatId).update({
             'messages': FieldValue.arrayUnion({image: imageUri, uid: uid, createdAt: createdAt}),
         });
@@ -81,16 +81,19 @@ class ChatServices {
     static async listenForChatMessages(chatId, onMessageReceived) {
         let firstTime = true;
         const chatRoomRef = firestore().collection('chats').doc(chatId);
-        console.log('test');
+        let prevMessagesLength=0;
         const unsubscribe = chatRoomRef.onSnapshot((doc) => {
             const messages = doc.data().messages;
             console.log('added message: ', messages[messages.length - 1]);
             const index = messages.length - 1;
             if (firstTime) {
+                prevMessagesLength=messages.length;
                 firstTime = false;
                 return;
             }
-            onMessageReceived(messages[index], index + 1);
+            if(prevMessagesLength!==messages.length)
+                onMessageReceived(messages[index], index + 1);
+            prevMessagesLength=messages.length;
         });
         return unsubscribe;
 
@@ -149,6 +152,27 @@ class ChatServices {
         }
     }
 
+    static async resetUnReadMessagesCountForPoster(chatId) {
+         await firestore().collection('chats').doc(chatId).update({
+            'userThatPostedUnReadMessagesCount':0
+        });
+    }
+    static async resetUnReadMessagesCountForRequester(chatId) {
+        await firestore().collection('chats').doc(chatId).update({
+            'userThatRequestedUnReadMessagesCount':0
+        });
+    }
+    static async incrementUnReadMessagesCountForPoster(chatId){
+        await firestore().collection('chats').doc(chatId).update({
+            'userThatPostedUnReadMessagesCount':FieldValue.increment(1)
+        });
+    }
+    static async incrementUnReadMessagesCountForRequester(chatId){
+        console.log("increment in service")
+        await firestore().collection('chats').doc(chatId).update({
+            'userThatRequestedUnReadMessagesCount':FieldValue.increment(1)
+        });
+    }
 }
 
 export default ChatServices;

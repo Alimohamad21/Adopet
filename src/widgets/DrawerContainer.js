@@ -45,76 +45,76 @@ export default function DrawerContainer(props) {
     if(!currentUser)
         return <ScreenLoadingIndicator/>
     else
-    return (
-        <View style={styles.content}>
-            {isLoading && <TransparentLoadingIndicator/>}
-            <View style={styles.profileContainer}>
-                <TouchableHighlight style={styles.profileBtnClickContain} underlayColor={appPurpleLight}>
-                    <View style={styles.profileBtnContainer}>
-                        <View style={styles.imageContainer}>
-                            {
-                                currentUser.profilePicture !== '' ?
-                                    <Image source={{uri: currentUser.profilePicture}} style={styles.profileBtnIcon}/> :
-                                    <Image source={require('../assets/default_user.png')}
-                                           style={styles.profileBtnIcon}/>}
+        return (
+            <View style={styles.content}>
+                {isLoading && <TransparentLoadingIndicator/>}
+                <View style={styles.profileContainer}>
+                    <TouchableHighlight style={styles.profileBtnClickContain} underlayColor={appPurpleLight}>
+                        <View style={styles.profileBtnContainer}>
+                            <View style={styles.imageContainer}>
+                                {
+                                    currentUser.profilePicture !== '' ?
+                                        <Image source={{uri: currentUser.profilePicture}} style={styles.profileBtnIcon}/> :
+                                        <Image source={require('../assets/default_user.png')}
+                                               style={styles.profileBtnIcon}/>}
+                            </View>
+                            <View>
+                                <Text style={styles.btnTextName}>{currentUser.fullName}</Text>
+                                <Text style={styles.profileBtnText}>View Profile</Text>
+                            </View>
+
                         </View>
-                        <View>
-                            <Text style={styles.btnTextName}>{currentUser.fullName}</Text>
-                            <Text style={styles.profileBtnText}>View Profile</Text>
+
+                    </TouchableHighlight>
+                </View>
+
+                <View style={styles.buttonsContainer}>
+                    <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                        <View style={styles.btnContainer}>
+                            {/*<Image source={source} style={styles.btnIcon} />*/}
+                            <FontAwesome name="home" style={styles.btnIcon}/>
+                            <Text style={styles.btnText}>Home</Text>
                         </View>
+                    </TouchableHighlight>
 
-                    </View>
+                    <TouchableHighlight onPress={handleChatsNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                        <View style={styles.btnContainer}>
+                            {/*<Image source={source} style={styles.btnIcon} />*/}
+                            <FontAwesome name="commenting" style={styles.btnIcon}/>
+                            <Text style={styles.btnText}>Chats</Text>
+                        </View>
+                    </TouchableHighlight>
 
-                </TouchableHighlight>
-            </View>
+                    <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={handleCreatePetProfileNavigation}>
+                        <View style={styles.btnContainer}>
+                            {/*<Image source={source} style={styles.btnIcon} />*/}
+                            <FontAwesome name="bookmark" style={styles.btnIcon}/>
+                            <Text style={styles.btnText}>Pet profile</Text>
+                        </View>
+                    </TouchableHighlight>
 
-            <View style={styles.buttonsContainer}>
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
-                    <View style={styles.btnContainer}>
-                        {/*<Image source={source} style={styles.btnIcon} />*/}
-                        <FontAwesome name="home" style={styles.btnIcon}/>
-                        <Text style={styles.btnText}>Home</Text>
-                    </View>
-                </TouchableHighlight>
+                    {/*<TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">*/}
+                    {/*    <View style={styles.btnContainer}>*/}
+                    {/*        /!*<Image source={source} style={styles.btnIcon} />*!/*/}
+                    {/*        <FontAwesome name="bookmark" style={styles.btnIcon}/>*/}
+                    {/*        <Text style={styles.btnText}>Saved</Text>*/}
+                    {/*    </View>*/}
+                    {/*</TouchableHighlight>*/}
 
-                <TouchableHighlight onPress={handleChatsNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
-                    <View style={styles.btnContainer}>
-                        {/*<Image source={source} style={styles.btnIcon} />*/}
-                        <FontAwesome name="commenting" style={styles.btnIcon}/>
-                        <Text style={styles.btnText}>Chats</Text>
-                    </View>
-                </TouchableHighlight>
+                    <TouchableHighlight onPress={handleLogOut} style={styles.signOutBtnClickContain}
+                                        underlayColor="rgba(128, 128, 128, 0.1)">
+                        <View style={styles.signOutBtnContainer}>
+                            {/*<Image source={source} style={styles.btnIcon} />*/}
+                            <FontAwesome name="sign-out" style={styles.signOutBtnIcon}/>
+                            <Text style={styles.signOutBtnText}>Log out</Text>
+                        </View>
+                    </TouchableHighlight>
 
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={handleCreatePetProfileNavigation}>
-                    <View style={styles.btnContainer}>
-                        {/*<Image source={source} style={styles.btnIcon} />*/}
-                        <FontAwesome name="bookmark" style={styles.btnIcon}/>
-                        <Text style={styles.btnText}>Pet profile</Text>
-                    </View>
-                </TouchableHighlight>
 
-                {/*<TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">*/}
-                {/*    <View style={styles.btnContainer}>*/}
-                {/*        /!*<Image source={source} style={styles.btnIcon} />*!/*/}
-                {/*        <FontAwesome name="bookmark" style={styles.btnIcon}/>*/}
-                {/*        <Text style={styles.btnText}>Saved</Text>*/}
-                {/*    </View>*/}
-                {/*</TouchableHighlight>*/}
-
-                <TouchableHighlight onPress={handleLogOut} style={styles.signOutBtnClickContain}
-                                    underlayColor="rgba(128, 128, 128, 0.1)">
-                    <View style={styles.signOutBtnContainer}>
-                        {/*<Image source={source} style={styles.btnIcon} />*/}
-                        <FontAwesome name="sign-out" style={styles.signOutBtnIcon}/>
-                        <Text style={styles.signOutBtnText}>Log out</Text>
-                    </View>
-                </TouchableHighlight>
-
+                </View>
 
             </View>
-
-        </View>
-    );
+        );
 }
 const styles = StyleSheet.create({
     content: {
