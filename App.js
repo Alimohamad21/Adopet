@@ -13,7 +13,7 @@ import {
     AdoptionScreenRoute,
     appPurpleDark, ChatScreenRoute,
     HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute, ProfileScreenRoute,
+    LoginScreenRoute, MainAppRoute, ProfileScreenRoute, SavedPostsScreenRoute,
     SignupScreenRoute,
     UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute,
 } from './src/utilities/constants';
@@ -29,6 +29,7 @@ import ViewPetScreen from './src/screens/ViewPetScreen';
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
+import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -63,6 +64,7 @@ function AppStackScreens() {
             <AppStack.Screen name={ProfileScreenRoute} component={ProfileScreen}/>
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
+            <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
         </AppStack.Navigator>
     );
 }

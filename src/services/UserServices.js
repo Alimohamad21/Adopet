@@ -54,6 +54,95 @@ class UserServices {
     static async removeFcmToken(uid, fcmToken) {
         await firestore().collection('users').doc(uid).update({'fcmTokens': FieldValue.arrayRemove(fcmToken)});
     }
+    static async addToSavedPosts(uid, savedPostID) {
+        try {
+            // Get a reference to the user document
+            const userRef = firestore().collection('users').doc(uid);
+
+            // Check if the savedPosts field exists
+            const userDoc = await userRef.get();
+            let savedPosts = userDoc.get('savedPosts');
+            if (!savedPosts) {
+                // If the savedPosts field doesn't exist, create it as an empty array
+                savedPosts = [];
+            }
+
+            // Add the saved post ID to the savedPosts array
+            savedPosts.push(savedPostID);
+
+            // Update the user document with the updated savedPosts array
+            await userRef.update({ savedPosts });
+
+            console.log('Post added to saved posts successfully');
+        } catch (error) {
+            console.error('Error adding post to saved posts:', error);
+        }
+    }
+    static async removeFromSavedPosts(uid, savedPostID) {
+        try {
+            // Get a reference to the user document
+            const userRef = firestore().collection('users').doc(uid);
+
+            // Update the user document to remove the saved post ID from the savedPosts array
+            await userRef.update({
+                savedPosts: firestore.FieldValue.arrayRemove(savedPostID)
+            });
+
+            console.log('Post removed from saved posts successfully');
+        } catch (error) {
+            console.error('Error removing post from saved posts:', error);
+        }
+    }
+    static async isPostSaved(uid, postId) {
+        try {
+            // Get a reference to the user document
+            const userRef = firestore().collection('users').doc(uid);
+
+            // Get the user document and retrieve the savedPosts array
+            const userDoc = await userRef.get();
+            const savedPosts = userDoc.get('savedPosts');
+
+            // If the savedPosts array is empty or doesn't exist, the post is not saved
+            if (!savedPosts || savedPosts.length === 0) {
+                return false;
+            }
+
+            // Check if the post ID is in the savedPosts array
+            return savedPosts.includes(postId);
+        } catch (error) {
+            console.error('Error checking if post is saved:', error);
+            return false;
+        }
+    }
+    static async getSavedPosts(uid) {
+        try {
+            // Get a reference to the user document
+            const userDoc = (await firestore().collection('users').doc(uid).get()).data();
+
+            const savedPosts = userDoc.savedPosts
+
+
+            // If the savedPosts array is empty or doesn't exist, the post is not saved
+            if (!savedPosts || savedPosts.length === 0) {
+                return [];
+            }
+            // // Convert the Firestore document snapshots into JSON objects
+            // const savedPostsData = await Promise.all(
+            //     savedPosts.map(async (postRef) => {
+            //         const postSnapshot = await postRef.get();
+            //         return { id: postSnapshot.id, ...postSnapshot.data() };
+            //     })
+            // );
+            //
+            return savedPosts;
+        } catch (error) {
+            console.error('Error getting saved posts Ids:', error);
+            return ;
+        }
+    }
+
 }
+
+
 
 export default UserServices;

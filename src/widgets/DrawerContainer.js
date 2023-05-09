@@ -3,7 +3,14 @@ import {Image, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import PropTypes from 'prop-types';
 
 
-import {appPurpleLight, HomeScreenRoute, LoginScreenRoute, ViewChatsScreenRoute, ProfileScreenRoute} from '../utilities/constants';
+import {
+    appPurpleLight,
+    HomeScreenRoute,
+    LoginScreenRoute,
+    ViewChatsScreenRoute,
+    ProfileScreenRoute,
+    SavedPostsScreenRoute
+} from '../utilities/constants';
 import auth from '@react-native-firebase/auth';
 import UserServices from '../services/UserServices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,6 +35,9 @@ export default function DrawerContainer(props) {
     const handleChatsNavigation = () =>{
         navigation.navigate(ViewChatsScreenRoute)
 
+    }
+    const handleSavedPostsNavigation = ()=>{
+        navigation.navigate(SavedPostsScreenRoute)
     }
     const handleLogOut = async () => {
         setIsLoading(true);
@@ -85,7 +95,7 @@ export default function DrawerContainer(props) {
                         <Text style={styles.btnText}>Chats</Text>
                     </View>
                 </TouchableHighlight>
-                <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
+                <TouchableHighlight onPress={handleSavedPostsNavigation} style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)">
                     <View style={styles.btnContainer}>
                         {/*<Image source={source} style={styles.btnIcon} />*/}
                         <FontAwesome name="bookmark" style={styles.btnIcon}/>
