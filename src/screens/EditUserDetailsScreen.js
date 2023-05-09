@@ -4,11 +4,8 @@ import {
   appPurpleLight,
   borderGrey,
   egyptianCities,
-  HomeScreenRoute,
-  LoginScreenRoute, MainAppRoute, ProfileScreenRoute,
+  ProfileScreenRoute,
 } from "../utilities/constants";
-import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
-import AuthServices from '../services/AuthServices';
 import UserServices from '../services/UserServices';
 import User from '../models/User';
 import DropdownComponent from '../widgets/DropdownComponent';
@@ -17,15 +14,14 @@ import {
   View,
   Text,
   TextInput,
-  SafeAreaView,
   ScrollView,
   Dimensions,
   Image,
   TouchableOpacity,
-  TouchableHighlight, Animated, Button,
+  Animated,
 } from "react-native";
 import {
-  extractSubstringAfterDelimiter, removeSpacesFromString,
+  removeSpacesFromString,
   validateConfirmPassword,
   validateEmail,
   validatePassword,
@@ -65,84 +61,58 @@ const EditUserDetailsScreen = () => {
   };
   const handleEmailChange = (text) => {
     setEmail(text);
-    //setIsEmailNotValid(false);
-    if (!validateEmail(text)) {
-      //isValidInputs = false;
-      setIsEmailNotValid(true);
-      setEmailError('Please enter a valid email address');
-    }
-    else {
-      setEmail(text);
-    }
+    setIsEmailNotValid(false);
   };
   const handlePhoneNumberChange = (text) => {
-    //setPhoneNumber(text);
-    //setIsPhoneNumberNotValid(false);
-    if (!validatePhoneNumber(text)) {
-      //isValidInputs = false;
-      setIsPhoneNumberNotValid(true);
-    }
-    else {
-      setPhoneNumber(text);
-    }
+    setPhoneNumber(text);
+    setIsPhoneNumberNotValid(false);
   };
 
   const handlePasswordChange = (text) => {
-    //setPassword(text);
-    //setPasswordNotValid(false);
-    //setIsPasswordNotConfirmed(false);
-    if (!validatePassword(password)) {
-      //isValidInputs = false;
-      setPasswordNotValid(true);
-    }
-    else {
-      setPassword(text);
-    }
+    setPassword(text);
+    setPasswordNotValid(false);
+    setIsPasswordNotConfirmed(false);
+
   };
 
   const handleConfirmPasswordChange = (text) => {
-    //setConfirmPassword(text);
-    //setIsPasswordNotConfirmed(false);
-    if (!validateConfirmPassword(password, confirmPassword)) {
-      //isValidInputs = false;
-      setIsPasswordNotConfirmed(true);
-    }
-    else {
-      setConfirmPassword(text);
-    }
+    setConfirmPassword(text);
+    setIsPasswordNotConfirmed(false);
   };
   const handleCityChange = (value) => {
     setCity(value.value);
     //setIsCityEmpty(false);
   };
- // const validateInputs = () => {
-    //let isValidInputs = true;
+ const validateInputs = () => {
+    let isValidInputs = true;
 
-    // if (!validateConfirmPassword(password, confirmPassword)) {
-    //   isValidInputs = false;
-    //   setIsPasswordNotConfirmed(true);
-    // }
-    // if (!validateEmail(email)) {
-    //   isValidInputs = false;
-    //   setIsEmailNotValid(true);
-    //   setEmailError('Please enter a valid email address');
-    // }
-    // if (!validatePhoneNumber(phoneNumber)) {
-    //   isValidInputs = false;
-    //   setIsPhoneNumberNotValid(true);
-    // }
-    // if (!validatePassword(password)) {
-    //   isValidInputs = false;
-    //   setPasswordNotValid(true);
-    // }
-  //   return isValidInputs;
-  // };
+    if (!validateConfirmPassword(password, confirmPassword)) {
+      isValidInputs = false;
+      setIsPasswordNotConfirmed(true);
+    }
+    if (!validateEmail(email)) {
+      isValidInputs = false;
+      setIsEmailNotValid(true);
+      setEmailError('Please enter a valid email address');
+    }
+    if (!validatePhoneNumber(phoneNumber)) {
+      isValidInputs = false;
+      setIsPhoneNumberNotValid(true);
+    }
+    if (!validatePassword(password)) {
+      isValidInputs = false;
+      setPasswordNotValid(true);
+    }
+    return isValidInputs;
+  };
 
   const handleUpdate = async () => {
     setEmail(removeSpacesFromString(email));
     setFullName(fullName.trim());
-    const isValidInputs = !isEmailNotValid && !isPhoneNumberNotValid && !isPasswordNotConfirmed && !passwordNotValid;
+    const isValidInputs = validateInputs();
+    //const isValidInputs = !isEmailNotValid && !isPhoneNumberNotValid && !isPasswordNotConfirmed && !passwordNotValid;
     if (isValidInputs) {
+      //setIsLoading(true);
       const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.fcmTokens);
       await UserServices.updateUser(user, currentUser.uid).
       then(()=>{setCurrentUser(user)}).
@@ -182,6 +152,7 @@ const EditUserDetailsScreen = () => {
             placeholder="Email"
             value={email}
             onChangeText={handleEmailChange}
+            //onSubmitEditing={handleEmailChange}
           />
           {isEmailNotValid && <Text style={styles.wrongCredentialsText}>{emailError}</Text>}
 
