@@ -8,13 +8,13 @@ import {
     Dimensions,
     Image,
     TouchableOpacity,
-    TouchableHighlight, Animated,
-} from 'react-native';
+    TouchableHighlight, Animated, Button,
+} from "react-native";
 import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
-import {appPurpleDark, ViewPetScreenRoute} from "../utilities/constants";
+import { appPurpleDark, ChatScreenRoute, EditUserDetailsScreenRoute, ViewPetScreenRoute } from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
@@ -169,11 +169,15 @@ const ProfileScreen = () => {
         );
     };
 
+    const handleEditDetails = () => {
+        navigation.navigate(EditUserDetailsScreenRoute);
+    };
+
     return(
         <SafeAreaView style={{flex:1}}>
             { !hideComponents &&
                 <Animated.View style={{ opacity: animatedValue }}>
-            <View style={styles.profileIconContainer}>
+                <View style={styles.profileIconContainer}>
 
                 {
                     currentUser.profilePicture !== '' ?
@@ -194,7 +198,10 @@ const ProfileScreen = () => {
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
                     <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
                 </View>
-
+                <View style={{flexDirection:"row",justifyContent:"center"}}>
+                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                    <Text style={styles.editDetails} onPress={handleEditDetails}>Edit details</Text>
+                </View>
             </View>
 
                 </Animated.View>
@@ -287,6 +294,11 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     phone:{
+        marginLeft:"2%",
+        fontSize:15,
+        fontWeight:"500"
+    },
+    editDetails:{
         marginLeft:"2%",
         fontSize:15,
         fontWeight:"500"
