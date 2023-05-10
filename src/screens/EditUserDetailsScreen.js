@@ -67,13 +67,14 @@ const EditUserDetailsScreen = () => {
   };
   const handleEmailChange = (text) => {
     setEmail(text);
-    //setIsEmailNotValid(false);
+
     if (!validateEmail(text)) {
       //isValidInputs = false;
       setIsEmailNotValid(true);
       setEmailError('Please enter a valid email address');
     }
     else {
+      setIsEmailNotValid(false);
       setEmail(text);
     }
   };
