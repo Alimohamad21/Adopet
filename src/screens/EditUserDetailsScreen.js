@@ -33,9 +33,11 @@ import {
 } from '../utilities/stringUtilities';
 
 import PhoneInput from 'react-native-phone-input';
+
 import {StatusBar} from 'native-base';
 import { CurrentUserContext } from "../providers/CurrentUserProvider";
 import { useNavigation } from "@react-navigation/native";
+
 
 const EditUserDetailsScreen = () => {
   const navigation = useNavigation();
@@ -75,28 +77,38 @@ const EditUserDetailsScreen = () => {
       setEmail(text);
     }
   };
-  const handlePhoneNumberChange = (text) => {
-    //setPhoneNumber(text);
-    //setIsPhoneNumberNotValid(false);
-    if (!validatePhoneNumber(text)) {
-      //isValidInputs = false;
-      setIsPhoneNumberNotValid(true);
-    }
-    else {
-      setPhoneNumber(text);
-    }
+  // const handlePhoneNumberChange = (text) => {
+  //   //setPhoneNumber(text);
+  //   //setIsPhoneNumberNotValid(false);
+  //   if (!validatePhoneNumber(text)) {
+  //     console.log('Invalid phone number');
+  //     setIsPhoneNumberNotValid(true);
+  //   }
+  //   else {
+  //     setPhoneNumber(text);
+  //     setIsPhoneNumberNotValid(false);
+  //   }
+  // };
+  const handlePhoneNumberChange = (number, countryCode) => {
+    setPhoneNumber(number);
+    // const isValidNumberBool = isValidNumber(number)
+    // console.log(isValidNumberBool)
+    // setIsPhoneNumberNotValid(isValidNumberBool)
   };
+
 
   const handlePasswordChange = (text) => {
     //setPassword(text);
     //setPasswordNotValid(false);
     //setIsPasswordNotConfirmed(false);
+
+
     if (!validatePassword(password)) {
       //isValidInputs = false;
       setPasswordNotValid(true);
     }
     else {
-      setPassword(text);
+      setPasswordNotValid(false);
     }
   };
 
@@ -108,7 +120,7 @@ const EditUserDetailsScreen = () => {
       setIsPasswordNotConfirmed(true);
     }
     else {
-      setConfirmPassword(text);
+      setIsPasswordNotConfirmed(false);
     }
   };
   const handleCityChange = (value) => {
@@ -191,7 +203,8 @@ const EditUserDetailsScreen = () => {
             placeholder="Password"
             secureTextEntry={true}
             value={password}
-            onChangeText={handlePasswordChange}
+            onChangeText={setPassword}
+            onEndEditing={handlePasswordChange}
           />
           {passwordNotValid && <Text style={styles.wrongCredentialsText}>{passwordError}</Text>}
           <TextInput
@@ -199,7 +212,8 @@ const EditUserDetailsScreen = () => {
             placeholder="Confirm Password"
             secureTextEntry={true}
             value={confirmPassword}
-            onChangeText={handleConfirmPasswordChange}
+            onChangeText={setConfirmPassword}
+            onEndEditing={handleConfirmPasswordChange}
           />
           {isPasswordNotConfirmed &&
             <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
@@ -216,6 +230,7 @@ const EditUserDetailsScreen = () => {
               allowZeroAfterCountryCode={false}
               editable={false}
               onChangePhoneNumber={handlePhoneNumberChange}
+              autoFormat = {true}
               textProps={{ placeholder: phoneNumber }}
               ref={phoneRef}
             />
