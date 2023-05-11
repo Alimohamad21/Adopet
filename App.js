@@ -10,13 +10,20 @@ import AuthScreen from './src/screens/AuthScreen';
 import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
-    AdoptionScreenRoute,
-    appPurpleDark, ChatScreenRoute,
-    HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute, ProfileScreenRoute,
-    SignupScreenRoute,
-    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute,EditUserDetailsScreenRoute,
-} from './src/utilities/constants';
+  AdoptionScreenRoute,
+  appPurpleDark,
+  ChatScreenRoute,
+  HomeScreenRoute,
+  LoginScreenRoute,
+  MainAppRoute,
+  ProfileScreenRoute,
+  SignupScreenRoute,
+  UploadImageScreenRoute,
+  ViewChatsScreenRoute,
+  ViewPetScreenRoute,
+  EditUserDetailsScreenRoute,
+  ChangePasswordScreenRoute,
+} from "./src/utilities/constants";
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
 
@@ -30,6 +37,7 @@ import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
 import EditUserDetailsScreen from "./src/screens/EditUserDetailsScreen";
+import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -63,6 +71,7 @@ function AppStackScreens() {
             <AppStack.Screen name={ViewPetScreenRoute} component={ViewPetScreen}/>
             <AppStack.Screen name={ProfileScreenRoute} component={ProfileScreen}/>
             <AppStack.Screen name={EditUserDetailsScreenRoute} component={EditUserDetailsScreen}/>
+            <AppStack.Screen name={ChangePasswordScreenRoute} component={ChangePasswordScreen}/>
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
         </AppStack.Navigator>

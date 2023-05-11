@@ -2,9 +2,9 @@ import React, { useContext, useRef, useState } from "react";
 import {
   appPurpleDark,
   appPurpleLight,
-  borderGrey,
+  borderGrey, ChangePasswordScreenRoute,
   egyptianCities,
-  ProfileScreenRoute,
+  ProfileScreenRoute, UploadImageScreenRoute,
 } from "../utilities/constants";
 import UserServices from '../services/UserServices';
 import User from '../models/User';
@@ -32,11 +32,14 @@ import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
 import { CurrentUserContext } from "../providers/CurrentUserProvider";
 import { useNavigation } from "@react-navigation/native";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AuthServices from "../services/AuthServices";
 
 const EditUserDetailsScreen = () => {
   const navigation = useNavigation();
   const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
   const [fullName, setFullName] = useState(currentUser.fullName);
+  const oldEmail = currentUser.email;
   const [email, setEmail] = useState(currentUser.email);
   const [phoneNumber, setPhoneNumber] = useState(currentUser.phoneNumber);
   const [password, setPassword] = useState('');
@@ -61,56 +64,94 @@ const EditUserDetailsScreen = () => {
   };
   const handleEmailChange = (text) => {
     setEmail(text);
-    setIsEmailNotValid(false);
+    if (!validateEmail(text)) {
+      //isValidInputs = false;
+      setIsEmailNotValid(true);
+      setEmailError('Please enter a valid email address');
+    }
+    else {
+      setIsEmailNotValid(false);
+      //setEmail(text);
+    }
+    //setIsEmailNotValid(false);
   };
-  const handlePhoneNumberChange = (text) => {
-    setPhoneNumber(text);
-    setIsPhoneNumberNotValid(false);
+  // const handleEmailEditFinish = (text) => {
+  //   if (!validateEmail(email)) {
+  //     isValidInputs = false;
+  //     setIsEmailNotValid(true);
+  //     setEmailError('Please enter a valid email address');
+  //   }
+  // };
+
+  const handlePhoneNumberChange = (number, countryCode) => {
+    setPhoneNumber(number);
+    //setIsPhoneNumberNotValid(false);
   };
 
   const handlePasswordChange = (text) => {
-    setPassword(text);
-    setPasswordNotValid(false);
-    setIsPasswordNotConfirmed(false);
-
+    navigation.navigate(ChangePasswordScreenRoute);
+    //setPassword(text);
+    //setPasswordNotValid(false);
+    //setIsPasswordNotConfirmed(false);
+    // if (!validatePassword(password)) {
+    //   //isValidInputs = false;
+    //   setPasswordNotValid(true);
+    // }
+    // else {
+    //   setPasswordNotValid(false);
+    // }
   };
 
   const handleConfirmPasswordChange = (text) => {
     setConfirmPassword(text);
-    setIsPasswordNotConfirmed(false);
+    //setIsPasswordNotConfirmed(false);
+    if (!validateConfirmPassword(password, confirmPassword)) {
+      //isValidInputs = false;
+      setIsPasswordNotConfirmed(true);
+    }
+    else {
+      setIsPasswordNotConfirmed(false);
+    }
   };
   const handleCityChange = (value) => {
     setCity(value.value);
     //setIsCityEmpty(false);
   };
- const validateInputs = () => {
-    let isValidInputs = true;
+ // const validateInputs = () => {
+ //    let isValidInputs = true;
+ //
+ //    if (!validateConfirmPassword(password, confirmPassword)) {
+ //      isValidInputs = false;
+ //      setIsPasswordNotConfirmed(true);
+ //    }
+    // if (!validateEmail(email)) {
+    //   isValidInputs = false;
+    //   setIsEmailNotValid(true);
+    //   setEmailError('Please enter a valid email address');
+    // }
+  //   if (!validatePhoneNumber(phoneNumber)) {
+  //     isValidInputs = false;
+  //     setIsPhoneNumberNotValid(true);
+  //   }
+  //   if (!validatePassword(password)) {
+  //     isValidInputs = false;
+  //     setPasswordNotValid(true);
+  //   }
+  //   return isValidInputs;
+  // };
 
-    if (!validateConfirmPassword(password, confirmPassword)) {
-      isValidInputs = false;
-      setIsPasswordNotConfirmed(true);
-    }
-    if (!validateEmail(email)) {
-      isValidInputs = false;
-      setIsEmailNotValid(true);
-      setEmailError('Please enter a valid email address');
-    }
-    if (!validatePhoneNumber(phoneNumber)) {
-      isValidInputs = false;
-      setIsPhoneNumberNotValid(true);
-    }
-    if (!validatePassword(password)) {
-      isValidInputs = false;
-      setPasswordNotValid(true);
-    }
-    return isValidInputs;
-  };
+ const handlePictureChange = () => {
+   //navigation.navigate(UploadImageScreenRoute);
+ }
 
   const handleUpdate = async () => {
     setEmail(removeSpacesFromString(email));
     setFullName(fullName.trim());
-    const isValidInputs = validateInputs();
-    //const isValidInputs = !isEmailNotValid && !isPhoneNumberNotValid && !isPasswordNotConfirmed && !passwordNotValid;
+    //const isValidInputs = validateInputs();
+    const isValidInputs = !isEmailNotValid && !isPhoneNumberNotValid && !isPasswordNotConfirmed && !passwordNotValid;
+    if(oldEmail != email) {
+      await AuthServices.updateEmail(email);
+    }
     if (isValidInputs) {
       //setIsLoading(true);
       const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.fcmTokens);
@@ -118,6 +159,8 @@ const EditUserDetailsScreen = () => {
       then(()=>{setCurrentUser(user)}).
       then(()=>{navigation.navigate(ProfileScreenRoute)});
     }
+
+
   }
 
 
@@ -137,6 +180,10 @@ const EditUserDetailsScreen = () => {
                 <Image source={require('../assets/default_user.png') }
                        style={styles.profileIcon}/>}
           </View>
+          <View style={{flexDirection:"row",justifyContent:"center"}}>
+            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"camera"}></FontAwesome>
+            <Text style={styles.editPicture} onPress={handlePictureChange}>Edit profile picture</Text>
+          </View>
 
         <View style={styles.container}>
 
@@ -152,28 +199,30 @@ const EditUserDetailsScreen = () => {
             placeholder="Email"
             value={email}
             onChangeText={handleEmailChange}
-            //onSubmitEditing={handleEmailChange}
+            //onEndEditing={handleEmailChange}
           />
           {isEmailNotValid && <Text style={styles.wrongCredentialsText}>{emailError}</Text>}
 
 
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={handlePasswordChange}
-          />
-          {passwordNotValid && <Text style={styles.wrongCredentialsText}>{passwordError}</Text>}
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            secureTextEntry={true}
-            value={confirmPassword}
-            onChangeText={handleConfirmPasswordChange}
-          />
-          {isPasswordNotConfirmed &&
-            <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
+          {/*<TextInput*/}
+          {/*  style={styles.input}*/}
+          {/*  placeholder="Password"*/}
+          {/*  secureTextEntry={true}*/}
+          {/*  value={password}*/}
+          {/*  onChangeText={setPassword}*/}
+          {/*  onEndEditing={handlePasswordChange}*/}
+          {/*/>*/}
+          {/*{passwordNotValid && <Text style={styles.wrongCredentialsText}>{passwordError}</Text>}*/}
+          {/*<TextInput*/}
+          {/*  style={styles.input}*/}
+          {/*  placeholder="Confirm Password"*/}
+          {/*  secureTextEntry={true}*/}
+          {/*  value={confirmPassword}*/}
+          {/*  onChangeText={setConfirmPassword}*/}
+          {/*  onEndEditing={handleConfirmPasswordChange}*/}
+          {/*/>*/}
+          {/*{isPasswordNotConfirmed &&*/}
+          {/*  <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}*/}
 
           <DropdownComponent placeholder={city} onSelect={handleCityChange} data={egyptianCities}/>
           {/*{isCityEmpty && <Text style={styles.wrongCredentialsText}>Please select a city</Text>}*/}
@@ -196,6 +245,9 @@ const EditUserDetailsScreen = () => {
 
         <View style={{alignItems: 'center'}}>
 
+          <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
+              <Text style={styles.editPicture} onPress={handlePasswordChange}>Change password?</Text>
+          </View>
 
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
             <TouchableOpacity style={styles.signupBtnContainer} onPress={handleUpdate}>
@@ -391,6 +443,11 @@ const styles = StyleSheet.create({
     width:imageSize,
     height:imageSize,
     alignSelf: 'center',
+  },
+  editPicture:{
+    marginLeft:"2%",
+    fontSize:15,
+    fontWeight:"500"
   },
 });
 
