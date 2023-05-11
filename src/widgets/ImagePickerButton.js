@@ -23,7 +23,8 @@ const ImagePickerButton = ({onPick}) => {
     return (
 
            // <View style={styles.container}>
-                <TouchableOpacity onPress={handlePickImage} ><FontAwesome name="image" style={styles.icon} />
+                <TouchableOpacity onPress={handlePickImage} >
+                    <FontAwesome name="image" style={styles.icon} />
                     </TouchableOpacity>
             //</View>
 

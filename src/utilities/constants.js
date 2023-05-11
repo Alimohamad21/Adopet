@@ -5,7 +5,7 @@ export const borderGrey = '#BBC1CF';
 export  const postGrey= '#F1F1F6';
 
 //DIRECTORIES
-export const firebaseStoragePostsDirectory = '/posts';
+export const fbStorageUserImagesDirectory = '/user-images';
 //ROUTES
 export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';

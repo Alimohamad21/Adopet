@@ -14,12 +14,19 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
-import { appPurpleDark, ChatScreenRoute, EditUserDetailsScreenRoute, ViewPetScreenRoute } from "../utilities/constants";
+import {
+    appPurpleDark,
+    ChatScreenRoute,
+    EditUserDetailsScreenRoute,
+    UploadImageScreenRoute,
+    ViewPetScreenRoute,
+} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
+import UserServices from "../services/UserServices";
 
 const ProfileScreen = () => {
     const [view,setView] = useState(1)
@@ -83,6 +90,12 @@ const ProfileScreen = () => {
             setUserPosts(res)
         }
 
+        const unsubscribe = navigation.addListener('focus', async () => {
+            const user = await UserServices.getUser(currentUser.uid);
+            setCurrentUser(user);
+        });
+        return unsubscribe;
+
         //TO DO:  load Pets from database or from current user object
         const pets = [
             {   id:0,
@@ -121,7 +134,7 @@ const ProfileScreen = () => {
          getUserPosts().then()
 
 
-    },[])
+    },[navigation])
 
 
     const handlePostsSelect =() =>{

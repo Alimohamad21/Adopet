@@ -3,6 +3,7 @@ import User from '../models/User';
 import { useContext } from "react";
 import { CurrentUserContext } from "../providers/CurrentUserProvider";
 const {FieldValue}=firestore;
+
 class UserServices {
 
     // Register a new user with email and password
@@ -39,6 +40,7 @@ class UserServices {
     static async uploadProfilePictureUrl(uid, url) {
         try {
             await firestore().collection('users').doc(uid).update({profilePicture: url});
+
         } catch (error) {
             console.log(error.message);
             return false;

@@ -31,14 +31,19 @@ class AuthServices {
     const user = auth().currentUser;
 
     // Update the user's email
-    user.updateEmail(newEmail)
+    try {
+      await user.updateEmail(newEmail)
       .then(() => {
         console.log("Email updated successfully!");
+        return newEmail;
       })
-      .catch((error) => {
+    }
+    catch(error) {
         console.error(error);
-      });
+        return error.message;
+      }
   }
+
 
    static async updatePassword(currentPassword, newPassword) {
     // Get the current user
@@ -61,15 +66,19 @@ class AuthServices {
       })
       .catch((error) => {
         console.error(error);
+        return null;
       });
     //  const emailCred  = auth.EmailAuthProvider.credential(auth().currentUser, currentPassword);
-    //  auth().currentUser.reauthenticateWithCredential(emailCred)
-    //    .then(() => {
-    //      return auth().currentUser.updatePassword(newPassword);
-    //    })
-    //    .catch((error)=> {
+    //  try {
+    //    auth().currentUser.reauthenticateWithCredential(emailCred)
+    //      .then(() => {
+    //        return auth().currentUser.updatePassword(newPassword);
+    //      })
+    //  }
+    //  catch(error){
     //    console.log("error in changing password");
-    //  });
+    //    return null;
+    //  }
   }
 
   // Sign out the currently signed-in user

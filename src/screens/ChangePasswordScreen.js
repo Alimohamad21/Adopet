@@ -21,12 +21,13 @@ import {
   Animated,
 } from "react-native";
 import {
+  extractSubstringAfterDelimiter,
   removeSpacesFromString,
   validateConfirmPassword,
   validateEmail,
   validatePassword,
   validatePhoneNumber,
-} from '../utilities/stringUtilities';
+} from "../utilities/stringUtilities";
 
 import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
@@ -34,6 +35,7 @@ import { CurrentUserContext } from "../providers/CurrentUserProvider";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import AuthServices from "../services/AuthServices";
+import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 
 const ChangePasswordScreen = () => {
   const navigation = useNavigation();
@@ -43,7 +45,10 @@ const ChangePasswordScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const passwordError = 'Password must not be less than 6 digits';
+  const [passwordChangeError, setPasswordChangeError] = useState(false);
+  const [passwordChangeErrorText, setPasswordChangeErrorText] = useState('');
   const [oldPasswordNotValid, setOldPasswordNotValid] = useState(false);
+  const [isOldPasswordFound, setIsOldPasswordFound] = useState(true);
   const [newPasswordNotValid, setNewPasswordNotValid] = useState(false);
   const [isPasswordNotConfirmed, setIsPasswordNotConfirmed] = useState(false);
   const animatedValue = useRef(new Animated.Value(1)).current;
@@ -60,6 +65,13 @@ const ChangePasswordScreen = () => {
       setOldPasswordNotValid(false);
     }
   };
+  const handleOldPasswordConfirm = async () => {
+    setIsOldPasswordFound(true);
+    const passwordAuth = await AuthServices.signInWithEmailAndPassword(currentUser.email, oldPassword);
+    if(!passwordAuth){
+      setIsOldPasswordFound(false);
+    }
+  }
 
   const handleNewPasswordChange = (text) => {
     setNewPassword(text);
@@ -87,10 +99,25 @@ const ChangePasswordScreen = () => {
   };
 
   const handleChangePassword = async () => {
-    const isValidInputs = !isPasswordNotConfirmed && !oldPasswordNotValid && !newPasswordNotValid;
+    const isValidInputs = isOldPasswordFound && !isPasswordNotConfirmed && !oldPasswordNotValid && !newPasswordNotValid;
     if (isValidInputs) {
-      await AuthServices.updatePassword(oldPassword, newPassword);
-      await navigation.navigate(ProfileScreenRoute);
+      // const passwordAuth = await AuthServices.signInWithEmailAndPassword(currentUser.email, oldPassword);
+      // if(!passwordAuth){
+      //   setIsOldPasswordFound(false);
+      // }
+      // else {
+        const response = await AuthServices.updatePassword(oldPassword, newPassword);
+        if (typeof response === 'string') {
+          setPasswordChangeError(true);
+          setPasswordChangeErrorText(extractSubstringAfterDelimiter(response, ']'));
+          setIsLoading(false);
+        } else {
+          //const user = new User(response.uid, fullName, city, phoneNumber, email, '', '',[]);
+          //await UserServices.addUser(user, response.uid);
+          navigation.navigate(ProfileScreenRoute);
+          //navigation.navigate(ProfileScreenRoute);
+        }
+      //}
       //then(()=>{navigation.navigate(ProfileScreenRoute)});
     }
   }
@@ -99,7 +126,7 @@ const ChangePasswordScreen = () => {
     <View style={styles.screen}>
 
       <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
-      {/*{isLoading && <TransparentLoadingIndicator/>}*/}
+      {isLoading && <TransparentLoadingIndicator/>}
       <ScrollView showsVerticalScrollIndicator={false}
                   contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={styles.scrollView}>
         <Animated.View style={{ opacity: animatedValue }}>
@@ -111,10 +138,12 @@ const ChangePasswordScreen = () => {
               secureTextEntry={true}
               value={oldPassword}
               onChangeText={handleOldPasswordChange}
-              //onEndEditing={handleOldPasswordChange}
+              onEndEditing={handleOldPasswordConfirm}
             />
             {oldPasswordNotValid && <Text style={styles.wrongCredentialsText}>{passwordError}</Text>}
-
+            {!isOldPasswordFound &&
+              <Text style={styles.wrongCredentialsText}>Can't find a user with
+                the corresponding old password</Text>}
             <TextInput
               style={styles.input}
               placeholder="New Password"
@@ -134,6 +163,9 @@ const ChangePasswordScreen = () => {
             />
             {isPasswordNotConfirmed &&
               <Text style={styles.wrongCredentialsText}>Passwords not matching</Text>}
+
+            {passwordChangeError &&
+              <Text style={styles.wrongCredentialsText}>{passwordChangeErrorText}</Text>}
 
           </View>
 
