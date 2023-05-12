@@ -26,6 +26,61 @@ class AuthServices {
     }
   }
 
+  static async updateEmail(newEmail) {
+    // Get the current user
+    const user = auth().currentUser;
+
+    // Update the user's email
+    try {
+      await user.updateEmail(newEmail)
+      .then(() => {
+        console.log("Email updated successfully!");
+        return newEmail;
+      })
+    }
+    catch(error) {
+        console.error(error);
+        return error.message;
+      }
+  }
+
+
+   static async updatePassword(currentPassword, newPassword) {
+    // Get the current user
+    const user = auth().currentUser;
+
+    // Create a credential with the user's current email and password
+    const credential = auth.EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+    );
+
+    // Reauthenticate the user with the current credential
+    user.reauthenticateWithCredential(credential)
+      .then(() => {
+        // If reauthentication is successful, update the password
+        return user.updatePassword(newPassword);
+      })
+      .then(() => {
+        console.log("Password updated successfully!");
+      })
+      .catch((error) => {
+        console.error(error);
+        return null;
+      });
+    //  const emailCred  = auth.EmailAuthProvider.credential(auth().currentUser, currentPassword);
+    //  try {
+    //    auth().currentUser.reauthenticateWithCredential(emailCred)
+    //      .then(() => {
+    //        return auth().currentUser.updatePassword(newPassword);
+    //      })
+    //  }
+    //  catch(error){
+    //    console.log("error in changing password");
+    //    return null;
+    //  }
+  }
+
   // Sign out the currently signed-in user
   static async signOut() {
     try {

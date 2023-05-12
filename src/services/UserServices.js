@@ -1,7 +1,11 @@
 import firestore from '@react-native-firebase/firestore';
 import User from '../models/User';
+import { useContext } from "react";
+import { CurrentUserContext } from "../providers/CurrentUserProvider";
 const {FieldValue}=firestore;
+
 class UserServices {
+
     // Register a new user with email and password
     static async getUser(uid) {
         const userDoc = await firestore().collection('users').doc(uid).get();
@@ -21,9 +25,22 @@ class UserServices {
         return true;
     }
 
+    static async updateUser(user, uid) {
+        try {
+            user.email = user.email.toLowerCase();
+            await firestore().collection('users').doc(uid).update(User.toJson(user));
+
+        } catch (error) {
+            console.log(error.message);
+            return false;
+        }
+        return true;
+    }
+
     static async uploadProfilePictureUrl(uid, url) {
         try {
             await firestore().collection('users').doc(uid).update({profilePicture: url});
+
         } catch (error) {
             console.log(error.message);
             return false;
