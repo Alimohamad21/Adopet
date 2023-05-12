@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useLayoutEffect, useRef, useState } from "react";
 import {
   appPurpleDark,
   appPurpleLight,
@@ -38,6 +38,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import AuthServices from "../services/AuthServices";
 import { pickImage } from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
+import MenuImage from "../widgets/MenuImage";
 
 const EditUserDetailsScreen = () => {
   const navigation = useNavigation();
@@ -65,7 +66,22 @@ const EditUserDetailsScreen = () => {
   const animatedValue = useRef(new Animated.Value(1)).current;
   const phoneRef = useRef("phone");
   const [imageUri, setImageUri] = useState(null);
+  const goBack = () => {
+    console.log("GOING BACK")
+    navigation.navigate(ProfileScreenRoute);
+  };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={goBack}>
+          <FontAwesome name="chevron-left"
+          />
+        </TouchableOpacity>
+      ),
+      headerRight: () => <View />,
+    });
+  }, []);
   const handleFullNameChange = (text) => {
     setFullName(text);
     //setIsFullNameEmpty(false);

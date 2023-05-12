@@ -89,14 +89,15 @@ const ProfileScreen = () => {
             console.log(res)
             setUserPosts(res)
         }
-
-        const unsubscribe = navigation.addListener('focus', async () => {
-            const user = await UserServices.getUser(currentUser.uid);
-            setCurrentUser(user);
-        });
-        return unsubscribe;
+        //
+        // const unsubscribe = navigation.addListener('focus', async () => {
+        //     const user = await UserServices.getUser(currentUser.uid);
+        //     setCurrentUser(user);
+        // });
+        // return unsubscribe;
 
         //TO DO:  load Pets from database or from current user object
+        console.log("USE EFFECT CALLED IN PROFILE")
         const pets = [
             {   id:0,
                 age: 1,
