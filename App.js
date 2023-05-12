@@ -26,7 +26,6 @@ import {
 } from "./src/utilities/constants";
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
-
 import {NativeBaseProvider} from 'native-base';
 import DrawerContainer from './src/widgets/DrawerContainer';
 import {CurrentUserContext,CurrentUserProvider} from './src/providers/CurrentUserProvider';
@@ -38,6 +37,7 @@ import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
 import EditUserDetailsScreen from "./src/screens/EditUserDetailsScreen";
 import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
+import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -74,6 +74,7 @@ function AppStackScreens() {
             <AppStack.Screen name={ChangePasswordScreenRoute} component={ChangePasswordScreen}/>
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
+            <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
         </AppStack.Navigator>
     );
 }

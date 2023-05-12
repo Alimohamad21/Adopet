@@ -19,6 +19,7 @@ export const EditUserDetailsScreenRoute = 'Edit Details';
 export const ChangePasswordScreenRoute = 'Change Password';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
+export const SavedPostsScreenRoute='Saved'
 
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
