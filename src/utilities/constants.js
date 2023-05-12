@@ -17,7 +17,8 @@ export const ViewPetScreenRoute = 'Pet Details';
 export const ProfileScreenRoute = 'Profile';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
-export const SavedPostsScreenRoute='Saved'
+export const SavedPostsScreenRoute='Saved';
+export const FilterPostsScreenRoute = "Filters";
 
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},

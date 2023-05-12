@@ -11,7 +11,7 @@ import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
     AdoptionScreenRoute,
-    appPurpleDark, ChatScreenRoute,
+    appPurpleDark, ChatScreenRoute, FilterPostsScreenRoute,
     HomeScreenRoute,
     LoginScreenRoute, MainAppRoute, ProfileScreenRoute, SavedPostsScreenRoute,
     SignupScreenRoute,
@@ -30,6 +30,7 @@ import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
 import SavedPostsScreen from "./src/screens/SavedPostsScreen";
+import FilterPostsScreen from "./src/screens/FilterPostsScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -65,6 +66,12 @@ function AppStackScreens() {
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
             <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
+            <AppStack.Screen name={FilterPostsScreenRoute} component={FilterPostsScreen} options={{
+                presentation: 'modal',
+                animationTypeForReplace: 'push',
+                animation:'slide_from_bottom',
+
+            }}/>
         </AppStack.Navigator>
     );
 }

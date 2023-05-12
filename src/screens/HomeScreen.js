@@ -49,7 +49,7 @@ const HomeScreen = ({navigation}) => {
     return (
 
         <View>
-            <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
+            <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
 
             <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2}
                       data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`}/>
