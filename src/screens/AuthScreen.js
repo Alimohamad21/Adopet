@@ -9,7 +9,6 @@ import user from "../models/User";
 import AuthServices from '../services/AuthServices';
 
 export function AuthScreen({navigation}) {
-
     const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
 
     useEffect(() => {

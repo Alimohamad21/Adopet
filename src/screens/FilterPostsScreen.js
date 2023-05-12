@@ -18,6 +18,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {appPurpleDark, appPurpleLight} from "../utilities/constants";
 import {Checkbox, Slider, StatusBar, Switch} from "native-base";
 import {Picker} from "@react-native-picker/picker";
+import TwoSlider from "../widgets/TwoSlider";
 
 const FilterPostsScreen = () => {
     const navigation = useNavigation();
@@ -30,6 +31,7 @@ const FilterPostsScreen = () => {
         navigation.goBack();
     }
     useLayoutEffect(() => {
+
         navigation.setOptions({
             headerTintColor: appPurpleDark,
             headerStyle: {
@@ -88,6 +90,11 @@ const FilterPostsScreen = () => {
                         <Text>Orange</Text>
                     </View>
                     </View>
+                <Text>Breed:</Text>
+                <View >
+                    <TwoSlider></TwoSlider>
+                </View>
+
             </View>
 
 
