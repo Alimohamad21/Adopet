@@ -235,7 +235,7 @@ const EditUserDetailsScreen = () => {
       {isLoading && <TransparentLoadingIndicator />}
       <ScrollView showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} style={styles.scrollView}>
-        <Animated.View style={{ opacity: animatedValue }}>
+        <View >
           <View style={styles.profileIconContainer}>
 
             {
@@ -244,10 +244,10 @@ const EditUserDetailsScreen = () => {
                 <Image source={require("../assets/default_user.png")}
                        style={styles.profileIcon} />}
           </View>
-          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <TouchableOpacity onPress={handlePictureChange} style={{ flexDirection: "row", justifyContent: "center" }}>
             <FontAwesome style={{ fontSize: 19, color: appPurpleDark }} name={"camera"}></FontAwesome>
-            <Text style={styles.editPicture} onPress={handlePictureChange}>Edit profile picture</Text>
-          </View>
+            <Text style={styles.editPicture} >Edit profile picture</Text>
+          </TouchableOpacity>
 
           <View style={styles.container}>
 
@@ -324,7 +324,7 @@ const EditUserDetailsScreen = () => {
             {/*</View>*/}
 
           </View>
-        </Animated.View>
+        </View>
       </ScrollView>
 
     </View>
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   container: {
     //flex: 0.2,
-    marginTop: "30%",
+    marginTop: "5%",
     alignItems: "center",
 
   },
@@ -506,11 +506,12 @@ const styles = StyleSheet.create({
 
   profileIcon: {
 
-    position: "absolute",
+
     borderRadius: borderRadius,
     width: imageSize,
     height: imageSize,
     alignSelf: "center",
+    marginBottom:"5%"
   },
   editPicture: {
     marginLeft: "2%",
