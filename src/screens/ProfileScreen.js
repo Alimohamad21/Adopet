@@ -211,10 +211,10 @@ const ProfileScreen = () => {
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
                     <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
                 </View>
-                <View style={{flexDirection:"row",justifyContent:"center"}}>
+                <TouchableOpacity onPress={handleEditDetails} style={{flexDirection:"row",justifyContent:"center"}}>
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
-                    <Text style={styles.editDetails} onPress={handleEditDetails}>Edit details</Text>
-                </View>
+                    <Text style={styles.editDetails} >Edit details</Text>
+                </TouchableOpacity>
             </View>
 
                 </Animated.View>
