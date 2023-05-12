@@ -1,8 +1,6 @@
 class Pet {
-    constructor(uid, pid, type, photo, name, description, age, color, breed, gender, isSpayed, vaccinations) {
+    constructor(type, photo, name, description, age, color, breed, gender, isSpayed, vaccinations) {
         this.type = type;
-        this.uid = uid;
-        this.pid = pid;
         this.photo = photo;
         this.name = name;
         this.description = description;
@@ -15,13 +13,11 @@ class Pet {
     }
 
     static fromJson(json) {
-        return new Pet(json.uid,json.pid,json.type, json.photo, json.name, json.description, json.age, json.color, json.breed, json.gender, json.isSpayed, json.vaccinations);
+        return new Pet(json.type, json.photo, json.name, json.description, json.age, json.color, json.breed, json.gender, json.isSpayed, json.vaccinations);
     }
 
     static toJson(pet) {
         return {
-            uid: pet.uid,
-            pid: pet.pid,
             type: pet.type,
             photo: pet.photo,
             name: pet.name,

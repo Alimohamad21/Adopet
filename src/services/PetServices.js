@@ -13,6 +13,16 @@ class PetServices{
         }
         return true;
     }
+
+    static async uploadPictureUrl(uid, url) {
+        try {
+            await firestore().collection('pets').doc(pid).update({image: url});
+        } catch (error) {
+            console.log(error.message);
+            return false;
+        }
+        return true;
+    }
 }
 
 export default PetServices

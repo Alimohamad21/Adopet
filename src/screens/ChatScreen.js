@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import StorageServices from "../services/StorageServices";
 import TransparentLoadingIndicator from "../widgets/TransparentLoadingIndicator";
+import {CurrentUserContext} from "../providers/CurrentUserProvider";
 
 
 export function ChatScreen() {
