@@ -67,15 +67,14 @@ const EditUserDetailsScreen = () => {
   const phoneRef = useRef("phone");
   const [imageUri, setImageUri] = useState(null);
   const goBack = () => {
-    console.log("GOING BACK")
-    navigation.navigate(ProfileScreenRoute);
+    navigation.navigate({name:ProfileScreenRoute,key:Date.now().toString()});
   };
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={goBack}>
-          <FontAwesome name="chevron-left"
+        <TouchableOpacity onPress={goBack} >
+          <FontAwesome name="chevron-left" style={styles.backButton}
           />
         </TouchableOpacity>
       ),
@@ -344,6 +343,11 @@ const styles = StyleSheet.create({
     width: "100%",
 
 
+  },
+  backButton: {
+    fontSize: 20,
+    color: '#fff',
+    marginRight: "15%"
   },
   container: {
     //flex: 0.2,

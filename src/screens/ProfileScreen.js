@@ -86,7 +86,6 @@ const ProfileScreen = () => {
     useEffect(  () => {
         const getUserPosts = async () => {
             const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
-            console.log(res)
             setUserPosts(res)
         }
         //
@@ -97,7 +96,6 @@ const ProfileScreen = () => {
         // return unsubscribe;
 
         //TO DO:  load Pets from database or from current user object
-        console.log("USE EFFECT CALLED IN PROFILE")
         const pets = [
             {   id:0,
                 age: 1,
@@ -111,7 +109,6 @@ const ProfileScreen = () => {
                 image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
                 type: "Cat",
                 vaccinations: ["Basic"]
-
 
             },
             {   id:1,
