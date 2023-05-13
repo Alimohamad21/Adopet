@@ -6,7 +6,7 @@ import {
     borderGrey,
     egyptianCities,
     HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute,
+    LoginScreenRoute, MainAppRoute, OTPScreenRoute,
 } from '../utilities/constants';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import AuthServices from '../services/AuthServices';
@@ -25,12 +25,12 @@ import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
 
 const SignupScreen = ({navigation}) => {
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
+    const [fullName, setFullName] = useState('Ali Mohamed');
+    const [email, setEmail] = useState('ali@ali.com');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [city, setCity] = useState('');
+    const [password, setPassword] = useState('123456');
+    const [confirmPassword, setConfirmPassword] = useState('123456');
+    const [city, setCity] = useState('Alexandria');
     const [isLoading, setIsLoading] = useState(false);
     const [isFullNameEmpty, setIsFullNameEmpty] = useState(false);
     const [emailError, setEmailError] = useState('');
@@ -112,8 +112,10 @@ const SignupScreen = ({navigation}) => {
                 setIsLoading(false);
             } else {
                 const user = new User(response.uid, fullName, city, phoneNumber, email, '', '',[]);
-                await UserServices.addUser(user, response.uid);
-                navigation.replace("AuthLoading");
+                //await UserServices.addUser(user, response.uid);
+                //navigation.replace("AuthLoading");
+                setIsLoading(false);
+                navigation.navigate(OTPScreenRoute,{user:user});
             }
         }
     }

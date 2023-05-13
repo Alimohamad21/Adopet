@@ -19,7 +19,8 @@ export const EditUserDetailsScreenRoute = 'Edit Details';
 export const ChangePasswordScreenRoute = 'Change Password';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
-export const SavedPostsScreenRoute='Saved'
+export const SavedPostsScreenRoute='Saved';
+export const OTPScreenRoute='Verify Phone Number';
 
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},

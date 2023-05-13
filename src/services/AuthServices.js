@@ -13,6 +13,30 @@ class AuthServices {
     }
   }
 
+  static async sendPhoneVerificationSMS(phoneNumber){
+      let confirmation;
+      try {
+          confirmation = await auth().signInWithPhoneNumber(
+              phoneNumber,
+          );
+          console.log('Verification ID:', confirmation);
+      } catch (error) {
+          console.log('Error sending OTP', error);
+      }
+      return confirmation;
+  }
+
+  static async confirmValidOTP(confirmation,otp){
+      let isValid;
+      try{
+          isValid = await confirmation.confirm(otp);
+      }
+      catch (e) {
+          console.log("ERROR IN OTP CONFIRM:",e)
+          isValid=false;
+      }
+      return isValid;
+  }
   // Sign in a user with email and password
   static async signInWithEmailAndPassword(email, password) {
     try {
