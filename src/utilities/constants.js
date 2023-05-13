@@ -19,6 +19,7 @@ export const ViewPetScreenRoute = 'Pet Details';
 export const ProfileScreenRoute = 'Profile';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
+export const SavedPostsScreenRoute='Saved'
 
 
 export const CreatePetProfileScreenRoute='Create pet profile';

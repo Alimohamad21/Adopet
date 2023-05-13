@@ -93,7 +93,7 @@ export function ChatScreen() {
     }
 
     function incrementUnReadMessages(){
-        console.log("increment")
+
         if(currentUser.uid===chat.userThatPostedId)
             ChatServices.incrementUnReadMessagesCountForRequester(chat.id);
         else

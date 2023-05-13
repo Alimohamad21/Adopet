@@ -13,9 +13,9 @@ import {
     AdoptionScreenRoute,
     appPurpleDark, ChatScreenRoute,
     HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute, ProfileScreenRoute,
+    LoginScreenRoute, MainAppRoute, ProfileScreenRoute, SavedPostsScreenRoute,
     SignupScreenRoute,
-    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute, CreatePetProfileScreenRoute,
+    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute,
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
@@ -29,7 +29,7 @@ import ViewPetScreen from './src/screens/ViewPetScreen';
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
-import CreatePetProfileScreen from "./src/screens/CreatePetProfileScreen";
+import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -63,8 +63,8 @@ function AppStackScreens() {
             <AppStack.Screen name={ViewPetScreenRoute} component={ViewPetScreen}/>
             <AppStack.Screen name={ProfileScreenRoute} component={ProfileScreen}/>
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
-            <AppStack.Screen name={CreatePetProfileScreenRoute} component={CreatePetProfileScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
+            <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
         </AppStack.Navigator>
     );
 }
