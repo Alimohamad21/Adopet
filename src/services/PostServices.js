@@ -15,6 +15,7 @@ class PostServices {
         return {newPosts: adoptionPosts, lastDocument: lastDocument};
     }
 
+
     static async getAdoptionPostsPaginated(prevLastDocument) {
         const snapshot = await firestore()
             .collection('adoption-posts')
@@ -27,6 +28,26 @@ class PostServices {
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
         return {newPosts: adoptionPosts, lastDocument: lastDocument};
     }
+
+    static async getAdoptionPostsFiltered(minValue,maxValue,selectedColors) {
+        console.log(minValue,maxValue);
+        const snapshot = await firestore()
+            .collection('adoption-posts')
+            .orderBy("petAge")
+            .orderBy("petColor")
+            .where("petAge", '>=', parseInt(minValue) )
+            .where("petAge", '<=', parseInt(maxValue) )
+            // .where("petColor",'array-contains-any',selectedColors)
+
+            .limit(15)
+            .get();
+
+        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        const lastDocument = snapshot.docs[snapshot.docs.length - 1];
+        console.log(adoptionPosts,)
+        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+    }
+
 
     static async addAdoptionPost(adoptionPost) {
         await firestore().collection('adoption-posts').add(AdoptionPost.toJson(adoptionPost));
