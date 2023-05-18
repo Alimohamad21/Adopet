@@ -17,7 +17,7 @@ import {
     borderGrey, CreatePetProfileScreenRoute, egyptianCatBreeds,
     egyptianCities, egyptianDogBreeds, fbStoragePetImagesDirectory,
     HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute,
+    LoginScreenRoute, MainAppRoute, ProfileScreenRoute,
     UploadImageScreenRoute,
 } from '../utilities/constants';
 import {CurrentUserContext} from '../providers/CurrentUserProvider';
@@ -73,8 +73,8 @@ const CreatePetProfileScreen = ({navigation}) => {
     const [color, setColor] = useState('');
     const [breed, setBreed] = useState('');
     const [breedList, setBreedList] = useState('');
-    const [gender, setGender] = useState(genderOptions[0]);
-    const [isSpayed, setIsSpayed] = useState(isSpayedOptions[0]);
+    const [gender, setGender] = useState('');
+    const [isSpayed, setIsSpayed] = useState('');
     const [vaccinations, setVaccinations] = useState('');
     const [description, setDescription] = useState('');
     // let [breedsOfType, setBreedOfType] = useState('');
@@ -127,26 +127,6 @@ const CreatePetProfileScreen = ({navigation}) => {
         // console.log(type);
     };
 
-    const changeBreedsList =  (value) => {
-        if (value === "cat"){
-            setBreedList(egyptianCatBreeds);
-        }
-        else if (value === "dog") {
-            setBreedList(egyptianDogBreeds);
-        }
-        console.log(value);
-    }
-
-    // const handleBreedChange = (text) => {
-    //     setBreed(text);
-    //     setIsBreedEmpty(false);
-    // };
-    useEffect(() => {
-
-        changeBreedsList(type.value);
-
-        console.log(breedList)
-    }, [type]);
 
     const handleVaccinationsChange = (text) => {
         setVaccinations(text);
@@ -159,15 +139,13 @@ const CreatePetProfileScreen = ({navigation}) => {
 
 
     const handleTypeChange = (value) => {
-        setType(value)
-        if (value === "cat"){
-            setBreedList(egyptianCatBreeds);
-        }
-        else if (value === "dog") {
-            setBreedList(egyptianDogBreeds);
-        }        setIsTypeEmpty(false);
+        setType(value);
+        setBreedList(value.value);
+        setIsTypeEmpty(false);
+        // console.log(value.value, type);
 
     };
+
     const handleGenderChange = (value) => {
         setGender(value);
         setIsGenderEmpty(false);
@@ -237,14 +215,19 @@ const CreatePetProfileScreen = ({navigation}) => {
 
 
     const handleCreatePetProfile = async () => {
-        const isValidInputs = validateInputs();
-        if (isValidInputs) {
-            // console.log(name, age, gender, type, color, breed, gender, isSpayed, vaccinations);
+        // const isValidInputs = validateInputs();
+        if (1) {
             setIsLoading(true);
-            const pet = new Pet(currentUser.uid, type, photo, name, description, age, color, breed, gender, isSpayed, vaccinations);
-            await PetServices.addPet(pet);
-            navigation.replace("AuthLoading");
-            // console.log("Done")
+            const pet = new Pet(currentUser.uid, "", type.value, photo, name, description, age, color, breed.value, gender.value, isSpayed.value, vaccinations);
+            // console.log("After creating pet")
+            // console.log(pet);
+            // console.log("User ID");
+            // console.log(currentUser.uid);
+            const newPid = await PetServices.addPet(pet);
+            await firestore().collection('pets').doc(newPid).update({'pid': newPid});
+            // console.log("Done updating");
+            // console.log(newPid);
+            navigation.replace(ProfileScreenRoute);
         }
     }
 
@@ -266,14 +249,13 @@ const CreatePetProfileScreen = ({navigation}) => {
                         <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
                             <View style={{ flexDirection: 'row'}}>
                                 <Text style={styles.titles} >Add photo</Text>
-                                {/*<FontAwesome name="plus" size={24} />*/}
-
                                 <FontAwesome name="plus" size={24} onPress={handleAddPhoto}/>
                             </View>
                         </TouchableHighlight>
 
                     </View>
 
+                    <Text style={styles.titles} >Name</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Name"
@@ -282,13 +264,17 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
                     {isNameEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's name</Text>}
 
-                    <View >
-                        <TouchableHighlight style={styles.btnClickContain} underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
+                    {/*<View >*/}
+                        <Text style={styles.titles} >Birthdate</Text>
+
+                        <TouchableHighlight style = {{justifyContent: "flex-start"}}
+                            underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
                             <View style={{ flexDirection: 'row'}}>
-                                <Text style={styles.titles} >Birthdate</Text>
                                 <FontAwesome name="calendar" size={23} style={styles.calendarBtn} icon="fa-solid fa-calendar-lines"/>
+                                <Text style={styles.displayInput}> {age} </Text>
                             </View>
                         </TouchableHighlight>
+
 
                         {showCalendar && <Calendar style={styles.calendar}
                                                    onDayPress={handleAgeChange}
@@ -296,7 +282,7 @@ const CreatePetProfileScreen = ({navigation}) => {
 
                         {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
 
-                    </View>
+                    {/*</View>*/}
 
 
                     <Text style={styles.titles} >Pet Type </Text>
@@ -306,6 +292,7 @@ const CreatePetProfileScreen = ({navigation}) => {
                         onSelect={handleTypeChange}
                     />
 
+                    <Text style={styles.titles} >Color </Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Color"
@@ -314,7 +301,8 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
                     {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
 
-                    <DropdownComponent onSelect={handleBreedChange} data={breedList} placeholder={"Breed"}/>
+                    <Text style={styles.titles} >Breed</Text>
+                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
                     {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
 
 
@@ -333,6 +321,7 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
 
 
+                    <Text style={styles.titles} >Vaccinations</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Vaccinations"
@@ -341,6 +330,7 @@ const CreatePetProfileScreen = ({navigation}) => {
                     />
                     {isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}
 
+                    <Text style={styles.titles} >Pet description</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Describe your pet. ie playful, likes to cuddle, etc"
@@ -396,6 +386,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
     },
+
+    displayInput: {
+        fontFamily: 'sans-serif-medium',
+        height: 40,
+        left: "50%",
+    },
     titles: {
         fontFamily: 'sans-serif-medium',
         fontSize: 15,
@@ -404,6 +400,7 @@ const styles = StyleSheet.create({
         marginBottom: -10,
         // borderWidth: 1,
         padding: 10,
+        // left: "1%",
     },
     //
     // radioBtnContainer: {
@@ -459,8 +456,9 @@ const styles = StyleSheet.create({
 
     calendarBtn: {
         color: appPurpleDark,
-        right: 240,
-        top: 18,
+        // right: 240,
+        // top: 18,
+        // left: "3%",
     },
 
     calendar: {

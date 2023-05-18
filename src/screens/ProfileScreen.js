@@ -14,12 +14,14 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
-import {appPurpleDark, ViewPetScreenRoute} from "../utilities/constants";
+import {appPurpleDark, ViewPetScreenRoute, CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
+import userServices from "../services/UserServices";
+import UserServices from "../services/UserServices";
 
 const ProfileScreen = () => {
     const [view,setView] = useState(1)
@@ -32,6 +34,7 @@ const ProfileScreen = () => {
     const animatedValue = useRef(new Animated.Value(1)).current;
     const fadeOut = useRef(null);
     const fadeIn = useRef(null);
+
     useMemo(() => {
         fadeOut.current = Animated.timing(animatedValue, { toValue: 0, useNativeDriver: true });
         fadeIn.current = Animated.timing(animatedValue, { toValue: 1, useNativeDriver: true });
@@ -76,7 +79,7 @@ const ProfileScreen = () => {
         });
         console.log(currentUser)
     }, []);
-    useEffect(  () => {
+    useEffect(   () => {
         const getUserPosts = async () => {
             const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
             console.log(res)
@@ -84,41 +87,45 @@ const ProfileScreen = () => {
         }
 
         //TO DO:  load Pets from database or from current user object
-        const pets = [
-            {   id:0,
-                age: 1,
-                breed: "Persian",
-                color: "orange",
-                description: "Cute",
-                gender: "Female",
-                isNeutered: false,
-                name: "Cheeto",
-                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-                type: "Cat",
-                vaccinations: ["Basic"]
+        const getUserPets = async () => {
+            const pets = await UserServices.getUserPets(currentUser.uid);
+            setUserPets(pets);
+        }
+        // {   id:0,
+        //     age: 1,
+        //     breed: "Persian",
+        //     color: "orange",
+        //     description: "Cute",
+        //     gender: "Female",
+        //     isNeutered: false,
+        //     name: "Cheeto",
+        //     ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+        //     image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+        //     type: "Cat",
+        //     vaccinations: ["Basic"]
+        //
+        //
+        // },
+        // {   id:1,
+        //     age: 1,
+        //     breed: "Persian",
+        //     color: "orange",
+        //     description: "Cute",
+        //     gender: "Female",
+        //     isNeutered: false,
+        //     name: "Cheeto",
+        //     ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
+        //     image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
+        //     type: "Cat",
+        //     vaccinations: ["Basic"]
+        //
+        // },
 
 
-            },
-            {   id:1,
-                age: 1,
-                breed: "Persian",
-                color: "orange",
-                description: "Cute",
-                gender: "Female",
-                isNeutered: false,
-                name: "Cheeto",
-                ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-                image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-                type: "Cat",
-                vaccinations: ["Basic"]
+        // setUserPets(pets)
+        getUserPosts().then()
+        getUserPets().then()
 
-
-            },
-
-        ];
-         setUserPets(pets)
-         getUserPosts().then()
 
 
     },[])
@@ -135,8 +142,9 @@ const ProfileScreen = () => {
     const handleViewDetails= (pet)=>{
         navigation.navigate(ViewPetScreenRoute,{pet:pet});
     }
-    const handleAddPetNavigation = ()=>{
-       // navigation.navigate(AddPetScreenRoute);
+
+    const handleCreatePetProfileNavigation = () =>{
+        navigation.navigate(CreatePetProfileScreenRoute)
     }
     const renderPost = ({item}) => {
         return (
@@ -146,7 +154,7 @@ const ProfileScreen = () => {
     const renderPet = ({item}) => {
         return (
             <View style={{  alignItems:"center",paddingTop:"5%",paddingBottom:"10%"}}>
-            <Image  source={{uri: item.image}} style={styles.petIcon}/>
+            <Image  source={{uri: item.photo}} style={styles.petIcon}/>
                 <Text style={{fontWeight:"bold",fontSize:18}}>{item.name}</Text>
         <TouchableOpacity onPress={()=>{
             handleViewDetails(item)
@@ -160,7 +168,7 @@ const ProfileScreen = () => {
     };
     const renderFooter = () => {
         return (
-            <TouchableOpacity onPress={handleAddPetNavigation} style={{  alignItems:"center",marginTop:"15%"}}>
+            <TouchableOpacity onPress={handleCreatePetProfileNavigation} style={{  alignItems:"center",marginTop:"15%"}}>
               <View style={{alignItems:"center",flexDirection:"row"}}>
                 <FontAwesome name={'plus-circle'} style={{fontSize: 30,color:appPurpleDark}}></FontAwesome>
                 <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"7%"}}>Add Pet</Text>

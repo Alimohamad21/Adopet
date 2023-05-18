@@ -6,12 +6,14 @@ const {FieldValue}=firestore;
 class PetServices{
     static async addPet(pet){
         try {
-            await firestore().collection('pets').add(Pet.toJson(pet));
+            const pid = await firestore().collection('pets').add(Pet.toJson(pet));
+            console.log("Adding pet")
+            console.log(pet);
+            return pid.id;
         } catch (error) {
             console.log(error.message);
             return false;
         }
-        return true;
     }
 
     static async uploadPictureUrl(uid, url) {

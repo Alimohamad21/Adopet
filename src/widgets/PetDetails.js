@@ -6,7 +6,7 @@ import { View, Text, Image,StyleSheet } from 'react-native';
 const PetDetails = ({ pet }) => {
     return (
         <View style={styles.container}>
-            <Image source={{ uri: pet.image }} style={styles.image} />
+            <Image source={{ uri: pet.photo }} style={styles.image} />
             <Text style={styles.name}>{pet.name}</Text>
             <Text style={styles.description}>{pet.description}</Text>
             <View style={styles.detailsContainer}>
@@ -23,8 +23,8 @@ const PetDetails = ({ pet }) => {
                     <Text style={styles.detailsValue}>{pet.color}</Text>
                     <Text style={styles.detailsValue}>{pet.breed}</Text>
                     <Text style={styles.detailsValue}>{pet.gender}</Text>
-                    <Text style={styles.detailsValue}>{pet.isNeutered ? 'Yes' : 'No'}</Text>
-                    <Text style={styles.detailsValue}>{pet.vaccinations.join(" - ")}</Text>
+                    <Text style={styles.detailsValue}>{pet.isSpayed ? 'Yes' : 'No'}</Text>
+                    {/*<Text style={styles.detailsValue}>{pet.vaccinations.join(" - ")}</Text>*/}
                 </View>
             </View>
         </View>

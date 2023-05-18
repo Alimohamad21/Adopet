@@ -1,5 +1,8 @@
 import firestore from '@react-native-firebase/firestore';
 import User from '../models/User';
+import Chat from "../models/Chat";
+import Pet from "../models/Pet";
+import AdoptionPost from "../models/AdoptionPost";
 const {FieldValue}=firestore;
 class UserServices {
     // Register a new user with email and password
@@ -19,6 +22,19 @@ class UserServices {
             return false;
         }
         return true;
+    }
+
+    static async getUserPets(uid){
+        const petDoc = await firestore().collection('pets').where('uid', '==', uid).get();
+        const pets = [];
+
+        petDoc.docs.forEach((doc) => {
+            const petData = doc.data();
+            pets.push(petData);
+        });
+        console.log("PETS ARRAY");
+        console.log(pets);
+        return pets;
     }
 
     static async uploadProfilePictureUrl(uid, url) {
