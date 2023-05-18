@@ -37,6 +37,7 @@ class UserServices {
         return true;
     }
 
+
     static async uploadProfilePictureUrl(uid, url) {
         try {
             await firestore().collection('users').doc(uid).update({profilePicture: url});

@@ -11,7 +11,6 @@ import AuthServices from '../services/AuthServices';
 export function AuthScreen({navigation}) {
 
     const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
-    //AuthServices.signOut()
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged(async (authUser) => {
             if (authUser) {
