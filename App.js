@@ -10,20 +10,20 @@ import AuthScreen from './src/screens/AuthScreen';
 import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
-  AdoptionScreenRoute,
-  appPurpleDark,
-  ChatScreenRoute,
-  HomeScreenRoute,
-  LoginScreenRoute,
-  MainAppRoute,
-  ProfileScreenRoute,
-  SignupScreenRoute,
-  UploadImageScreenRoute,
-  ViewChatsScreenRoute,
-  ViewPetScreenRoute,
-  EditUserDetailsScreenRoute,
-  ChangePasswordScreenRoute,
-} from "./src/utilities/constants";
+    AdoptionScreenRoute,
+    appPurpleDark,
+    ChatScreenRoute,
+    HomeScreenRoute,
+    LoginScreenRoute,
+    MainAppRoute,
+    ProfileScreenRoute,
+    SignupScreenRoute,
+    UploadImageScreenRoute,
+    ViewChatsScreenRoute,
+    ViewPetScreenRoute,
+    EditUserDetailsScreenRoute,
+    ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute,
+} from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
 import {NativeBaseProvider} from 'native-base';
@@ -38,6 +38,7 @@ import ViewChatsScreen from './src/screens/ViewChatsScreen';
 import EditUserDetailsScreen from "./src/screens/EditUserDetailsScreen";
 import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 import SavedPostsScreen from "./src/screens/SavedPostsScreen";
+import OTPScreen from './src/screens/OTPScreen';
 
 
 const AppStack = createNativeStackNavigator();
@@ -52,6 +53,7 @@ function AuthStackScreens() {
         <AuthStack.Navigator screenOptions={{headerShown: false}}>
             <AuthStack.Screen name={LoginScreenRoute} component={LoginScreen}/>
             <AuthStack.Screen name={SignupScreenRoute} component={SignupScreen}/>
+            <AuthStack.Screen name={OTPScreenRoute} component={OTPScreen}/>
         </AuthStack.Navigator>
     );
 }
