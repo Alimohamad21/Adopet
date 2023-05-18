@@ -1,5 +1,6 @@
 import auth from '@react-native-firebase/auth';
 import {extractSubstringAfterDelimiter} from '../utilities/stringUtilities';
+import UserServices from './UserServices';
 
 class AuthServices {
     // Register a new user with email and password
@@ -21,10 +22,13 @@ class AuthServices {
                 const methods=await auth().fetchSignInMethodsForEmail(email);
                 return methods.includes("password");
     }
-x
+
 
     static async sendPhoneVerificationSMS(phoneNumber) {
         let verificationId=null, error=null;
+        const isAlreadyRegistered=await UserServices.checkIfPhoneNumberExists(phoneNumber)
+        if(isAlreadyRegistered)
+            return {error: "Phone Number is already used", verificationId: verificationId}
         try {
             const confirmation = await auth().signInWithPhoneNumber(
                 phoneNumber,
@@ -41,7 +45,8 @@ x
     static async confirmValidOTP(verificationId, otp) {
         let isValid;
         try {
-            const credential = auth.PhoneAuthProvider.credential(verificationId, otp); // get the credential
+            console.log(`VERIFICATION ID: ${verificationId} OTP: ${otp}`)
+            const credential = auth.PhoneAuthProvider.credential(verificationId, otp); // get the credential';
             await auth().signInWithCredential(credential);
             isValid = true;
         } catch (e) {

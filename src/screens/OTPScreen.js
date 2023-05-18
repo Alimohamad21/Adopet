@@ -25,7 +25,6 @@ const OTPScreen = () => {
     const navigation = useNavigation();
     const [otpError, setOtpError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: true,
@@ -43,10 +42,10 @@ const OTPScreen = () => {
             setOtpError('');
         }
         if (text.length === 6) {
-            await handleOTPSubmit();
+            await handleOTPSubmit(text);
         }
     };
-    const handleOTPSubmit = async () => {
+    const handleOTPSubmit = async (otp) => {
         setIsLoading(true);
         const success = await AuthServices.confirmValidOTP(verificationId, otp);
         if (!success) {

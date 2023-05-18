@@ -25,13 +25,12 @@ import PhoneInput from 'react-native-phone-input';
 import {StatusBar} from 'native-base';
 
 const SignupScreen = ({navigation}) => {
-    const [fullName, setFullName] = useState('Ali Mohamed');
-    const [email, setEmail] = useState(`ali${Date.now().toString()}@ali.com`);
-    //const [email, setEmail] = useState(`ali@ali.com`);
-    const [phoneNumber, setPhoneNumber] = useState('+201062505007');
-    const [password, setPassword] = useState('123456');
-    const [confirmPassword, setConfirmPassword] = useState('123456');
-    const [city, setCity] = useState('Alexandria');
+    const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState(``);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [city, setCity] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isFullNameEmpty, setIsFullNameEmpty] = useState(false);
     const [emailError, setEmailError] = useState('');
@@ -113,13 +112,12 @@ const SignupScreen = ({navigation}) => {
                 setEmailError("Email address is already in use");
                 setIsLoading(false);
             } else {
-                const user = new User("", fullName, city, phoneNumber, email, '', '', []);
+                const user = new User("", fullName, city, phoneNumber, email, '', '', [],[]);
                 const {verificationId, error} = await AuthServices.sendPhoneVerificationSMS(phoneNumber);
                 setIsLoading(false);
                 if (error) {
                     setIsPhoneNumberNotValid(true);
                     setPhoneNumberError(error);
-                    navigation.navigate(OTPScreenRoute, {user: user,password:password,verificationId: "hamada"});
                 } else {
                     navigation.navigate(OTPScreenRoute, {user: user,password:password,verificationId: verificationId});
                 }

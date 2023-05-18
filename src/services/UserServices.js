@@ -37,6 +37,11 @@ class UserServices {
         return true;
     }
 
+    static async checkIfPhoneNumberExists(phoneNumber){
+        const snapshot = await firestore().collection('users').where('phoneNumber','==',phoneNumber).get();
+        return snapshot.docs.length>0;
+    }
+
 
     static async uploadProfilePictureUrl(uid, url) {
         try {
