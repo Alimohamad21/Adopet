@@ -25,6 +25,26 @@ class PetServices{
         }
         return true;
     }
+
+    static async getPetAge(birthDate) {
+        try {
+            const currentDate = new Date();
+            const diffInMonths = (currentDate.getMonth() + 12 * currentDate.getFullYear()) - (birthDate.getMonth() + 12 * birthDate.getFullYear());
+
+            console.log(diffInMonths);
+
+            const years = Math.floor(diffInMonths / 12);
+            const months = diffInMonths % 12;
+
+            console.log(years);
+            console.log(months);
+            console.log(`${years} years and ${months} months`);
+            return [years, months];
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 }
 
 export default PetServices

@@ -1,9 +1,16 @@
 import React from 'react';
 import { View, Text, Image,StyleSheet } from 'react-native';
+import PetServices from "../services/PetServices";
 /**
  * @param {Pet} pet
  */
 const PetDetails = ({ pet }) => {
+
+    const years = PetServices.getPetAge(pet.age)[0];
+    const months = PetServices.getPetAge(pet.age)[1];
+
+    const ageString = years > 0 ? `${years} years and ${months} months` : `${months} months`;
+
     return (
         <View style={styles.container}>
             <Image source={{ uri: pet.photo }} style={styles.image} />
@@ -19,12 +26,12 @@ const PetDetails = ({ pet }) => {
                     <Text style={styles.detailsLabel}>Vaccinations:</Text>
                 </View>
                 <View style={styles.detailsColumn}>
-                    <Text style={styles.detailsValue}>{pet.age}</Text>
+                    <Text style={styles.detailsValue}>{ageString}</Text>
                     <Text style={styles.detailsValue}>{pet.color}</Text>
                     <Text style={styles.detailsValue}>{pet.breed}</Text>
                     <Text style={styles.detailsValue}>{pet.gender}</Text>
                     <Text style={styles.detailsValue}>{pet.isSpayed ? 'Yes' : 'No'}</Text>
-                    {/*<Text style={styles.detailsValue}>{pet.vaccinations.join(" - ")}</Text>*/}
+                    <Text style={styles.detailsValue}>{pet.vaccinations}</Text>
                 </View>
             </View>
         </View>

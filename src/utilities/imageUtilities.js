@@ -1,7 +1,19 @@
-import * as ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from "react-native-image-picker";
 
-export const pickImage = async (options) => {
-    const result=await ImagePicker.launchImageLibrary(options);
-    if (!result.assets) return null;
+// const options = {
+//     mediaType: 'photo',
+//     maxWidth: 700,
+//     maxHeight: 700,
+//     selectionLimit: 1
+// };
+export const pickImage = async (options = {
+    mediaType: "photo",
+    maxWidth: 700,
+    maxHeight: 700,
+    selectionLimit: 1,
+}) => {
+    const result = await ImagePicker.launchImageLibrary(options);
+    console.log(result.assets);
+    if(!result.assets) return null;
     return result.assets[0].uri;
 };

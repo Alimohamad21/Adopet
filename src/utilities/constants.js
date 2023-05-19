@@ -26,6 +26,29 @@ export const CreatePetProfileScreenRoute='Create pet profile';
 
 
 //Lists
+
+export const catAndDogColors = [
+    { label: 'Black', value: 'black' },
+    { label: 'White', value: 'white' },
+    { label: 'Gray', value: 'gray' },
+    { label: 'Brown', value: 'brown' },
+    { label: 'Red', value: 'red' },
+    { label: 'Golden', value: 'golden' },
+    { label: 'Cream', value: 'cream' },
+    { label: 'Chocolate', value: 'chocolate' },
+    { label: 'Apricot', value: 'apricot' },
+    { label: 'Beige', value: 'beige' },
+    { label: 'Spotted', value: 'spotted' },
+    { label: 'Bicolor', value: 'bicolor' },
+    { label: 'Tricolor', value: 'tricolor' },
+    { label: 'Harlequin', value: 'harlequin' }
+];
+
+export const vaccinationOptions = [
+    { label: 'None', value: 'none' },
+    { label: 'Some', value: 'some' },
+    { label: 'All mandatory', value: 'allMandatory' },
+];
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Alexandria', value: 'Alexandria'},
     {label: 'Giza', value: 'Giza'},
