@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from "react";
 import { Button, Image, StyleSheet, View } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import StorageServices from '../services/StorageServices';
@@ -6,9 +6,12 @@ import {firebaseStoragePostsDirectory} from '../utilities/constants';
 import UserServices from '../services/UserServices';
 import {pickImage} from '../utilities/imageUtilities';
 import ImagePickerButton from "../widgets/ImagePickerButton";
+import { CurrentUserContext } from "../providers/CurrentUserProvider";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const UploadImageScreen = ({route,navigation}) => {
-    const {user}=route.params;
+    //const {user}=route.params;
+    const { currentUser,setCurrentUser } = useContext(CurrentUserContext);
     const [imageUri, setImageUri] = useState(null);
     const [imageFromFirebase,setImageFromFirebase] = useState(null);
 
@@ -37,7 +40,7 @@ const UploadImageScreen = ({route,navigation}) => {
         const imageUrl = await StorageServices.uploadImageToFirebase(firebaseStoragePostsDirectory, imageUri);
         console.log(imageUrl);
         setImageFromFirebase(imageUrl)
-        await UserServices.uploadProfilePictureUrl(user.uid,imageUrl);
+        await UserServices.uploadProfilePictureUrl(currentUser.uid,imageUrl);
     };
 
     return (
@@ -51,7 +54,8 @@ const UploadImageScreen = ({route,navigation}) => {
             {/*    <Button title="Pick an image" onPress={handlePickImage} />*/}
             {/*</View>*/}
             <View style={{alignItems:"center"}}>
-                <ImagePickerButton onPick={handleImageUriChange} />
+                <Button title="Select Image" onPress={handleImageUriChange} />
+                <FontAwesome name="image" style={styles.icon} />
                 </View>
             <Button title="Upload Image" onPress={handleUploadImage} />
             {imageFromFirebase && <Image source={{ uri: imageFromFirebase }} style={styles.image} />}

@@ -7,7 +7,6 @@ export  const postGrey= '#F1F1F6';
 //DIRECTORIES
 export const fbStorageUserImagesDirectory = '/user-images';
 export const fbStoragePetImagesDirectory = '/pet-images';
-
 //ROUTES
 export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';
@@ -17,9 +16,12 @@ export const SignupScreenRoute = 'Signup';
 export const UploadImageScreenRoute = 'UploadImage';
 export const ViewPetScreenRoute = 'Pet Details';
 export const ProfileScreenRoute = 'Profile';
+export const EditUserDetailsScreenRoute = 'Edit Details';
+export const ChangePasswordScreenRoute = 'Change Password';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
-export const SavedPostsScreenRoute='Saved'
+export const SavedPostsScreenRoute='Saved';
+export const OTPScreenRoute='Verify Phone Number';
 
 
 export const CreatePetProfileScreenRoute='Create pet profile';

@@ -6,7 +6,7 @@ import {borderGrey, egyptianCities} from "../utilities/constants";
 
 
 
-function DropdownComponent({onSelect,data, placeholder}){
+function DropdownComponent({placeholder,onSelect,data}){
     const [value, setValue] = useState(null);
 
     const renderItem = item => {

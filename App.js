@@ -11,15 +11,19 @@ import messaging from '@react-native-firebase/messaging';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
     AdoptionScreenRoute,
-    appPurpleDark, ChatScreenRoute,
+    appPurpleDark,
+    ChatScreenRoute,
     HomeScreenRoute,
-    LoginScreenRoute, MainAppRoute, ProfileScreenRoute, SavedPostsScreenRoute,
+    LoginScreenRoute,
+    MainAppRoute,
+    ProfileScreenRoute,
     SignupScreenRoute,
     UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute, CreatePetProfileScreenRoute,
+    EditUserDetailsScreenRoute,
+    ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute,
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
-
 import {NativeBaseProvider} from 'native-base';
 import DrawerContainer from './src/widgets/DrawerContainer';
 import {CurrentUserContext,CurrentUserProvider} from './src/providers/CurrentUserProvider';
@@ -29,8 +33,11 @@ import ViewPetScreen from './src/screens/ViewPetScreen';
 import ProfileScreen from "./src/screens/ProfileScreen";
 import ChatScreen from './src/screens/ChatScreen';
 import ViewChatsScreen from './src/screens/ViewChatsScreen';
+import EditUserDetailsScreen from "./src/screens/EditUserDetailsScreen";
+import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 import CreatePetProfileScreen from "./src/screens/CreatePetProfileScreen";
+import OTPScreen from './src/screens/OTPScreen';
 
 
 const AppStack = createNativeStackNavigator();
@@ -45,6 +52,7 @@ function AuthStackScreens() {
         <AuthStack.Navigator screenOptions={{headerShown: false}}>
             <AuthStack.Screen name={LoginScreenRoute} component={LoginScreen}/>
             <AuthStack.Screen name={SignupScreenRoute} component={SignupScreen}/>
+            <AuthStack.Screen name={OTPScreenRoute} component={OTPScreen}/>
         </AuthStack.Navigator>
     );
 }
@@ -63,6 +71,8 @@ function AppStackScreens() {
             <AppStack.Screen name={UploadImageScreenRoute} component={UploadImageScreen}/>
             <AppStack.Screen name={ViewPetScreenRoute} component={ViewPetScreen}/>
             <AppStack.Screen name={ProfileScreenRoute} component={ProfileScreen}/>
+            <AppStack.Screen name={EditUserDetailsScreenRoute} component={EditUserDetailsScreen}/>
+            <AppStack.Screen name={ChangePasswordScreenRoute} component={ChangePasswordScreen}/>
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
             <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>

@@ -8,19 +8,25 @@ import {
     Dimensions,
     Image,
     TouchableOpacity,
-    TouchableHighlight, Animated,
-} from 'react-native';
+    TouchableHighlight, Animated, Button,
+} from "react-native";
 import {useNavigation, useRoute} from '@react-navigation/native';
 import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
-import {appPurpleDark, ViewPetScreenRoute, CreatePetProfileScreenRoute} from "../utilities/constants";
+import {
+    appPurpleDark,
+    ChatScreenRoute,
+    EditUserDetailsScreenRoute,
+    UploadImageScreenRoute,
+    ViewPetScreenRoute,
+  CreatePetProfileScreenRoute
+} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import AdoptionPostCard from "../widgets/AdoptionPostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
-import userServices from "../services/UserServices";
 import UserServices from "../services/UserServices";
 
 const ProfileScreen = () => {
@@ -82,53 +88,23 @@ const ProfileScreen = () => {
     useEffect(   () => {
         const getUserPosts = async () => {
             const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
-            console.log(res)
             setUserPosts(res)
         }
+        //
+        // const unsubscribe = navigation.addListener('focus', async () => {
+        //     const user = await UserServices.getUser(currentUser.uid);
+        //     setCurrentUser(user);
+        // });
+        // return unsubscribe;
 
         //TO DO:  load Pets from database or from current user object
         const getUserPets = async () => {
             const pets = await UserServices.getUserPets(currentUser.uid);
             setUserPets(pets);
         }
-        // {   id:0,
-        //     age: 1,
-        //     breed: "Persian",
-        //     color: "orange",
-        //     description: "Cute",
-        //     gender: "Female",
-        //     isNeutered: false,
-        //     name: "Cheeto",
-        //     ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-        //     image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-        //     type: "Cat",
-        //     vaccinations: ["Basic"]
-        //
-        //
-        // },
-        // {   id:1,
-        //     age: 1,
-        //     breed: "Persian",
-        //     color: "orange",
-        //     description: "Cute",
-        //     gender: "Female",
-        //     isNeutered: false,
-        //     name: "Cheeto",
-        //     ownerID: "MGcgEFgff8ZrVXbDNBTF7ZRFcxc2",
-        //     image: "https://www.thehappycatsite.com/wp-content/uploads/2020/05/yellow-tabby-HC-long.jpg",
-        //     type: "Cat",
-        //     vaccinations: ["Basic"]
-        //
-        // },
-
-
-        // setUserPets(pets)
-        getUserPosts().then()
-        getUserPets().then()
-
-
-
-    },[])
+         getUserPosts().then()
+         getUserPets().then()
+    },[navigation])
 
 
     const handlePostsSelect =() =>{
@@ -177,11 +153,15 @@ const ProfileScreen = () => {
         );
     };
 
+    const handleEditDetails = () => {
+        navigation.navigate(EditUserDetailsScreenRoute);
+    };
+
     return(
         <SafeAreaView style={{flex:1}}>
             { !hideComponents &&
                 <Animated.View style={{ opacity: animatedValue }}>
-            <View style={styles.profileIconContainer}>
+                <View style={styles.profileIconContainer}>
 
                 {
                     currentUser.profilePicture !== '' ?
@@ -202,7 +182,10 @@ const ProfileScreen = () => {
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
                     <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
                 </View>
-
+                <TouchableOpacity onPress={handleEditDetails} style={{flexDirection:"row",justifyContent:"center"}}>
+                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                    <Text style={styles.editDetails} >Edit details</Text>
+                </TouchableOpacity>
             </View>
 
                 </Animated.View>
@@ -295,6 +278,11 @@ const styles = StyleSheet.create({
         fontWeight:"500"
     },
     phone:{
+        marginLeft:"2%",
+        fontSize:15,
+        fontWeight:"500"
+    },
+    editDetails:{
         marginLeft:"2%",
         fontSize:15,
         fontWeight:"500"
