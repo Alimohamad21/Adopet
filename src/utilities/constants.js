@@ -21,6 +21,7 @@ export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
 export const SavedPostsScreenRoute='Saved';
 export const OTPScreenRoute='Verify Phone Number';
+export const FilterPostsScreenRoute = "Filters";
 
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},

@@ -28,20 +28,48 @@ class PostServices {
         return {newPosts: adoptionPosts, lastDocument: lastDocument};
     }
 
+    static async getAdoptionPostsFiltered(ageRange, selectedColors) {
+
+        console.log(selectedColors);
+
+        const postsCollection = await firestore().collection('adoption-posts')
+        let query = postsCollection
+        if (ageRange) {
+            query = query
+                .where("petAge", '>=', parseInt(ageRange.min))
+                .where("petAge", '<=', parseInt(ageRange.max))
+        }
+        if (selectedColors){
+            query = query.where("petColor",'in',selectedColors)
+        }
+
+
+
+        const snapshot = await query
+            .limit(15)
+            .get();
+        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        const lastDocument = snapshot.docs[snapshot.docs.length - 1];
+        console.log(adoptionPosts,)
+        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+    }
+
     static async addAdoptionPost(adoptionPost) {
         await firestore().collection('adoption-posts').add(AdoptionPost.toJson(adoptionPost));
     }
-    static async getUserAdoptionPosts(userID){
+
+    static async getUserAdoptionPosts(userID) {
         const snapshot = await firestore()
             .collection('adoption-posts')
-            .where("userThatPostedId","==",userID)
+            .where("userThatPostedId", "==", userID)
             .get();
-        console.log("userposts:",snapshot)
+        console.log("userposts:", snapshot)
         return snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
     }
+
     static async getAdoptionPostsByID(postIds) {
         try {
-            console.log("post service id:",postIds)
+            console.log("post service id:", postIds)
             // Get a reference to the adoption posts collection
             const collectionRef = firestore().collection('adoption-posts');
 
