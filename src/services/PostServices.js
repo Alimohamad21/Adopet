@@ -28,21 +28,29 @@ class PostServices {
         return {newPosts: adoptionPosts, lastDocument: lastDocument};
     }
 
-    static async getAdoptionPostsFiltered(ageRange, selectedColors) {
+    static async getAdoptionPostsFiltered(filters) {
 
-        console.log(selectedColors);
+        // console.log(petType,ageRange,selectedBreeds,isNeutered);
 
         const postsCollection = await firestore().collection('adoption-posts')
         let query = postsCollection
-        if (ageRange) {
+        if (filters.petType != null){
+            query = query.where("petType",'==', filters.petType)
+        }
+        if (filters.ageRange) {
             query = query
-                .where("petAge", '>=', parseInt(ageRange.min))
-                .where("petAge", '<=', parseInt(ageRange.max))
+                .where("petAge", '>=', parseInt(filters.ageRange.min))
+                .where("petAge", '<=', parseInt(filters.ageRange.max))
         }
-        if (selectedColors){
-            query = query.where("petColor",'in',selectedColors)
+        // if (selectedColors.length > 0){
+        //     query = query.where("petColor",'in',selectedColors)
+        // }
+        if (filters.selectedBreeds.length > 0){
+            query = query.where("petBreed",'in',filters.selectedBreeds)
         }
-
+        if(filters.isNeutered != null){
+            query = query.where("petIsNeutered", '==', filters.isNeutered )
+        }
 
 
         const snapshot = await query
@@ -50,7 +58,42 @@ class PostServices {
             .get();
         const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-        console.log(adoptionPosts,)
+        console.log(adoptionPosts)
+        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+    }
+
+    static async getAdoptionPostsFilteredPaginated(filters,prevLastDocument) {
+        console.log(filters)
+
+        const postsCollection = await firestore().collection('adoption-posts')
+        let query = postsCollection
+        if (filters.petType != null){
+            query = query.where("petType",'==', filters.petType)
+        }
+        if (filters.ageRange) {
+            query = query
+                .where("petAge", '>=', parseInt(filters.ageRange.min))
+                .where("petAge", '<=', parseInt(filters.ageRange.max))
+                .orderBy('petAge')
+        }
+        // if (selectedColors.length > 0){
+        //     query = query.where("petColor",'in',selectedColors)
+        // }
+        if (filters.selectedBreeds.length > 0){
+            query = query.where("petBreed",'in',filters.selectedBreeds)
+        }
+        if(filters.isNeutered != null){
+            query = query.where("petIsNeutered", '==', filters.isNeutered )
+        }
+
+
+        const snapshot = await query
+            .startAfter(prevLastDocument)
+            .limit(15)
+            .get();
+        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        const lastDocument = snapshot.docs[snapshot.docs.length - 1];
+        console.log(adoptionPosts)
         return {newPosts: adoptionPosts, lastDocument: lastDocument};
     }
 

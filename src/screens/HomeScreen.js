@@ -31,7 +31,7 @@ const HomeScreen = ({navigation}) => {
 
     const onPressService = (route) => {
 
-        navigation.navigate(route);
+        navigation.navigate(route,{ "isFiltered": null, "filters": null });
     };
 
     const renderServices = ({item}) => (

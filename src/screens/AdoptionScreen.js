@@ -26,7 +26,8 @@ import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useNavigation} from "@react-navigation/native";
 
 
-const AdoptionScreen = () => {
+const AdoptionScreen = ({route}) => {
+    const { isFiltered, filters } = route.params;
     const [searchPhrase, setSearchPhrase] = useState('');
     const [clicked, setClicked] = useState(false);
     const [adoptionPosts, setAdoptionPosts] = useState(null);
@@ -41,37 +42,73 @@ const AdoptionScreen = () => {
         );
     };
 
+
     const onEndReached = async () => {
+        console.log("all posts loaded:",isAllPostsLoaded)
         if (!adoptionPosts.length || isAllPostsLoaded) {
             // don't load more data if scrolling up or if no data has been loaded yet
             return;
         }
+
         setIsPaginating(true);
-        const {newPosts, lastDocument} = await PostServices.getAdoptionPostsPaginated(prevLastDocument);
-        setAdoptionPosts([...adoptionPosts, ...newPosts]);
-        setIsPaginating(false);
-        setPrevLastDocument(lastDocument);
-        if(newPosts<5)
-            setIsAllPostsLoaded(true);
+
+        if (isFiltered){
+            const {newPosts, lastDocument} = await PostServices.getAdoptionPostsFilteredPaginated(filters,prevLastDocument);
+            setAdoptionPosts([...adoptionPosts, ...newPosts]);
+            setIsPaginating(false);
+            setPrevLastDocument(lastDocument);
+            if(newPosts<5)
+                setIsAllPostsLoaded(true);
+        }
+        else{
+            const {newPosts, lastDocument} = await PostServices.getAdoptionPostsPaginated(prevLastDocument);
+            setAdoptionPosts([...adoptionPosts, ...newPosts]);
+            setIsPaginating(false);
+            setPrevLastDocument(lastDocument);
+            if(newPosts<5)
+                setIsAllPostsLoaded(true);
+        }
+
+
     };
 
 
     useEffect(() => {
+        console.log(isFiltered,filters)
         const getPosts = async () => {
             const {newPosts, lastDocument} = await PostServices.getAdoptionPostsInitial();
             setAdoptionPosts(newPosts);
             setPrevLastDocument(lastDocument);
         };
-        getPosts();
-    }, []);
+        const getPostsFiltered = async () => {
+            const {newPosts, lastDocument} = await PostServices.getAdoptionPostsFiltered(filters);
+            setAdoptionPosts(newPosts);
+            setPrevLastDocument(lastDocument);
+            setIsAllPostsLoaded(false)
+        };
+        isFiltered ? getPostsFiltered() : getPosts()
+
+
+    }, [route]);
     const handleFilterPress=()=>{
+
         navigation.navigate(FilterPostsScreenRoute);
     }
 
     if (!adoptionPosts) {
         return <ScreenLoadingIndicator/>;
     } else if (adoptionPosts.length === 0) {
-        return <NoDataAvailable text="No posts available"/>;
+        return (
+            <View>
+                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}}>
+                    <Text>Filter</Text>
+                    <FontAwesome name={"chevron-down"} style={{marginLeft:"5%"}} ></FontAwesome>
+                </TouchableOpacity>
+                <NoDataAvailable text="No posts available"/>
+            </View>
+
+
+        )
     } else {
         return (
             <SafeAreaView style={styles.root}>
@@ -94,8 +131,9 @@ const AdoptionScreen = () => {
                           data={adoptionPosts} renderItem={renderPost}
                           keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
                           onEndReached={onEndReached}
+                          extraData={route}
                 />
-               {isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View>}
+                {isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View>}
             </SafeAreaView>
         );
     }
