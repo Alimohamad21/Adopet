@@ -15,7 +15,14 @@ import MenuImage from '../widgets/MenuImage';
 import SearchBar from '../widgets/SearchBar';
 import {red} from 'react-native-reanimated/src';
 import {FlatList, KeyboardAvoidingView, StatusBar} from 'native-base';
-import {appPurpleDark, FilterPostsScreenRoute, postGrey, services, ViewPetScreenRoute} from '../utilities/constants';
+import {
+    appPurpleDark,
+    appPurpleLight,
+    FilterPostsScreenRoute,
+    postGrey,
+    services,
+    ViewPetScreenRoute
+} from '../utilities/constants';
 import {blueGrey100, blueGrey300, blueGrey50} from 'react-native-paper/src/styles/themes/v2/colors';
 import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -99,12 +106,20 @@ const AdoptionScreen = ({route}) => {
         return <ScreenLoadingIndicator/>;
     } else if (adoptionPosts.length === 0) {
         return (
-            <View>
-                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",marginTop:'3%',marginRight:"5%",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}} >
-                    <Text style={{marginLeft:"5%",fontSize:16}}>Filters</Text>
-                    <FontAwesome name={"filter"} style={{marginLeft:"5%",fontSize:20}} ></FontAwesome>
-                </TouchableOpacity>
+            <View style={{flex:1}}>
                 <NoDataAvailable text="No posts available"/>
+                <TouchableOpacity onPress={handleFilterPress} style={{ flexDirection: 'row',
+                    marginTop: '3%', marginRight: '3%', marginBottom: '5%',
+                    justifyContent: 'center', alignItems: 'center',
+                    position: 'absolute', bottom: 0, right: 0, zIndex: 999,
+                    backgroundColor:appPurpleDark,
+                    width:"13%",
+                    borderRadius:7
+                }}>
+                    <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Filters</Text>
+                    <FontAwesome name={'filter'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
+                </TouchableOpacity>
+
 
 
             </View>
@@ -114,21 +129,21 @@ const AdoptionScreen = ({route}) => {
     } else {
         return (
             <SafeAreaView style={styles.root}>
-                {/*<View style={styles.searchBarContainer}>*/}
 
-                {/*    <SearchBar*/}
-                {/*        searchPhrase={searchPhrase}*/}
-                {/*        setSearchPhrase={setSearchPhrase}*/}
-                {/*        clicked={clicked}*/}
-                {/*        setClicked={setClicked}*/}
-
-                {/*    />*/}
-                {/*</View>*/}
                 <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
-                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",marginTop:'3%',marginRight:"5%",marginBottom:"3%",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}} >
-                    <Text style={{marginLeft:"5%",fontSize:16}}>Filters</Text>
-                    <FontAwesome name={"filter"} style={{marginLeft:"5%",fontSize:20}} ></FontAwesome>
-                </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handleFilterPress} style={{ flexDirection: 'row',
+                        marginTop: '3%', marginRight: '3%', marginBottom: '5%',
+                        justifyContent: 'center', alignItems: 'center',
+                        position: 'absolute', bottom: 0, right: 0, zIndex: 999,
+                        backgroundColor:appPurpleDark,
+                        width:"13%",
+                        borderRadius:7
+                    }}>
+                        <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Filters</Text>
+                        <FontAwesome name={'filter'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
+                    </TouchableOpacity>
+
                 <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
                           data={adoptionPosts} renderItem={renderPost}
                           keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
