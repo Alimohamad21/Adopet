@@ -230,7 +230,7 @@ const EditUserDetailsScreen = () => {
   return (
     <View style={styles.screen}>
 
-      <StatusBar backgroundColor={appPurpleDark} barStyle="light-content" />
+      {/*<StatusBar backgroundColor={appPurpleDark} barStyle="light-content" />*/}
       {isLoading && <TransparentLoadingIndicator />}
       <ScrollView showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} style={styles.scrollView}>

@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
 
         alignItems: 'flex-start',
         marginBottom: '70%',
-        marginTop: '10%',
+        marginTop: '20%',
         paddingHorizontal: '10%',
 
     },

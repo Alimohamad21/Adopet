@@ -22,7 +22,7 @@ import {
     ViewChatsScreenRoute,
     ViewPetScreenRoute,
     EditUserDetailsScreenRoute,
-    ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute,
+    ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute, FilterPostsScreenRoute,
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
@@ -39,6 +39,7 @@ import EditUserDetailsScreen from "./src/screens/EditUserDetailsScreen";
 import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 import OTPScreen from './src/screens/OTPScreen';
+import FilterPostsScreen from "./src/screens/FilterPostsScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -77,6 +78,12 @@ function AppStackScreens() {
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
             <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
+            <AppStack.Screen name={FilterPostsScreenRoute} component={FilterPostsScreen} options={{
+                presentation: 'modal',
+                animationTypeForReplace: 'push',
+                animation:'slide_from_bottom',
+
+            }}/>
         </AppStack.Navigator>
     );
 }

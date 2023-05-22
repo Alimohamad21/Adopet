@@ -21,6 +21,7 @@ export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
 export const SavedPostsScreenRoute='Saved';
 export const OTPScreenRoute='Verify Phone Number';
+export const FilterPostsScreenRoute = "Filters";
 
 //Lists
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
@@ -45,6 +46,32 @@ export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Hurghada', value: 'Hurghada'},
 
 ];
+export const egyptianCatBreeds = [
+    { label: 'Egyptian Mau', value: 'Egyptian Mau' },
+    { label: 'Persian', value: 'Persian' },
+    { label: 'Siamese', value: 'Siamese' },
+    { label: 'Sphynx', value: 'Sphynx' },
+    { label: 'Munchkin', value: 'Munchkin' },
+    { label: 'British Shorthair', value: 'British Shorthair' },
+    { label: 'Maine Coon', value: 'Maine Coon' },
+    { label: 'Bengal', value: 'Bengal' },
+    { label: 'Savannah', value: 'Savannah' },
+    { label: 'Scottish Fold', value: 'Scottish Fold' }
+];
+
+export const egyptianDogBreeds = [
+    { label: 'German Shepherd', value: 'German Shepherd' },
+    { label: 'Labrador Retriever', value: 'Labrador Retriever' },
+    { label: 'Golden Retriever', value: 'Golden Retriever' },
+    { label: 'Rottweiler', value: 'Rottweiler' },
+    { label: 'Bulldog', value: 'Bulldog' },
+    { label: 'Boxer', value: 'Boxer' },
+    { label: 'Siberian Husky', value: 'Siberian Husky' },
+    { label: 'Doberman Pinscher', value: 'Doberman Pinscher' },
+    { label: 'Poodle', value: 'Poodle' },
+    { label: 'Great Dane', value: 'Great Dane' }
+];
+
 export const services = [
     {serviceId: 1,
         name: "Adoption",
