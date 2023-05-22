@@ -13,7 +13,8 @@ import PostServices from "../services/PostServices";
 import {Portal, Provider} from "react-native-paper";
 
 /**
- * @param {AdoptionPost} adoptionPost
+ * Componenet which displays a card
+ * @param {AdoptionPost} adoptionPost an adoption post
  */
 const AdoptionPostCard = ({adoptionPost,isPoster}) => {
     const navigation=useNavigation();
@@ -22,14 +23,20 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
     const [isPostSaved,setIsPostSaved] = useState(false);
     const [fadeAnim] = useState(new Animated.Value(0));
     const [fadedText,setFadedText] = useState("") ;
+    const [rating,setRating]=useState(null);
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
     useEffect(  () => {
-
     const checkIsPostSaved = async ()=>{
         const bool = await UserServices.isPostSaved(currentUser.uid,adoptionPost.id);
         setIsPostSaved(bool);
     }
+    const getUserRating = async ()=>{
+            const user = await UserServices.getUser(adoptionPost.userThatPostedId);
+            console.log(`RATING: ${user.getAverageRating()}`)
+            setRating(user.getAverageRating());
+    }
+    getUserRating().then()
     checkIsPostSaved().then()
     },[])
     const callPhoneNumber = () => {

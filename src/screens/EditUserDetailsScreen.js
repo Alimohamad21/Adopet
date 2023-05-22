@@ -216,7 +216,7 @@ const EditUserDetailsScreen = () => {
     // }
     if (isValidInputs) {
       setIsLoading(true);
-      const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.fcmTokens);
+      const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.fcmTokens,0,0);
       await UserServices.updateUser(user, currentUser.uid).then(() => {
         setCurrentUser(user);
       }).then(() => {
