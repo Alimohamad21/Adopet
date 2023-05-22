@@ -1,5 +1,5 @@
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
-import React, {Component, useContext, useEffect, useLayoutEffect, useMemo, useState} from 'react';
+import React, {Component, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState} from 'react';
 import {
     StyleSheet,
     View,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
-
+import Slider from 'rn-range-slider';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
     AdoptionScreenRoute,
@@ -22,29 +22,20 @@ import {
     egyptianCatBreeds,
     egyptianDogBreeds
 } from "../utilities/constants";
-import { Slider, StatusBar, Switch} from "native-base";
+import {  StatusBar, Switch} from "native-base";
 import { RadioButton } from 'react-native-paper';
 import PostServices from "../services/PostServices";
+import Thumb from "../widgets/SliderWidgets/Thumb";
+import Rail from "../widgets/SliderWidgets/Rail";
+import RailSelected from "../widgets/SliderWidgets/RailSelected";
+import Label from "../widgets/SliderWidgets/Label";
+import Notch from "../widgets/SliderWidgets/Notch";
 
 
-const FilterPostsScreen = () => {
+const FilterPostsScreen = ({route}) => {
     const navigation = useNavigation();
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerTintColor: appPurpleDark,
-            headerStyle: {
-                backgroundColor: 'white', // Change the header background color
-            },
-            headerLeft: ()=> <View/>,
-            headerRight: () => {
-                return (
-                    <TouchableOpacity>
-                        <FontAwesome onPress={handleClose} name={"times"} style={{fontSize:20}}></FontAwesome>
-                    </TouchableOpacity>
-                )
-            },
-        });
-    }, []);
+    let prevFilters = route.params
+
     const handleClose=()=>{
         navigation.goBack();
     }
@@ -57,36 +48,28 @@ const FilterPostsScreen = () => {
 
     //const [selectedPetTypes, setSelectedPetTypes] = useState([]);
     const [petType, setPetType] = useState(null);
-    const [minAge, setMinAge] = useState("0");
-    const [maxAge,setMaxAge] = useState("20");
+    const [minAge, setMinAge] = useState(0);
+    const [maxAge,setMaxAge] = useState(15);
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedBreeds, setSelectedBreeds] = useState([]);
     const [isNeutered,setIsNeutered] = useState();
 
-    // const [petTypeList, setPetTypeList] = useState([
-    //     { label: "Dog", checked: false },
-    //     { label: "Cat", checked: false },
-    //  ])
-    // const memoizedPetTypeList = useMemo(() => petTypeList, []);
-    // const [colorsList, setColorsList] = useState([
-    //     { label: "White", checked: false },
-    //     { label: "Black", checked: false },
-    //     { label: "Gray", checked: false },
-    //     { label: "Brown", checked: false },
-    // ]);
+
     const [breedsList, setBreedsList] = useState([...egyptianCatBreeds, ...egyptianDogBreeds]);
-    // const [breedsList, setBreedsList] = useState([...egyptianCatBreeds, ...egyptianDogBreeds].map((breed) => ({
-    //     label: breed,
-    //     checked: false,
-    // })));
-    // const memoizedBreedsList = useMemo(() => breedsList, [breedsList]);
 
 
     const handleMinAgeChange = (text) => {
-        setMinAge(text);
+        setMinAge(Number(text));
     };
     const handleMaxAgeChange = (text) => {
-        setMaxAge(text);
+        if (Number(text) < minAge){
+            console.log("here")
+            setMaxAge(15);
+        }
+        else{
+            setMaxAge(Number(text));
+        }
+
     };
 
 
@@ -97,186 +80,279 @@ const FilterPostsScreen = () => {
             "max": maxAge,
         }
 
+
         let filters = {
             "ageRange": ageRange,
             "petType" : petType,
             "selectedBreeds" : selectedBreeds,
-            "isNeutered" : isNeutered
+            "isNeutered" : isNeutered === "any" ? null : isNeutered
         }
         navigation.navigate(AdoptionScreenRoute, { "isFiltered": true, "filters": filters })
         // await PostServices.getAdoptionPostsFiltered(petType,ageRange,selectedBreeds,isNeutered);
     }
 
 
-    // useEffect(() => {
-    //     setSelectedColors(colorsList.filter((item) => item.checked).map((item) => item.label));
-    //
-    // }, [colorsList]);
-
-    // useEffect(() => {
-    //     let breeds = []
-    //     if(petTypeList[0].checked)
-    //         breeds = breeds.concat(egyptianDogBreeds)
-    //     if(petTypeList[1].checked)
-    //         breeds = breeds.concat(egyptianCatBreeds)
-    //
-    //     setBreedsList(breeds);
-    //
-    // }, [petTypeList]);
-
-    // const handleColorFilterChange = (index) => {
-    //     const newList = [...colorsList];
-    //     newList[index].checked = !newList[index].checked;
-    //     setColorsList(newList);
-    // };
-    const handleBreedFilterChange = (index,value) =>{
+    const handleBreedFilterChange = (index) =>{
         // const newList = [...breedsList];
         // newList[index].checked = !newList[index].checked;
-        // setSelectedBreeds(newList.filter((item) => item.checked).map((item) => item.label))
+
         // setBreedsList(newList)
         // const updatedBreedsList = [...breedsList];
         // updatedBreedsList[index].checked = !updatedBreedsList[index].checked;
-        let updatedBreedsList = breedsList
-        updatedBreedsList[index].checked = value
-        setBreedsList(updatedBreedsList);
-        console.log(updatedBreedsList)
+        const newBreedsList = [...breedsList];
+        newBreedsList[index] = {
+            ...newBreedsList[index],
+            checked: !newBreedsList[index].checked,
+        };
+        setBreedsList(newBreedsList);
+        console.log(newBreedsList)
+        setSelectedBreeds(newBreedsList.filter((item) => item.checked).map((item) => item.label))
     }
+    const renderThumb = useCallback((text) => <Thumb name={text} min={minAge} max={maxAge}/>, [minAge,maxAge]);
+    const renderRail = useCallback(() => <Rail/>, []);
+    const renderRailSelected = useCallback(() => <RailSelected/>, []);
+    const renderLabel = useCallback(value => <Label text={value}/>, []);
+    const renderNotch = useCallback(() => <Notch/>, []);
+    const handleValueChange = useCallback((low, high) => {
+        setMinAge(low)
+        setMaxAge(high)
+        // setHigh(high);
+    }, []);
 
-    // const handlePetTypeChange = (index)=>{
-    //     const newList = [...petTypeList];
-    //     newList[index].checked = !newList[index].checked;
-    //     setPetTypeList(newList)
-    //     let breeds = []
-    //     if(newList[0].checked)
-    //         breeds = breeds.concat(egyptianDogBreeds)
-    //     if(newList[1].checked)
-    //         breeds = breeds.concat(egyptianCatBreeds)
-    //
-    //     if(!newList[0].checked && !newList[1].checked)
-    //         breeds = [...egyptianCatBreeds, ...egyptianDogBreeds]
-    //     setPetType(petTypeList[index].label)
-    //
-    //     // setSelectedPetTypes(newList.filter((item) => item.checked).map((item) => item.label))
-    //     // setBreedsList(breeds);
-    // }
+    const  handelResetFilter = ()=>{
+        setMaxAge(15)
+        setMinAge(0)
+        setBreedsList([...egyptianCatBreeds, ...egyptianDogBreeds])
+        setIsNeutered(null)
+        setPetType(null)
+
+    }
+    useEffect(()=>{
+        console.log(prevFilters)
+
+            let breeds;
+            if (petType === "Dog")
+                breeds  = [...egyptianDogBreeds];
+            else if (petType === "Cat")
+                breeds  = [...egyptianCatBreeds];
+            else {
+                breeds = [...egyptianCatBreeds, ...egyptianDogBreeds]
+            }
+            // breeds = breeds.map((breed) => {
+            // const isChecked = prevFilters.filters.selectedBreeds.includes(breed.label);
+            // return { ...breed, checked: isChecked };
+            // });
+            // Update the state with the new breeds array
+            setBreedsList(breeds);
+
+
+
+    }, [petType]);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerTintColor: appPurpleDark,
+            headerStyle: {
+                backgroundColor: 'white', // Change the header background color
+            },
+            headerLeft: ()=> <View/>,
+            headerRight: () => {
+                return (
+                    <View style={{flexDirection:"row",justifyContent:"flex-end",alignItems:"center",marginLeft:"70%"}}>
+                        <View style={{flexDirection:"row",justifyContent:"flex-end",marginTop:"5%",marginBottom:"5%",marginRight:"15%"}}>
+                            <TouchableOpacity  onPress={handelResetFilter}  style={styles.resetFilters}>
+                                <Text style={{color:appPurpleDark,fontWeight:"600",fontSize:18,textAlign:"center"}}>Reset </Text>
+                            </TouchableOpacity>
+                        </View>
+                        {/*<View style={{flex: 0.5}} />*/}
+                        <TouchableOpacity >
+                            <FontAwesome onPress={handleClose} name={"times"} style={{fontSize:20,marginBottom:"35%"}}></FontAwesome>
+                        </TouchableOpacity>
+                    </View>
+
+                )
+            },
+
+        });
+
+        const loadPrevFilters= async ()=>{
+            if(prevFilters.filters){
+                if(prevFilters.filters.petType)
+                    setPetType(prevFilters.filters.petType)
+
+                setMinAge(prevFilters.filters.ageRange.min)
+                setMaxAge(prevFilters.filters.ageRange.max)
+                if (prevFilters.filters.selectedBreeds.length>0){
+
+
+                let breeds;
+                if (prevFilters.filters.petType === "Dog")
+                     breeds  = [...egyptianDogBreeds];
+                else if (prevFilters.filters.petType === "Cat")
+                     breeds  = [...egyptianCatBreeds];
+                else
+                    breeds = [...egyptianCatBreeds, ...egyptianDogBreeds]
+
+                breeds = breeds.map((breed) => {
+                    const isChecked = prevFilters.filters.selectedBreeds.includes(breed.label);
+                    return { ...breed, checked: isChecked };
+                });
+                // Update the state with the new breeds array
+                setBreedsList(breeds);
+                }
+                if (prevFilters.filters.isNeutered)
+                setIsNeutered(prevFilters.filters.isNeutered)
+
+            }
+
+        }
+        loadPrevFilters().then(()=>{
+
+        })
+    }, []);
+
     return (
         <ScrollView style={styles.root}>
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
+
             <View>
-                <View style={{flexDirection:"row",alignItems:"center", justifyContent:"space-between"}}>
-                    <Text>Pet Type:</Text>
-                    <TouchableOpacity onPress={()=>setViewPetTypeFilter(!viewPetTypeFilter)}>
-                        <FontAwesome name={"chevron-down"} style={{marginRight:"5%"}}></FontAwesome>
+
+
+                    <TouchableOpacity onPress={()=>setViewPetTypeFilter(!viewPetTypeFilter)} style={styles.filterTitle}>
+                        <Text style={styles.filterTitleText}>Pet Type</Text>
+                        { !viewPetTypeFilter &&
+                            <FontAwesome  style={styles.filterTitleText} name={"chevron-down"} ></FontAwesome>
+                        }
+                        { viewPetTypeFilter &&
+                            <FontAwesome  style={styles.filterTitleText} name={"chevron-up"} ></FontAwesome>
+                        }
+
                     </TouchableOpacity>
 
-                </View>
+
 
                 {viewPetTypeFilter &&
-                    <View>
+                    <View style={{justifyContent:"center",marginLeft:"6%",marginRight:"6%"}}>
 
                         <RadioButton.Group onValueChange={newValue => setPetType(newValue)} value={petType}>
-                            <RadioButton.Item label= "Dog" value={"Dog"} />
-                            <RadioButton.Item label= "Cat" value= {"Cat"} />
+                            <RadioButton.Item label= "Dog" value={"Dog"}  labelStyle={{fontWeight:"bold"}} color={appPurpleDark}/>
+                            <RadioButton.Item label= "Cat" value= {"Cat"} labelStyle={{fontWeight:"bold"}} color={appPurpleDark} />
 
                         </RadioButton.Group>
                     </View>
                 }
 
             </View>
+            <View style={{ borderBottomWidth: 2, borderColor: "#D3D3D3",marginTop:10 , marginBottom: 10,marginLeft:"4%",marginRight:"4%"}} />
 
 
-            <View style={{flexDirection:"row",alignItems:"center", justifyContent:"space-between"}}>
-                <Text>Age:</Text>
-                <TouchableOpacity onPress={()=>setViewAgeFilter(!viewAgeFilter)}>
-                    <FontAwesome name={"chevron-down"} style={{marginRight:"5%"}}></FontAwesome>
+
+                <TouchableOpacity onPress={()=>setViewAgeFilter(!viewAgeFilter)} style={styles.filterTitle}>
+                    <Text style={styles.filterTitleText}>Age</Text>
+                    { !viewAgeFilter &&
+                        <FontAwesome  style={styles.filterTitleText} name={"chevron-down"} ></FontAwesome>
+                    }
+                    { viewAgeFilter &&
+                        <FontAwesome  style={styles.filterTitleText} name={"chevron-up"} ></FontAwesome>
+                    }
+
                 </TouchableOpacity>
 
-            </View>
+
             {viewAgeFilter &&
                 <View>
-                    <TextInput   value={minAge} placeholder={"Min"}  onChangeText={handleMinAgeChange} style={{backgroundColor:"white",width:"10%"}}></TextInput>
-                    <TextInput value={maxAge} placeholder={"Max"}  onChangeText={handleMaxAgeChange} style={{marginTop:"2%",backgroundColor:"white",width:"10%"}} ></TextInput>
+                    <View style={styles.ageRangeInputsContainer}>
+
+                    </View>
+
+                    <Slider
+                        style={styles.slider}
+                        min={0}
+                        max={15}
+                        low = {minAge}
+                        high={maxAge}
+                        step={1}
+                        value={[minAge, maxAge]}
+                        floatingLabel={false}
+                        renderThumb={renderThumb}
+                        renderRail={renderRail}
+                        renderRailSelected={renderRailSelected}
+                        // renderLabel={renderLabel}
+                        // renderNotch={renderNotch}
+                        onValueChanged={handleValueChange}
+                    />
                 </View>
             }
-
-
-            {/*<View>*/}
-            {/*    <View style={{flexDirection:"row",alignItems:"center", justifyContent:"space-between"}}>*/}
-            {/*        <Text>Color:</Text>*/}
-            {/*        <TouchableOpacity onPress={()=>setViewColorFilter(!viewColorFilter)}>*/}
-            {/*            <FontAwesome name={"chevron-down"} style={{marginRight:"5%"}}></FontAwesome>*/}
-            {/*        </TouchableOpacity>*/}
-
-            {/*    </View>*/}
-            {/*    {viewColorFilter &&*/}
-            {/*        <View>*/}
-            {/*            <View>*/}
-            {/*                {colorsList.map((item, index) => (*/}
-            {/*                    <View key={index} style={{ flexDirection: "row" }}>*/}
-            {/*                        <Checkbox*/}
-            {/*                            accessibilityLabel="Select this option"*/}
-            {/*                            value={item.checked}*/}
-            {/*                            isChecked={item.checked}*/}
-            {/*                            // onValueChange={() => handleCheckboxChange(index)}*/}
-            {/*                            onChange={() => handleColorFilterChange(index)}*/}
-            {/*                        />*/}
-            {/*                        <Text> {item.label} </Text>*/}
-            {/*                    </View>*/}
-            {/*                ))}*/}
-            {/*            </View>*/}
-            {/*            <Text>Selected colors: {selectedColors.join(", ")}</Text>*/}
-            {/*       */}
-            {/*        </View>*/}
-            {/*    }*/}
-
-            {/*</View>*/}
-
             <View>
-                <View style={{flexDirection:"row",alignItems:"center", justifyContent:"space-between"}}>
-                    <Text>Breed:</Text>
-                    <TouchableOpacity onPress={()=>setViewBreedFilter(!viewBreedFilter)}>
-                        <FontAwesome name={"chevron-down"} style={{marginRight:"5%"}}></FontAwesome>
+
+
+                <View style={{ borderBottomWidth: 2, borderColor: "#D3D3D3",marginTop:10 ,marginBottom: 10,marginLeft:"4%",marginRight:"4%"}} />
+
+
+                    <TouchableOpacity onPress={()=>setViewBreedFilter(!viewBreedFilter)}  style={styles.filterTitle}>
+                        <Text style={styles.filterTitleText} >Breed</Text>
+                        { !viewBreedFilter &&
+                            <FontAwesome  style={styles.filterTitleText} name={"chevron-down"} ></FontAwesome>
+                        }
+                        { viewBreedFilter &&
+                            <FontAwesome  style={styles.filterTitleText} name={"chevron-up"} ></FontAwesome>
+                        }
+
                     </TouchableOpacity>
 
-                </View>
+
                 {viewBreedFilter &&
-                    <View>
-                        <View>
-                            {/*{breedsList.map((item, index) => (*/}
-                            {/*    <View key={index} style={{ flexDirection: "row" }}>*/}
-                            {/*        <CheckBox*/}
-                            {/*            value={item.checked}*/}
-                            {/*            onValueChange={(newValue) => handleBreedFilterChange(index, newValue)}*/}
-                            {/*        />*/}
-                            {/*        <Text> {item.label} </Text>*/}
-                            {/*    </View>*/}
-                            {/*))}*/}
+                    <View >
+                        <View  style={{flexDirection: "row", flexWrap: "wrap",justifyContent:"flex-start",marginLeft:"3%",marginRight:"3%"}}>
+
+                            {breedsList.map((item, index) => (
+
+                                        <TouchableOpacity onPress={()=>handleBreedFilterChange(index)} key={index} style={[styles.breedsFilterItem,
+                                            item.checked ?styles.checkedItem:styles.uncheckedItem]}>
+
+                                            <Text style={{fontWeight:"bold",color:"black"}}>{item.label}</Text>
+
+                                        </TouchableOpacity>
+
+                            ))}
+
                         </View>
-                        <Text>Selected colors: {selectedColors.join(", ")}</Text>
+
                     </View>
                 }
-                <View style={{flexDirection:"row",alignItems:"center", justifyContent:"space-between"}}>
-                    <Text>Neutered:</Text>
-                    <TouchableOpacity onPress={()=>setViewNeuteredFilter(!viewNeuteredFiltered)}>
-                        <FontAwesome name={"chevron-down"} style={{marginRight:"5%"}}></FontAwesome>
+
+                <View style={{ borderBottomWidth: 2, borderColor: "#D3D3D3",marginTop:10 , marginBottom: 10,marginLeft:"4%",marginRight:"4%"}} />
+                    <TouchableOpacity onPress={()=>setViewNeuteredFilter(!viewNeuteredFiltered)} style={styles.filterTitle}>
+                        <Text style={styles.filterTitleText} >Neutered</Text>
+                        {!viewNeuteredFiltered &&
+                            <FontAwesome style={styles.filterTitleText} name={"chevron-down"} ></FontAwesome>
+                        }
+                        {viewNeuteredFiltered &&
+                            <FontAwesome style={styles.filterTitleText} name={"chevron-up"} ></FontAwesome>
+                        }
                     </TouchableOpacity>
 
-                </View>
+
                 {viewNeuteredFiltered &&
-                    <View>
+                    <View style={{justifyContent:"center",marginLeft:"6%",marginRight:"6%"}} >
                         <View>
                             <RadioButton.Group onValueChange={newValue => setIsNeutered(newValue)} value={isNeutered}>
-                                <RadioButton.Item label= "No" value={false} />
-                                <RadioButton.Item label= "Yes" value= {true} />
-                                <RadioButton.Item label= "Any" value= {null} />
+                                <RadioButton.Item label= "No" value={false} labelStyle={{fontWeight:"bold"}} color={appPurpleDark} />
+                                <RadioButton.Item label= "Yes" value= {true} labelStyle={{fontWeight:"bold"}} color={appPurpleDark} />
+                                <RadioButton.Item label= "Any" value= {"any"} labelStyle={{fontWeight:"bold"}} color={appPurpleDark} />
                             </RadioButton.Group>
                         </View>
                     </View>
                 }
-
             </View>
             {/*<Text>Breed:</Text>*/}
-            <Button  onPress={handleApplyFilter} title={"Apply Filter"} ></Button>
+            <View style={{ borderBottomWidth: 2, borderColor: "#D3D3D3",marginTop:10 , marginBottom: 10,marginLeft:"4%",marginRight:"4%"}} />
+                    <View style={{flexDirection:"row",justifyContent:"center",marginTop:"5%",marginBottom:"7%"}}>
+                        <TouchableOpacity  onPress={handleApplyFilter}  style={styles.applyFilters}>
+                            <Text style={{color:"white",fontWeight:"600",fontSize:18,textAlign:"center"}}>Apply Filters</Text>
+                        </TouchableOpacity>
+                    </View>
+
 
 
 
@@ -289,11 +365,78 @@ const FilterPostsScreen = () => {
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        backgroundColor:appPurpleLight,
-    },
+    backgroundColor:"white",
 
+    },
+    filterTitle:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+        alignItems:"center",
+
+    },
+    filterTitleText:{
+        fontSize:17,
+        margin:"5%",
+        color:"#818589",
+        fontWeight:"bold"
+    },
+    breedsFilterItem:{ flexDirection: "row",
+        alignItems:"center",
+        justifyContent:"center",
+        borderStyle:"solid",
+        borderWidth: 1,
+        width:"32%",
+        marginBottom:"2%",
+        padding:"1%",
+        borderRadius:10,
+        marginLeft:"1%"
+    },
+    checkedItem:{
+        borderColor: appPurpleDark,
+        borderWidth:1.5,
+        backgroundColor:appPurpleLight
+    },
+    uncheckedItem:{
+        borderColor: "#D3D3D3",
+        borderWidth:1.5
+    },
+    slider:{
+        flex:1,
+        width:"85%",
+        marginLeft:"7%"
+
+    },
+    ageRangeInputsContainer:{
+    flexDirection:"row",
+        justifyContent:"center",
+
+    },
+    ageRangeInputs:{
+
+        width:"20%",
+        marginLeft:"10%",
+        marginRight:"10%",
+        flexDirection:"row",
+        textAlign:"center",
+        borderColor: "#D3D3D3",
+        borderWidth:1.5,
+        borderRadius:10,
+        fontWeight:"bold"
+    },
+    applyFilters:{
+        borderRadius:5,
+        backgroundColor:appPurpleDark,
+        width:"90%",
+        padding:"1%"
+    },
+    resetFilters:{
+        borderRadius:7,
+        backgroundColor:"white",
+        width:"80%",
+        borderWidth:2,
+        borderColor:appPurpleDark,
+        padding:"1%"
+    }
 });
 
 

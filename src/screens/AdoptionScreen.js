@@ -92,7 +92,7 @@ const AdoptionScreen = ({route}) => {
     }, [route]);
     const handleFilterPress=()=>{
 
-        navigation.navigate(FilterPostsScreenRoute);
+        navigation.navigate(FilterPostsScreenRoute,{"filters": filters });
     }
 
     if (!adoptionPosts) {
@@ -100,11 +100,13 @@ const AdoptionScreen = ({route}) => {
     } else if (adoptionPosts.length === 0) {
         return (
             <View>
-                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}}>
-                    <Text>Filter</Text>
-                    <FontAwesome name={"chevron-down"} style={{marginLeft:"5%"}} ></FontAwesome>
+                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",marginTop:'3%',marginRight:"5%",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}} >
+                    <Text style={{marginLeft:"5%",fontSize:16}}>Filters</Text>
+                    <FontAwesome name={"filter"} style={{marginLeft:"5%",fontSize:20}} ></FontAwesome>
                 </TouchableOpacity>
                 <NoDataAvailable text="No posts available"/>
+
+
             </View>
 
 
@@ -123,9 +125,9 @@ const AdoptionScreen = ({route}) => {
                 {/*    />*/}
                 {/*</View>*/}
                 <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
-                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}}>
-                    <Text>Filter</Text>
-                    <FontAwesome name={"chevron-down"} style={{marginLeft:"5%"}} ></FontAwesome>
+                <TouchableOpacity onPress={handleFilterPress} style={{flexDirection:"row",marginTop:'3%',marginRight:"5%",marginBottom:"3%",justifyContent: 'flex-end',alignItems:"center",marginLeft:"75%"}} >
+                    <Text style={{marginLeft:"5%",fontSize:16}}>Filters</Text>
+                    <FontAwesome name={"filter"} style={{marginLeft:"5%",fontSize:20}} ></FontAwesome>
                 </TouchableOpacity>
                 <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
                           data={adoptionPosts} renderItem={renderPost}

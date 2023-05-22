@@ -82,7 +82,8 @@ class PostServices {
         if (filters.selectedBreeds.length > 0){
             query = query.where("petBreed",'in',filters.selectedBreeds)
         }
-        if(filters.isNeutered != null){
+        console.log(typeof filters.isNeutered)
+        if(typeof filters.isNeutered === 'boolean'){
             query = query.where("petIsNeutered", '==', filters.isNeutered )
         }
 
