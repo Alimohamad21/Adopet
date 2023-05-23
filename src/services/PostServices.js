@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import AdoptionPost from '../models/AdoptionPost';
+import {AdoptionPost, HostingPost} from '../models/Post';
 import {firebase} from "@react-native-firebase/auth";
 
 class PostServices {
@@ -7,6 +7,7 @@ class PostServices {
         const snapshot = await firestore()
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
+            .where("type","==","Adoption")
             .limit(15)
             .get();
 
@@ -20,6 +21,7 @@ class PostServices {
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
             .startAfter(prevLastDocument)
+            .where("type","==","Adoption")
             .limit(15)
             .get();
 
@@ -54,6 +56,7 @@ class PostServices {
 
 
         const snapshot = await query
+            .where("type","==","Adoption")
             .limit(15)
             .get();
         const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
@@ -76,9 +79,7 @@ class PostServices {
                 .where("petAge", '<=', parseInt(filters.ageRange.max))
                 .orderBy('petAge')
         }
-        // if (selectedColors.length > 0){
-        //     query = query.where("petColor",'in',selectedColors)
-        // }
+
         if (filters.selectedBreeds.length > 0){
             query = query.where("petBreed",'in',filters.selectedBreeds)
         }
@@ -89,6 +90,7 @@ class PostServices {
 
 
         const snapshot = await query
+            .where("type","==","Adoption")
             .startAfter(prevLastDocument)
             .limit(15)
             .get();
@@ -102,38 +104,65 @@ class PostServices {
         await firestore().collection('adoption-posts').add(AdoptionPost.toJson(adoptionPost));
     }
 
-    static async getUserAdoptionPosts(userID) {
+    static async getUserPosts(userID) {
         const snapshot = await firestore()
             .collection('adoption-posts')
-            .where("userThatPostedId", "==", userID)
+            .where('userThatPostedId', '==', userID)
             .get();
-        console.log("userposts:", snapshot)
-        return snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+
+        const userPosts = [];
+
+        snapshot.docs.forEach((doc) => {
+            const postType = doc.data().type;
+
+            switch (postType) {
+                case 'Adoption':
+                    userPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
+                    break;
+                // case 'lostAndFound':
+                //     userPosts.push(LostAndFoundPost.fromJson({ id: doc.id, ...doc.data()}));
+                //     break;
+                // case 'event':
+                //     userPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
+                //     break;
+                // Add cases for other post types as needed
+                default:
+                    break;
+            }
+        });
+
+        return userPosts;
     }
-
-    static async getAdoptionPostsByID(postIds) {
+    static async getPostsByIds(postIds) {
         try {
-            console.log("post service id:", postIds)
-            // Get a reference to the adoption posts collection
             const collectionRef = firestore().collection('adoption-posts');
-
-            // Create a query to filter by post IDs
             const query = collectionRef.where(firestore.FieldPath.documentId(), 'in', postIds);
-
-            // Retrieve the query results
             const querySnapshot = await query.get();
 
-            // Convert the query results to an array of post objects
-            // const posts = [];
-            // querySnapshot.forEach((doc) => {
-            //     posts.push({ id: doc.id, ...doc.data() });
-            // });
+            const allPosts = [];
 
-            const adoptionPosts = querySnapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
-            //console.log(adoptionPosts)
-            return adoptionPosts;
+            querySnapshot.docs.forEach((doc) => {
+                const postType = doc.data().type;
+
+                switch (postType) {
+                    case 'Adoption':
+                        allPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
+                        break;
+                    // case 'lostAndFound':
+                    //     allPosts.push(LostAndFoundPost.fromJson({ id: doc.id, ...doc.data() }));
+                    //     break;
+                    case 'Hosting':
+                        allPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data() }));
+                        break;
+                    // Add cases for other post types as needed
+                    default:
+                        break;
+                }
+            });
+
+            return allPosts;
         } catch (error) {
-            console.error('Error getting adoption posts:', error);
+            console.error('Error getting posts:', error);
             return false;
         }
     }

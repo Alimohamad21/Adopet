@@ -28,7 +28,7 @@ import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import PostServices from '../services/PostServices';
-import AdoptionPostCard from '../widgets/AdoptionPostCard';
+import PostCard from '../widgets/PostCard';
 import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useNavigation} from "@react-navigation/native";
 
@@ -45,7 +45,7 @@ const AdoptionScreen = ({route}) => {
 
     const renderPost = ({item}) => {
         return (
-            <AdoptionPostCard adoptionPost={item} isPoster={false}/>
+            <PostCard post={item} isPoster={false}/>
         );
     };
 
