@@ -1,21 +1,21 @@
 import Pet from './Pet';
-class UserPet {
-    constructor(uid, pid, pet) {
+class UserPet {    /**
+ * @param {Pet} pet
+ */
+    constructor(id, uid, pet) {
+        this.id = id;
         this.uid = uid;
-        this.pid = pid;
         this.pet = pet;
     }
 
     static fromJson(json) {
-        return new UserPet(json.uid,json.pid,json.pet);
+        return new UserPet(json.id,json.uid,Pet.fromJson(json.pet));
     }
 
     static toJson(userPet) {
         return {
             uid: userPet.uid,
-            pid: userPet.pid,
             pet: userPet.pet,
-
         };
     }
 }

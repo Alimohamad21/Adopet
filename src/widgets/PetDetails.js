@@ -5,15 +5,9 @@ import PetServices from "../services/PetServices";
  * @param {Pet} pet
  */
 const PetDetails = ({ pet }) => {
-
-    const years = PetServices.getPetAge(pet.age)[0];
-    const months = PetServices.getPetAge(pet.age)[1];
-
-    const ageString = years > 0 ? `${years} years and ${months} months` : `${months} months`;
-
     return (
         <View style={styles.container}>
-            <Image source={{ uri: pet.photo }} style={styles.image} />
+            <Image source={{ uri: pet.image }} style={styles.image} />
             <Text style={styles.name}>{pet.name}</Text>
             <Text style={styles.description}>{pet.description}</Text>
             <View style={styles.detailsContainer}>
@@ -26,11 +20,11 @@ const PetDetails = ({ pet }) => {
                     <Text style={styles.detailsLabel}>Vaccinations:</Text>
                 </View>
                 <View style={styles.detailsColumn}>
-                    <Text style={styles.detailsValue}>{ageString}</Text>
+                    <Text style={styles.detailsValue}>{pet.getPetAge()}</Text>
                     <Text style={styles.detailsValue}>{pet.color}</Text>
                     <Text style={styles.detailsValue}>{pet.breed}</Text>
                     <Text style={styles.detailsValue}>{pet.gender}</Text>
-                    <Text style={styles.detailsValue}>{pet.isSpayed ? 'Yes' : 'No'}</Text>
+                    <Text style={styles.detailsValue}>{pet.isNeutered ? 'Yes' : 'No'}</Text>
                     <Text style={styles.detailsValue}>{pet.vaccinations}</Text>
                 </View>
             </View>

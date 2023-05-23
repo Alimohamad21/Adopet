@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Text,
     ScrollView,
+    Image,
     TouchableHighlight
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -27,12 +28,12 @@ import firestore from "@react-native-firebase/firestore";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
+import UserPet from '../models/UserPet';
 
 const CreatePetProfileScreen = ({navigation}) => {
 
     const {currentUser} = useContext(CurrentUserContext);
 
-    const [photo, setPhoto] = useState('');
     const [imageUri, setImageUri] = useState(null);
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
@@ -77,12 +78,7 @@ const CreatePetProfileScreen = ({navigation}) => {
         const uri = await pickImage();
         if (!uri) return;
         setImageUri(uri);
-        setIsLoading(true);
-        const imageUrl = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, uri);
-        setPhoto(imageUrl);
-        console.log(imageUrl);
         setIsPhotoEmpty(false);
-        setIsLoading(false);
     }
 
     const handleNameChange = (text) => {
@@ -155,7 +151,7 @@ const CreatePetProfileScreen = ({navigation}) => {
             isValidInputs = false;
             setIsBreedEmpty(true);
         }
-        if (photo === '') {
+        if (imageUri === null) {
             isValidInputs = false;
             setIsPhotoEmpty(true);
         }
@@ -193,11 +189,10 @@ const CreatePetProfileScreen = ({navigation}) => {
 
         if (isValidInputs) {
             setIsLoading(true);
-            const pet = new Pet(currentUser.uid, "", type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value);
-            const newPid = await PetServices.addPet(pet);
-            await firestore().collection('pets').doc(newPid).update({'pid': newPid});
+            const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
+            const userPet = new UserPet('', currentUser.uid, new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value));
+            await PetServices.addPet(userPet);
             navigation.replace(ProfileScreenRoute);
-            await PetServices.getPetAge(age);
         }
     }
 
@@ -216,6 +211,8 @@ const CreatePetProfileScreen = ({navigation}) => {
                         <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
                             <FontAwesome name={'plus-circle'} onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
                         </TouchableHighlight>
+                    {imageUri && <Image source={{uri:imageUri}} style={styles.image}/>}
+
                     {isPhotoEmpty && <Text style={styles.wrongCredentialsText}>Please add a picture of your pet.</Text>}
 
 
@@ -326,6 +323,13 @@ const styles = StyleSheet.create({
         width: '85%',
         marginLeft: '3%',
 
+    },
+    image: {
+        width: '80%',
+        aspectRatio: 1,
+        resizeMode: 'contain',
+        marginTop: 20,
+        marginBottom: 20,
     },
     container: {
         flex: 1,

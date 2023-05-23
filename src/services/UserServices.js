@@ -3,6 +3,7 @@ import User from '../models/User';
 import Chat from "../models/Chat";
 import Pet from "../models/Pet";
 import AdoptionPost from "../models/AdoptionPost";
+import UserPet from '../models/UserPet';
 const {FieldValue}=firestore;
 class UserServices {
     // Register a new user with email and password
@@ -30,10 +31,9 @@ class UserServices {
 
         petDoc.docs.forEach((doc) => {
             const petData = doc.data();
-            pets.push(petData);
+            petData.id=doc.id;
+            pets.push(UserPet.fromJson(petData));
         });
-        console.log("PETS ARRAY");
-        console.log(pets);
         return pets;
     }
 

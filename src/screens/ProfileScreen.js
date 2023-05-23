@@ -139,8 +139,8 @@ const ProfileScreen = () => {
         setView(2)
         console.log("Pets")
     }
-    const handleViewDetails= (pet)=>{
-        navigation.navigate(ViewPetScreenRoute,{pet:pet});
+    const handleViewDetails= (userPet)=>{
+        navigation.navigate(ViewPetScreenRoute,{pet:userPet.pet});
     }
 
     const handleCreatePetProfileNavigation = () =>{
@@ -154,8 +154,8 @@ const ProfileScreen = () => {
     const renderPet = ({item}) => {
         return (
             <View style={{  alignItems:"center",paddingTop:"5%",paddingBottom:"10%"}}>
-            <Image  source={{uri: item.photo}} style={styles.petIcon}/>
-                <Text style={{fontWeight:"bold",fontSize:18}}>{item.name}</Text>
+            <Image  source={{uri: item.pet.image}} style={styles.petIcon}/>
+                <Text style={{fontWeight:"bold",fontSize:18}}>{item.pet.name}</Text>
         <TouchableOpacity onPress={()=>{
             handleViewDetails(item)
         }} style={styles.petDetailsButton}>
@@ -221,7 +221,6 @@ const ProfileScreen = () => {
                         data={userPosts} renderItem={renderPost}
                         keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
                             onScroll={handleScroll}
-
                         />
                     }
                 </View>
