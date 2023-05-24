@@ -72,3 +72,4 @@ buck-out/
 # Other environment files
 .env.*
 .env.*.local
+ahsish.js
