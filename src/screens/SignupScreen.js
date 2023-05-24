@@ -112,7 +112,7 @@ const SignupScreen = ({navigation}) => {
                 setEmailError("Email address is already in use");
                 setIsLoading(false);
             } else {
-                const user = new User("", fullName, city, phoneNumber, email, '', '', [],[]);
+                const user = new User("", fullName, city, phoneNumber, email, '', '', [],[],0,0);
                 const {verificationId, error} = await AuthServices.sendPhoneVerificationSMS(phoneNumber);
                 setIsLoading(false);
                 if (error) {
