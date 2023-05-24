@@ -11,7 +11,8 @@ import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 import UserServices from "../services/UserServices";
 import PostServices from "../services/PostServices";
 import {Portal, Provider} from "react-native-paper";
-import {AdoptionPost} from "../models/Post";
+import {AdoptionPost,LostPost} from "../models/Post";
+
 
 /**
  * @param {Post} post
@@ -26,12 +27,13 @@ const PostCard = ({post,isPoster}) => {
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
     let renderedPost;
+    console.log("post card \n",post)
     if (post instanceof AdoptionPost) {
         renderedPost = <AdoptionPostRenderer post={post} />;
      }
-        // else if (post instanceof HostingPost) {
-    //     renderedPost = <HostingPostRenderer post={post} />;
-    // }
+        else if (post instanceof LostPost ) {
+        renderedPost = <LostPostRenderer post={post} />;
+     }
 
     useEffect(  () => {
     const checkIsPostSaved = async ()=>{
@@ -312,6 +314,102 @@ const PostCard = ({post,isPoster}) => {
             </Provider>
         );
     }
+    /**
+     * @param {LostPost} post
+     */
+    function LostPostRenderer({ post }) {
+        return(
+            <Provider>
+
+                <View style={styles.postContainer}>
+                    {isLoading && <TransparentLoadingIndicator/>}
+                    <View style={styles.postHeader}>
+
+                        <View style={styles.profileContainer}>
+                            {post.userThatPostedProfilePicture === ""  ?
+                                <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+                                <Image source={{uri: post.userThatPostedProfilePicture}}
+                                       style={styles.profileBtnIcon}/>}
+                            <View>
+                                <Text
+                                    style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
+                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
+                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
+                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
+                                    <FontAwesome name={'star-half-o'} style={{fontSize: 10}}></FontAwesome>
+                                </View>
+
+                            </View>
+                        </View>
+
+                        <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
+                            <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
+                            <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
+                            <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+                                {isPostSaved &&
+                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
+                                }
+                                {!isPostSaved &&
+                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+                                }
+
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.postBody}>
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
+                        </View>
+                        <Text style={styles.postTitle}>{post.pet.name}</Text>
+                        <Text style={{
+                            paddingLeft: '2%',
+                            paddingRight: '2%',
+                            color: 'black',
+                        }}>{post.pet.description}</Text>
+                        <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.detailsButton}>
+                            <FontAwesome name={'paw'}
+                                         style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+                            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <Text>Lost Near:</Text>
+                        <Text>{post.lostLocation}</Text>
+                        <Text>{post.lostDateAndTime}</Text>
+                    </View>
+
+
+                    {!isPoster &&
+                        <View>
+                            <View style={styles.horizontalSeparator}/>
+                            <View style={styles.postFooter}>
+                                <TouchableOpacity onPress={callPhoneNumber}>
+                                    <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                </TouchableOpacity>
+                                <View style={styles.verticalSeparator}/>
+                                <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
+                                    <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                    }
+
+                    <Portal>
+                        <Animated.View style={styles.fadingComponent}>
+                            <Text>{fadedText}</Text>
+                        </Animated.View>
+                    </Portal>
+
+                </View>
+
+            </Provider>
+        );
+    }
 };
+
+
 
 export default PostCard;

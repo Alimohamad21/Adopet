@@ -71,7 +71,8 @@ const FilterPostsScreen = ({route}) => {
             "selectedBreeds": selectedBreeds,
             "isNeutered": isNeutered === "any" ? null : isNeutered
         }
-        navigation.navigate(AdoptionScreenRoute, {"isFiltered": true, "filters": filters})
+        navigation.navigate(prevFilters.prevScreenRoute, {"isFiltered": true, "filters": filters})
+
     }
     const handelResetFilter = () => {
         setMaxAge(15)

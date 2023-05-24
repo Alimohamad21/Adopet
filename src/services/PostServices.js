@@ -1,36 +1,66 @@
 import firestore from '@react-native-firebase/firestore';
-import {AdoptionPost, HostingPost} from '../models/Post';
+import {AdoptionPost, HostingPost, LostPost} from '../models/Post';
 import {firebase} from "@react-native-firebase/auth";
 
 class PostServices {
-    static async getAdoptionPostsInitial() {
+    static async getPostsInitial(postType) {
+        console.log(postType)
         const snapshot = await firestore()
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
-            .where("type","==","Adoption")
+            .where("type","==",postType)
             .limit(15)
             .get();
 
-        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        let posts
+        switch (postType) {
+            case 'Adoption':
+                 posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            case 'Lost':
+                 posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            // case 'event':
+            //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
+            //     break;
+            // Add cases for other post types as needed
+            default:
+                break;
+        }
+
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+        return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getAdoptionPostsPaginated(prevLastDocument) {
+    static async getPostsPaginated(prevLastDocument,postType) {
         const snapshot = await firestore()
             .collection('adoption-posts')
             .orderBy('createdAt', 'desc')
             .startAfter(prevLastDocument)
-            .where("type","==","Adoption")
+            .where("type","==",postType)
             .limit(15)
             .get();
 
-        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        let posts
+        switch (postType) {
+            case 'Adoption':
+                posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            case 'Lost':
+                posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            // case 'event':
+            //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
+            //     break;
+            // Add cases for other post types as needed
+            default:
+                break;
+        }
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+        return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getAdoptionPostsFiltered(filters) {
+    static async getPostsFiltered(filters,postType) {
 
         // console.log(petType,ageRange,selectedBreeds,isNeutered);
 
@@ -56,16 +86,30 @@ class PostServices {
 
 
         const snapshot = await query
-            .where("type","==","Adoption")
+            .where("type","==",postType)
             .limit(15)
             .get();
-        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        let posts
+        switch (postType) {
+            case 'Adoption':
+                posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            case 'Lost':
+                posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            // case 'event':
+            //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
+            //     break;
+            // Add cases for other post types as needed
+            default:
+                break;
+        }
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-        console.log(adoptionPosts)
-        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+        console.log(posts)
+        return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getAdoptionPostsFilteredPaginated(filters,prevLastDocument) {
+    static async getPostsFilteredPaginated(filters,prevLastDocument,postType) {
         console.log(filters)
 
         const postsCollection = await firestore().collection('adoption-posts')
@@ -90,14 +134,28 @@ class PostServices {
 
 
         const snapshot = await query
-            .where("type","==","Adoption")
+            .where("type","==",postType)
             .startAfter(prevLastDocument)
             .limit(15)
             .get();
-        const adoptionPosts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+        let posts
+        switch (postType) {
+            case 'Adoption':
+                posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            case 'Lost':
+                posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            // case 'event':
+            //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
+            //     break;
+            // Add cases for other post types as needed
+            default:
+                break;
+        }
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
-        console.log(adoptionPosts)
-        return {newPosts: adoptionPosts, lastDocument: lastDocument};
+        console.log(posts)
+        return {newPosts: posts, lastDocument: lastDocument};
     }
 
     static async addAdoptionPost(adoptionPost) {
@@ -119,9 +177,9 @@ class PostServices {
                 case 'Adoption':
                     userPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
                     break;
-                // case 'lostAndFound':
-                //     userPosts.push(LostAndFoundPost.fromJson({ id: doc.id, ...doc.data()}));
-                //     break;
+                case 'Lost':
+                    userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
+                    break;
                 // case 'event':
                 //     userPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
                 //     break;
@@ -148,9 +206,9 @@ class PostServices {
                     case 'Adoption':
                         allPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
                         break;
-                    // case 'lostAndFound':
-                    //     allPosts.push(LostAndFoundPost.fromJson({ id: doc.id, ...doc.data() }));
-                    //     break;
+                    case 'Lost':
+                        allPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data() }));
+                        break;
                     case 'Hosting':
                         allPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data() }));
                         break;
