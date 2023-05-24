@@ -19,7 +19,7 @@ import {
     AdoptionScreenRoute,
     appPurpleDark,
     appPurpleLight,
-    FilterPostsScreenRoute,
+    FilterPostsScreenRoute, LostAndFoundScreenRoute,
     postGrey,
     services,
     ViewPetScreenRoute
@@ -34,16 +34,18 @@ import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useNavigation} from "@react-navigation/native";
 
 
-const AdoptionScreen = ({route}) => {
+const LostAndFoundScreen = ({route}) => {
     const { isFiltered, filters } = route.params;
     const [searchPhrase, setSearchPhrase] = useState('');
     const [clicked, setClicked] = useState(false);
-    const [adoptionPosts, setAdoptionPosts] = useState(null);
+    const [lostPosts, setLostPosts] = useState(null);
+    const [foundPosts,setFoundPosts] = useState(null);
     const [prevLastDocument, setPrevLastDocument] = useState();
     const [isAllPostsLoaded, setIsAllPostsLoaded] = useState(false);
     const [isPaginating, setIsPaginating] = useState(false);
     const navigation = useNavigation();
-    const postType = "Adoption"
+    const lostPostType = "Lost"
+const foundPostType = "Found"
     const renderPost = ({item}) => {
         return (
             <PostCard post={item} isPoster={false}/>
@@ -51,45 +53,46 @@ const AdoptionScreen = ({route}) => {
     };
 
 
-    const onEndReached = async () => {
-        console.log("all posts loaded:",isAllPostsLoaded)
-        if (!adoptionPosts.length || isAllPostsLoaded) {
-            // don't load more data if scrolling up or if no data has been loaded yet
-            return;
-        }
-
-        setIsPaginating(true);
-
-        if (isFiltered){
-            const {newPosts, lastDocument} = await PostServices.getPostsFilteredPaginated(filters,prevLastDocument,postType);
-            setAdoptionPosts([...adoptionPosts, ...newPosts]);
-            setIsPaginating(false);
-            setPrevLastDocument(lastDocument);
-            if(newPosts<5)
-                setIsAllPostsLoaded(true);
-        }
-        else{
-            const {newPosts, lastDocument} = await PostServices.getPostsPaginated(prevLastDocument,postType);
-            setAdoptionPosts([...adoptionPosts, ...newPosts]);
-            setIsPaginating(false);
-            setPrevLastDocument(lastDocument);
-            if(newPosts<5)
-                setIsAllPostsLoaded(true);
-        }
-
-    };
+    // const onEndReached = async () => {
+    //     console.log("all posts loaded:",isAllPostsLoaded)
+    //     if (!lostPosts.length || isAllPostsLoaded) {
+    //         // don't load more data if scrolling up or if no data has been loaded yet
+    //         return;
+    //     }
+    //
+    //     setIsPaginating(true);
+    //
+    //     if (isFiltered){
+    //         const {newPosts, lastDocument} = await PostServices.getPostsFilteredPaginated(filters,prevLastDocument,postType);
+    //         setAdoptionPosts([...adoptionPosts, ...newPosts]);
+    //         setIsPaginating(false);
+    //         setPrevLastDocument(lastDocument);
+    //         if(newPosts<5)
+    //             setIsAllPostsLoaded(true);
+    //     }
+    //     else{
+    //         const {newPosts, lastDocument} = await PostServices.getPostsPaginated(prevLastDocument,postType);
+    //         setAdoptionPosts([...adoptionPosts, ...newPosts]);
+    //         setIsPaginating(false);
+    //         setPrevLastDocument(lastDocument);
+    //         if(newPosts<5)
+    //             setIsAllPostsLoaded(true);
+    //     }
+    //
+    // };
 
 
     useEffect(() => {
         console.log(isFiltered,filters)
         const getPosts = async () => {
-            const {newPosts, lastDocument} = await PostServices.getPostsInitial(postType);
-            setAdoptionPosts(newPosts);
+            const {newPosts, lastDocument} = await PostServices.getPostsInitial(lostPostType);
+
+            setLostPosts(newPosts);
             setPrevLastDocument(lastDocument);
         };
         const getPostsFiltered = async () => {
-            const {newPosts, lastDocument} = await PostServices.getPostsFiltered(filters,postType);
-            setAdoptionPosts(newPosts);
+            const {newPosts, lastDocument} = await PostServices.getPostsFiltered(filters,lostPostType);
+            setLostPosts(newPosts);
             setPrevLastDocument(lastDocument);
             setIsAllPostsLoaded(false)
         };
@@ -98,13 +101,12 @@ const AdoptionScreen = ({route}) => {
 
     }, [route]);
     const handleFilterPress=()=>{
-        navigation.navigate(FilterPostsScreenRoute,{"filters": filters ,"prevScreenRoute":AdoptionScreenRoute});
+        navigation.navigate(FilterPostsScreenRoute,{"filters": filters,"prevScreenRoute":LostAndFoundScreenRoute} );
     }
-
-    if (!adoptionPosts) {
+    if (!lostPosts) {
         return <ScreenLoadingIndicator/>;
 
-    } else if (adoptionPosts.length === 0) {
+    } else if (lostPosts.length === 0) {
         return (
 
             <View style={{flex:1}}>
@@ -129,22 +131,22 @@ const AdoptionScreen = ({route}) => {
 
                 <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
 
-                    <TouchableOpacity onPress={handleFilterPress} style={{ flexDirection: 'row',
-                        marginTop: '3%', marginRight: '3%', marginBottom: '5%',
-                        justifyContent: 'center', alignItems: 'center',
-                        position: 'absolute', bottom: 0, right: 0, zIndex: 999,
-                        backgroundColor:appPurpleDark,
-                        width:"13%",
-                        borderRadius:7
-                    }}>
-                        <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Filters</Text>
-                        <FontAwesome name={'filter'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={handleFilterPress} style={{ flexDirection: 'row',
+                    marginTop: '3%', marginRight: '3%', marginBottom: '5%',
+                    justifyContent: 'center', alignItems: 'center',
+                    position: 'absolute', bottom: 0, right: 0, zIndex: 999,
+                    backgroundColor:appPurpleDark,
+                    width:"13%",
+                    borderRadius:7
+                }}>
+                    <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Filters</Text>
+                    <FontAwesome name={'filter'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
+                </TouchableOpacity>
 
                 <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
-                          data={adoptionPosts} renderItem={renderPost}
+                          data={lostPosts} renderItem={renderPost}
                           keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
-                          onEndReached={onEndReached}
+                          // onEndReached={onEndReached}
                           extraData={route}
                 />
                 { isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View> }
@@ -171,4 +173,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default AdoptionScreen;
+export default LostAndFoundScreen;

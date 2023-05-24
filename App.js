@@ -18,12 +18,9 @@ import {
     MainAppRoute,
     ProfileScreenRoute,
     SignupScreenRoute,
-    UploadImageScreenRoute,
-    ViewChatsScreenRoute,
-    ViewPetScreenRoute,
     EditUserDetailsScreenRoute,
     ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute, FilterPostsScreenRoute,
-    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute, CreatePetProfileScreenRoute,
+    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute, CreatePetProfileScreenRoute,LostAndFoundScreenRoute
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
@@ -42,6 +39,7 @@ import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 import OTPScreen from './src/screens/OTPScreen';
 import FilterPostsScreen from "./src/screens/FilterPostsScreen";
 import CreatePetProfileScreen from "./src/screens/CreatePetProfileScreen";
+import LostAndFoundScreen from "./src/screens/LostAndFoundScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -80,6 +78,7 @@ function AppStackScreens() {
             <AppStack.Screen name={ChatScreenRoute} component={ChatScreen}/>
             <AppStack.Screen name={ViewChatsScreenRoute} component={ViewChatsScreen}/>
             <AppStack.Screen name={SavedPostsScreenRoute} component={SavedPostsScreen}/>
+            <AppStack.Screen name={LostAndFoundScreenRoute} component={LostAndFoundScreen}/>
             <AppStack.Screen name={FilterPostsScreenRoute} component={FilterPostsScreen} options={{
                 presentation: 'modal',
                 animationTypeForReplace: 'push',

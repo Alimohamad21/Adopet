@@ -10,7 +10,7 @@ import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {ScrollView} from 'native-base';
 import UserServices from "../services/UserServices";
-import AdoptionPostCard from "../widgets/AdoptionPostCard";
+import PostCard from "../widgets/PostCard";
 import PostServices from "../services/PostServices";
 import SearchBar from "../widgets/SearchBar";
 
@@ -22,13 +22,14 @@ const SavedPostsScreen = () => {
     const navigation = useNavigation();
     useEffect(() => {
         const getSavedPosts = async (ids)=>{
-            const posts = await PostServices.getAdoptionPostsByID(ids);
+            const posts = await PostServices.getPostsByIds(ids);
             console.log("posts: ",posts)
             setMySavedPosts(posts);
             setIsLoading(false);
         }
         const getSavedPostsIDs =async ()=>{
             const ids = await UserServices.getSavedPosts(currentUser.uid);
+            console.log(ids)
             if (ids.length>0){
                 await getSavedPosts(ids);
             }
@@ -45,7 +46,7 @@ const SavedPostsScreen = () => {
     const renderPost = ({item}) => {
         // console.log("render post:",item)
         return (
-            <AdoptionPostCard adoptionPost={item} isPoster={false}/>
+            <PostCard post={item} isPoster={false}/>
         );
     };
     if (isLoading) {

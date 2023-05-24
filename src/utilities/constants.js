@@ -1,4 +1,6 @@
 // COLORS
+import lostAndFoundScreen from "../screens/LostAndFoundScreen";
+
 export const appPurpleDark = '#8059F0';
 export const appPurpleLight = '#C9BAF3';
 export const borderGrey = '#BBC1CF';
@@ -24,6 +26,7 @@ export const ViewChatsScreenRoute='Chats';
 export const SavedPostsScreenRoute='Saved';
 export const OTPScreenRoute='Verify Phone Number';
 export const FilterPostsScreenRoute = "Filters";
+export const LostAndFoundScreenRoute = "Lost and Found";
 
 
 export const CreatePetProfileScreenRoute='Create pet profile';

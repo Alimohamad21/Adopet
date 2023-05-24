@@ -24,7 +24,7 @@ import {
 import {appPurpleDark, ViewPetScreenRoute, CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
-import AdoptionPostCard from "../widgets/AdoptionPostCard";
+import PostCard from "../widgets/PostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
 import UserServices from "../services/UserServices";
@@ -87,7 +87,7 @@ const ProfileScreen = () => {
     }, []);
     useEffect(   () => {
         const getUserPosts = async () => {
-            const res = await PostServices.getUserAdoptionPosts(currentUser.uid)
+            const res = await PostServices.getUserPosts(currentUser.uid)
             setUserPosts(res)
         }
         //
@@ -128,7 +128,7 @@ const ProfileScreen = () => {
     }
     const renderPost = ({item}) => {
         return (
-            <AdoptionPostCard adoptionPost={item} isPoster={true}/>
+            <PostCard post={item} isPoster={true}/>
         );
     };
     const renderPet = ({item}) => {
