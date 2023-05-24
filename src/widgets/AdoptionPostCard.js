@@ -1,4 +1,4 @@
-import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Animated} from 'react-native';
+import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, Animated} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {appPurpleDark, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
 import React, {useContext, useEffect, useState} from 'react';
@@ -8,30 +8,39 @@ import ChatServices from '../services/ChatServices';
 import Chat from '../models/Chat';
 import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import TransparentLoadingIndicator from './TransparentLoadingIndicator';
-import UserServices from "../services/UserServices";
-import PostServices from "../services/PostServices";
-import {Portal, Provider} from "react-native-paper";
+import UserServices from '../services/UserServices';
+import PostServices from '../services/PostServices';
+import {Portal, Provider} from 'react-native-paper';
 
 /**
- * @param {AdoptionPost} adoptionPost
+ * Componenet which displays a card
+ * @param {AdoptionPost} adoptionPost an adoption post
  */
-const AdoptionPostCard = ({adoptionPost,isPoster}) => {
-    const navigation=useNavigation();
+const AdoptionPostCard = ({adoptionPost, isPoster}) => {
+    const navigation = useNavigation();
     const {currentUser} = useContext(CurrentUserContext);
-    const [isLoading,setIsLoading]= useState(false);
-    const [isPostSaved,setIsPostSaved] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isPostSaved, setIsPostSaved] = useState(false);
     const [fadeAnim] = useState(new Animated.Value(0));
-    const [fadedText,setFadedText] = useState("") ;
-    const addedToSavedText = "Added to saved posts!";
-    const removedFromSavedText = "Removed from saved posts!"
-    useEffect(  () => {
-
-    const checkIsPostSaved = async ()=>{
-        const bool = await UserServices.isPostSaved(currentUser.uid,adoptionPost.id);
-        setIsPostSaved(bool);
-    }
-    checkIsPostSaved().then()
-    },[])
+    const [fadedText, setFadedText] = useState('');
+    const [userRating, setUserRating] = useState(null);
+    const [userReviewsCount,setUserReviewsCount]=useState(null);
+    const addedToSavedText = 'Added to saved posts!';
+    const removedFromSavedText = 'Removed from saved posts!';
+    useEffect(() => {
+        const checkIsPostSaved = async () => {
+            const bool = await UserServices.isPostSaved(currentUser.uid, adoptionPost.id);
+            setIsPostSaved(bool);
+        };
+        const getUserRating = async () => {
+            const user = await UserServices.getUser(adoptionPost.userThatPostedId);
+            console.log(`RATING: ${user.getAverageRating()}`);
+            setUserReviewsCount(user.ratingsCount)
+            setUserRating(user.getAverageRating());
+        };
+        getUserRating().then();
+        checkIsPostSaved().then();
+    }, []);
     const callPhoneNumber = () => {
         call({
             number: adoptionPost.userThatPostedPhoneNumber,
@@ -62,24 +71,23 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
                 currentUser.profilePicture,
                 adoptionPost.id,
                 0,
-                0
+                0,
             );
             newChat.id = await ChatServices.initializeChat(newChat);
             setIsLoading(false);
             navigation.navigate(ChatScreenRoute, {chat: newChat});
         }
-    }
-    const handleSavePostClick= async ()=>{
+    };
+    const handleSavePostClick = async () => {
 
-        if(isPostSaved){
-            await UserServices.removeFromSavedPosts(currentUser.uid,adoptionPost.id)
-            setIsPostSaved(false)
-            setFadedText(removedFromSavedText)
-        }
-        else {
-            await UserServices.addToSavedPosts(currentUser.uid,adoptionPost.id);
-            setIsPostSaved(true)
-            setFadedText(addedToSavedText)
+        if (isPostSaved) {
+            await UserServices.removeFromSavedPosts(currentUser.uid, adoptionPost.id);
+            setIsPostSaved(false);
+            setFadedText(removedFromSavedText);
+        } else {
+            await UserServices.addToSavedPosts(currentUser.uid, adoptionPost.id);
+            setIsPostSaved(true);
+            setFadedText(addedToSavedText);
         }
         Animated.timing(fadeAnim, {
             toValue: 1,
@@ -95,7 +103,25 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
             }, 1000); // adjust as needed
         });
 
-    }
+    };
+    const RatingsWidget = () => {
+        const widget = [];
+        const ratingInt = Math.floor(userRating);
+        let emptyStars=5-ratingInt;
+        for (let i = 0; i < ratingInt; i++) {
+            widget.push(<FontAwesome name={'star'} style={{fontSize: 10}}/>);
+        }
+        if (userRating - ratingInt !== 0) {
+            widget.push(<FontAwesome name={'star-half-o'} style={{fontSize: 10}}/>);
+            emptyStars-=1;
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            widget.push(<FontAwesome name={'star-o'} style={{fontSize: 10}}/>);
+        }
+        return widget;
+    };
+
+
     const {width, height} = Dimensions.get('window');
 // orientation must fixed
     const SCREEN_WIDTH = width < height ? width : height;
@@ -194,21 +220,21 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
             flexDirection: 'row',
             justifyContent: 'space-evenly',
         },
-        fadingComponent:{
+        fadingComponent: {
             position: 'absolute',
-            justifyContent:"center",
-            alignItems:"center",
+            justifyContent: 'center',
+            alignItems: 'center',
             top: 0,
-            left:0,
-            right:0,
+            left: 0,
+            right: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.1)',
             opacity: fadeAnim,
-            borderRadius:20,
+            borderRadius: 20,
             width: '50%',
-            marginLeft: "20%",
+            marginLeft: '20%',
 
 
-        }
+        },
     });
     return (
         <Provider>
@@ -217,77 +243,74 @@ const AdoptionPostCard = ({adoptionPost,isPoster}) => {
 
                 {isLoading && <TransparentLoadingIndicator/>}
 
-            <View style={styles.postHeader}>
+                <View style={styles.postHeader}>
 
 
+                    <View style={styles.profileContainer}>
+                        {adoptionPost.userThatPostedProfilePicture === '' ?
+                            <Image style={styles.profileBtnIcon}
+                                   source={require('../assets/default_user.png')}></Image> :
+                            <Image source={{uri: adoptionPost.userThatPostedProfilePicture}}
+                                   style={styles.profileBtnIcon}/>}
+                        <View>
+                            <Text
+                                style={{marginTop: '2%', marginLeft: '2%'}}>{adoptionPost.userThatPostedFullName}</Text>
+                            <View style={{flexDirection: 'row',alignItems:'center'}}>
+                                <RatingsWidget/>
+                                <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
+                            </View>
 
-                <View style={styles.profileContainer}>
-                    {adoptionPost.userThatPostedProfilePicture === ""  ?
-                        <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
-                        <Image source={{uri: adoptionPost.userThatPostedProfilePicture}}
-                               style={styles.profileBtnIcon}/>}
-                    <View>
-                        <Text
-                            style={{marginTop: '2%', marginLeft: '2%'}}>{adoptionPost.userThatPostedFullName}</Text>
-                        <View style={{flexDirection: 'row'}}>
-                            <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                            <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                            <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                            <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                            <FontAwesome name={'star-half-o'} style={{fontSize: 10}}></FontAwesome>
                         </View>
+                    </View>
 
+                    <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
+                        <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
+                        <Text style={{fontSize: 12, marginLeft: '2%'}}>{adoptionPost.userThatPostedCity}</Text>
+                        <TouchableOpacity onPress={handleSavePostClick} style={{marginLeft: '10%'}}>
+                            {isPostSaved &&
+                            <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200'}}></FontAwesome>
+                            }
+                            {!isPostSaved &&
+                            <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+                            }
+
+                        </TouchableOpacity>
                     </View>
                 </View>
-
-                <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
-                    <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
-                    <Text style={{fontSize: 12, marginLeft: '2%'}}>{adoptionPost.userThatPostedCity}</Text>
-                    <TouchableOpacity onPress={handleSavePostClick}  style={{marginLeft: '10%'}}>
-                        {isPostSaved &&
-                            <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
-                        }
-                        {!isPostSaved &&
-                            <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
-                        }
-
+                <View style={styles.postBody}>
+                    <View style={styles.imageContainer}>
+                        <Image style={styles.postImage} source={{uri: adoptionPost.pet.image}}></Image>
+                    </View>
+                    <Text style={styles.postTitle}>{adoptionPost.pet.name}</Text>
+                    <Text style={{
+                        paddingLeft: '2%',
+                        paddingRight: '2%',
+                        color: 'black',
+                    }}>{adoptionPost.pet.description}</Text>
+                    <TouchableOpacity onPress={handleViewDetails} style={styles.detailsButton}>
+                        <FontAwesome name={'paw'}
+                                     style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+                        <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.postBody}>
-                <View style={styles.imageContainer}>
-                    <Image style={styles.postImage} source={{uri: adoptionPost.pet.image}}></Image>
+
+
+                {!isPoster &&
+                <View>
+                    <View style={styles.horizontalSeparator}/>
+                    <View style={styles.postFooter}>
+                        <TouchableOpacity onPress={callPhoneNumber}>
+                            <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                        </TouchableOpacity>
+                        <View style={styles.verticalSeparator}/>
+                        <TouchableOpacity onPress={handleChatNavigation}>
+                            <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <Text style={styles.postTitle}>{adoptionPost.pet.name}</Text>
-                <Text style={{
-                    paddingLeft: '2%',
-                    paddingRight: '2%',
-                    color: 'black',
-                }}>{adoptionPost.pet.description}</Text>
-                <TouchableOpacity onPress={handleViewDetails} style={styles.detailsButton}>
-                    <FontAwesome name={'paw'}
-                                 style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
-                    <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
-                </TouchableOpacity>
-            </View>
+                }
 
-
-            {!isPoster &&
-            <View>
-                <View style={styles.horizontalSeparator}/>
-            <View style={styles.postFooter}>
-                <TouchableOpacity onPress={callPhoneNumber}>
-                    <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                </TouchableOpacity>
-                <View style={styles.verticalSeparator}/>
-                <TouchableOpacity onPress={handleChatNavigation}>
-                    <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                </TouchableOpacity>
-            </View>
-            </View>
-            }
-
-                <Portal >
+                <Portal>
                     <Animated.View style={styles.fadingComponent}>
                         <Text>{fadedText}</Text>
                     </Animated.View>
