@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { CurrentUserContext } from "../providers/CurrentUserProvider";
 import Chat from "../models/Chat";
 import Pet from "../models/Pet";
-import AdoptionPost from "../models/AdoptionPost";
+
 import UserPet from '../models/UserPet';
 const {FieldValue}=firestore;
 

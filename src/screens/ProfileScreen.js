@@ -21,7 +21,7 @@ import {
     UploadImageScreenRoute,
     ViewPetScreenRoute,
 } from "../utilities/constants";
-import {appPurpleDark, ViewPetScreenRoute, CreatePetProfileScreenRoute} from "../utilities/constants";
+import {  CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import PostCard from "../widgets/PostCard";
