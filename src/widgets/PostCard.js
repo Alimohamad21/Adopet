@@ -24,6 +24,8 @@ const PostCard = ({post,isPoster}) => {
     const [isPostSaved,setIsPostSaved] = useState(false);
     const [fadeAnim] = useState(new Animated.Value(0));
     const [fadedText,setFadedText] = useState("") ;
+    const [userRating, setUserRating] = useState(null);
+    const [userReviewsCount,setUserReviewsCount]=useState(null);
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
     let renderedPost;
@@ -40,6 +42,13 @@ const PostCard = ({post,isPoster}) => {
         const bool = await UserServices.isPostSaved(currentUser.uid,post.id);
         setIsPostSaved(bool);
     }
+    const getUserRating = async () => {
+            const user = await UserServices.getUser(adoptionPost.userThatPostedId);
+            console.log(`RATING: ${user.getAverageRating()}`);
+            setUserReviewsCount(user.ratingsCount)
+            setUserRating(user.getAverageRating());
+        };
+    getUserRating().then();
     checkIsPostSaved().then()
     },[])
     const callPhoneNumber = () => {
@@ -49,7 +58,22 @@ const PostCard = ({post,isPoster}) => {
             skipCanOpen: true,
         });
     };
-
+    const RatingsWidget = () => {
+        const widget = [];
+        const ratingInt = Math.floor(userRating);
+        let emptyStars=5-ratingInt;
+        for (let i = 0; i < ratingInt; i++) {
+            widget.push(<FontAwesome name={'star'} style={{fontSize: 10}}/>);
+        }
+        if (userRating - ratingInt !== 0) {
+            widget.push(<FontAwesome name={'star-half-o'} style={{fontSize: 10}}/>);
+            emptyStars-=1;
+        }
+        for (let i = 0; i < emptyStars; i++) {
+            widget.push(<FontAwesome name={'star-o'} style={{fontSize: 10}}/>);
+        }
+        return widget;
+    };
     const handleViewDetails = (post) => {
         navigation.navigate(ViewPetScreenRoute, {pet: post.pet});
     };
@@ -245,12 +269,9 @@ const PostCard = ({post,isPoster}) => {
                             <View>
                                 <Text
                                     style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
-                                <View style={{flexDirection: 'row'}}>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star-half-o'} style={{fontSize: 10}}></FontAwesome>
+                                <View style={{flexDirection: 'row',alignItems:'center'}}>
+                                    <RatingsWidget/>
+                                    <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
                                 </View>
 
                             </View>
@@ -333,12 +354,9 @@ const PostCard = ({post,isPoster}) => {
                             <View>
                                 <Text
                                     style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
-                                <View style={{flexDirection: 'row'}}>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star'} style={{fontSize: 10}}></FontAwesome>
-                                    <FontAwesome name={'star-half-o'} style={{fontSize: 10}}></FontAwesome>
+                                <View style={{flexDirection: 'row',alignItems:'center'}}>
+                                    <RatingsWidget/>
+                                    <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
                                 </View>
 
                             </View>
