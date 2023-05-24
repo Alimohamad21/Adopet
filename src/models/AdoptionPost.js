@@ -17,7 +17,7 @@ class AdoptionPost {
     static fromJson(json) {
         return new AdoptionPost(json.id,
             new Pet(json.petType, json.petImage, json.petName, json.petDescription,
-                json.petAge, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
+                json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
             , json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
             json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt);
     }
@@ -27,7 +27,7 @@ class AdoptionPost {
             petType: adoptionPost.pet.type,
             petImage: adoptionPost.pet.image,
             petName: adoptionPost.pet.name,
-            petAge: adoptionPost.pet.age,
+            petBirthDate: adoptionPost.pet.birthDate,
             petColor: adoptionPost.pet.color,
             petBreed: adoptionPost.pet.breed,
             petGender: adoptionPost.pet.gender,

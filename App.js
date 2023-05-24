@@ -23,6 +23,7 @@ import {
     ViewPetScreenRoute,
     EditUserDetailsScreenRoute,
     ChangePasswordScreenRoute, SavedPostsScreenRoute, OTPScreenRoute, FilterPostsScreenRoute,
+    UploadImageScreenRoute, ViewChatsScreenRoute, ViewPetScreenRoute, CreatePetProfileScreenRoute,
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
 import UploadImageScreen from './src/screens/UploadImageScreen';
@@ -40,6 +41,7 @@ import ChangePasswordScreen from "./src/screens/ChangePasswordScreen";
 import SavedPostsScreen from "./src/screens/SavedPostsScreen";
 import OTPScreen from './src/screens/OTPScreen';
 import FilterPostsScreen from "./src/screens/FilterPostsScreen";
+import CreatePetProfileScreen from "./src/screens/CreatePetProfileScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -84,6 +86,7 @@ function AppStackScreens() {
                 animation:'slide_from_bottom',
 
             }}/>
+            <AppStack.Screen name={CreatePetProfileScreenRoute} component={CreatePetProfileScreen}/>
         </AppStack.Navigator>
     );
 }

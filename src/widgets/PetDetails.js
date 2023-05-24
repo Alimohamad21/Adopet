@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image,StyleSheet } from 'react-native';
+import PetServices from "../services/PetServices";
 /**
  * @param {Pet} pet
  */
@@ -19,12 +20,12 @@ const PetDetails = ({ pet }) => {
                     <Text style={styles.detailsLabel}>Vaccinations:</Text>
                 </View>
                 <View style={styles.detailsColumn}>
-                    <Text style={styles.detailsValue}>{pet.age}</Text>
+                    <Text style={styles.detailsValue}>{pet.getPetAge()}</Text>
                     <Text style={styles.detailsValue}>{pet.color}</Text>
                     <Text style={styles.detailsValue}>{pet.breed}</Text>
                     <Text style={styles.detailsValue}>{pet.gender}</Text>
                     <Text style={styles.detailsValue}>{pet.isNeutered ? 'Yes' : 'No'}</Text>
-                    <Text style={styles.detailsValue}>{pet.vaccinations.join(" - ")}</Text>
+                    <Text style={styles.detailsValue}>{pet.vaccinations}</Text>
                 </View>
             </View>
         </View>

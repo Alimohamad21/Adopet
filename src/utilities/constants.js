@@ -6,6 +6,8 @@ export  const postGrey= '#F1F1F6';
 
 //DIRECTORIES
 export const fbStorageUserImagesDirectory = '/user-images';
+export const fbStoragePetImagesDirectory = '/pet-images';
+
 //ROUTES
 export const MainAppRoute= 'App';
 export const HomeScreenRoute = 'Home';
@@ -23,7 +25,34 @@ export const SavedPostsScreenRoute='Saved';
 export const OTPScreenRoute='Verify Phone Number';
 export const FilterPostsScreenRoute = "Filters";
 
+
+export const CreatePetProfileScreenRoute='Create pet profile';
+
+
 //Lists
+
+export const catAndDogColors = [
+    { label: 'Black', value: 'black' },
+    { label: 'White', value: 'white' },
+    { label: 'Gray', value: 'gray' },
+    { label: 'Brown', value: 'brown' },
+    { label: 'Red', value: 'red' },
+    { label: 'Golden', value: 'golden' },
+    { label: 'Cream', value: 'cream' },
+    { label: 'Chocolate', value: 'chocolate' },
+    { label: 'Apricot', value: 'apricot' },
+    { label: 'Beige', value: 'beige' },
+    { label: 'Spotted', value: 'spotted' },
+    { label: 'Bicolor', value: 'bicolor' },
+    { label: 'Tricolor', value: 'tricolor' },
+    { label: 'Harlequin', value: 'harlequin' }
+];
+
+export const vaccinationOptions = [
+    { label: 'None', value: 'none' },
+    { label: 'Some', value: 'some' },
+    { label: 'All mandatory', value: 'allMandatory' },
+];
 export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Alexandria', value: 'Alexandria'},
     {label: 'Giza', value: 'Giza'},
@@ -44,8 +73,8 @@ export const egyptianCities = [{label: 'Cairo', value: 'Cairo'},
     {label: 'Beni Suef', value: 'Beni Suef'},
     {label: 'Sohag', value: 'Sohag'},
     {label: 'Hurghada', value: 'Hurghada'},
-
 ];
+
 export const egyptianCatBreeds = [
     { label: 'Egyptian Mau', value: 'Egyptian Mau' },
     { label: 'Persian', value: 'Persian' },

@@ -21,6 +21,9 @@ const ViewPetScreen = () => {
             <PetDetails pet={pet} />
     );
 };
+
+
+
 const styles = StyleSheet.create({
     root: {
         flex: 1,

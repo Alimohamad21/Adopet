@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect, useContext, useLayoutEffect} from 'react';
 import {Bubble, Composer, GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
-import {CurrentUserContext} from '../providers/CurrentUserProvider';
+
 import ChatServices from '../services/ChatServices';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {View, Text, Image, TouchableOpacity} from "react-native";
@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import StorageServices from "../services/StorageServices";
 import TransparentLoadingIndicator from "../widgets/TransparentLoadingIndicator";
+import {CurrentUserContext} from "../providers/CurrentUserProvider";
 
 
 export function ChatScreen() {

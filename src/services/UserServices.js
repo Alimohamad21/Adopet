@@ -2,6 +2,10 @@ import firestore from '@react-native-firebase/firestore';
 import User from '../models/User';
 import { useContext } from "react";
 import { CurrentUserContext } from "../providers/CurrentUserProvider";
+import Chat from "../models/Chat";
+import Pet from "../models/Pet";
+import AdoptionPost from "../models/AdoptionPost";
+import UserPet from '../models/UserPet';
 const {FieldValue}=firestore;
 
 class UserServices {
@@ -42,6 +46,18 @@ class UserServices {
         return snapshot.docs.length>0;
     }
 
+
+    static async getUserPets(uid){
+        const petDoc = await firestore().collection('pets').where('uid', '==', uid).get();
+        const pets = [];
+
+        petDoc.docs.forEach((doc) => {
+            const petData = doc.data();
+            petData.id=doc.id;
+            pets.push(UserPet.fromJson(petData));
+        });
+        return pets;
+    }
 
     static async uploadProfilePictureUrl(uid, url) {
         try {
