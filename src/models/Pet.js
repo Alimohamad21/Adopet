@@ -20,18 +20,11 @@ class Pet {
         let age = '';
         try {
             const currentDate = new Date();
-            console.log(`Birthdate: ${this.birthDate}`);
             const bdMonth = parseInt(this.birthDate.split('-')[1]) - 1;
             const bdYear = parseInt(this.birthDate.split('-')[0]);
-            console.log(`Current Date: ${currentDate.getFullYear()} Birthdate:${bdMonth}`);
             const diffInMonths = (currentDate.getMonth() + 12 * currentDate.getFullYear()) - (bdMonth + 12 * bdYear);
-            console.log(diffInMonths);
             const years = Math.floor(diffInMonths / 12);
             const months = diffInMonths % 12;
-
-            console.log(years);
-            console.log(months);
-            console.log(`${years} years and ${months} months`);
             if (years !== 0) {
                 age = `${years} years and ${months} months`;
             } else {

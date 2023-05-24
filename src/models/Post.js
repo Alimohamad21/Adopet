@@ -45,8 +45,10 @@ class AdoptionPost extends Post {
 
     static fromJson(json) {
         return new AdoptionPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petAge, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
+            new Pet(json.petType, json.petImage, json.petName, json.petDescription,
+                json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
+            , json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
+            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt);
     }
 
     toJson() {
@@ -55,13 +57,13 @@ class AdoptionPost extends Post {
             petType: this.pet.type,
             petImage: this.pet.image,
             petName: this.pet.name,
-            petAge: this.pet.age,
+            petBirthDate: this.pet.birthDate,
             petColor: this.pet.color,
             petBreed: this.pet.breed,
             petGender: this.pet.gender,
             petDescription: this.pet.description,
             petIsNeutered: this.pet.isNeutered,
-            petVaccinations: this.pet.vaccinations
+            petVaccinations: this.pet.vaccinations,
         };
     }
 
@@ -106,7 +108,7 @@ class LostPost extends Post {
 
     static fromJson(json) {
         return new LostPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petAge, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
             json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.lostLocation,json.lostDateAndTime);
     }
 
@@ -116,7 +118,7 @@ class LostPost extends Post {
             petType: this.pet.type,
             petImage: this.pet.image,
             petName: this.pet.name,
-            petAge: this.pet.age,
+            petBirthDate: this.pet.birthDate,
             petColor: this.pet.color,
             petBreed: this.pet.breed,
             petGender: this.pet.gender,
