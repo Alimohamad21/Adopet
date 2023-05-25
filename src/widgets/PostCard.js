@@ -43,7 +43,7 @@ const PostCard = ({post,isPoster}) => {
         setIsPostSaved(bool);
     }
     const getUserRating = async () => {
-            const user = await UserServices.getUser(adoptionPost.userThatPostedId);
+            const user = await UserServices.getUser(post.userThatPostedId);
             console.log(`RATING: ${user.getAverageRating()}`);
             setUserReviewsCount(user.ratingsCount)
             setUserRating(user.getAverageRating());
