@@ -36,6 +36,9 @@ const PostCard = ({post,isPoster}) => {
         else if (post instanceof LostPost ) {
         renderedPost = <LostPostRenderer post={post} />;
      }
+    else if (post instanceof HostingPost ) {
+        renderedPost = <HostPostRenderer post={post} />;
+    }
 
     useEffect(  () => {
     const checkIsPostSaved = async ()=>{
@@ -307,6 +310,97 @@ const PostCard = ({post,isPoster}) => {
                             <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                         </TouchableOpacity>
                     </View>
+
+
+                    {!isPoster &&
+                        <View>
+                            <View style={styles.horizontalSeparator}/>
+                            <View style={styles.postFooter}>
+                                <TouchableOpacity onPress={callPhoneNumber}>
+                                    <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                </TouchableOpacity>
+                                <View style={styles.verticalSeparator}/>
+                                <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
+                                    <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    }
+
+                    <Portal >
+                        <Animated.View style={styles.fadingComponent}>
+                            <Text>{fadedText}</Text>
+                        </Animated.View>
+                    </Portal>
+
+                </View>
+
+            </Provider>
+        );
+    }
+    function AdoptionPostRenderer({ post }) {
+        return (
+            <Provider>
+
+                <View style={styles.postContainer}>
+
+                    {isLoading && <TransparentLoadingIndicator/>}
+
+                    <View style={styles.postHeader}>
+
+
+
+                        <View style={styles.profileContainer}>
+                            {post.userThatPostedProfilePicture === ""  ?
+                                <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+                                <Image source={{uri: post.userThatPostedProfilePicture}}
+                                       style={styles.profileBtnIcon}/>}
+                            <View>
+                                <Text
+                                    style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
+                                <View style={{flexDirection: 'row',alignItems:'center'}}>
+                                    <RatingsWidget/>
+                                    <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
+                                </View>
+
+                            </View>
+                        </View>
+
+                        <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
+                            <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
+                            <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
+                            <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+                                {isPostSaved &&
+                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
+                                }
+                                {!isPostSaved &&
+                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+                                }
+
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.postBody}>
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
+                        </View>
+                        <Text style={styles.postTitle}>{post.pet.name}</Text>
+                        <Text style={{
+                            paddingLeft: '2%',
+                            paddingRight: '2%',
+                            color: 'black',
+                        }}>{post.pet.description}</Text>
+                        <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.detailsButton}>
+                            <FontAwesome name={'paw'}
+                                         style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+                            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text>
+                       start date: {post.startDate}
+                        end date: {post.endDate}
+                       Duration: {post.duration}
+                    </Text>
 
 
                     {!isPoster &&

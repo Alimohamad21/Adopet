@@ -70,29 +70,6 @@ class AdoptionPost extends Post {
 
 }
 
-class HostingPost extends Post {
-    constructor(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt, availableFromDate, availableToDate) {
-        super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt);
-        this.availableFromDate = availableFromDate;
-        this.availableToDate = availableToDate;
-    }
-
-    static fromJson(json) {
-        return new HostingPost(json.id, json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt, json.availableFromDate, json.availableToDate);
-    }
-
-    toJson() {
-        return {
-            ...super.toJson(),
-            availableFromDate: this.availableFromDate,
-            availableToDate: this.availableToDate
-        };
-    }
-
-    render() {
-        // hosting post rendering logic
-    }
-}
 
 class LostPost extends Post {
     /**
@@ -154,6 +131,51 @@ class FoundPost extends  Post {
             foundDateAndTime: this.foundDateAndTime
         };
     }
+
+}
+class HostingPost extends Post {
+    /**
+     * @param {Pet} pet
+     */
+    constructor(id, pet, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture,
+                userThatPostedPhoneNumber, createdAt,type,endDate,startDate,duration) {
+        super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
+        this.pet = pet;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.duration = duration;
+    }
+
+    static fromJson(json) {
+        return new HostingPost(json.id,
+            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate,
+                json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
+            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,
+            json.type,json.startDate,json.endDate,json.duration);
+    }
+
+    toJson() {
+        return {
+            ...super.toJson(),
+            petType: this.pet.type,
+            petImage: this.pet.image,
+            petName: this.pet.name,
+            petBirthDate: this.pet.birthDate,
+            petColor: this.pet.color,
+            petBreed: this.pet.breed,
+            petGender: this.pet.gender,
+            petDescription: this.pet.description,
+            petIsNeutered: this.pet.isNeutered,
+            petVaccinations: this.pet.vaccinations,
+            startDate:this.startDate,
+            endDate:this.endDate,
+            duration:this.duration
+
+
+        };
+    }
+
 
 }
 
