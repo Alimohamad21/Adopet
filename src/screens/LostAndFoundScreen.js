@@ -28,10 +28,12 @@ import PostServices from '../services/PostServices';
 import PostCard from '../widgets/PostCard';
 import NoDataAvailable from '../widgets/NoDataAvailable';
 import {useNavigation} from "@react-navigation/native";
+import SlideButton from "../widgets/SlideButton";
 
 
 const LostAndFoundScreen = ({route}) => {
     const { isFiltered, filters } = route.params;
+    const [view,setView] = useState(1)
     const [searchPhrase, setSearchPhrase] = useState('');
     const [clicked, setClicked] = useState(false);
     const [lostPosts, setLostPosts] = useState(null);
@@ -41,7 +43,15 @@ const LostAndFoundScreen = ({route}) => {
     const [isPaginating, setIsPaginating] = useState(false);
     const navigation = useNavigation();
     const lostPostType = "Lost"
-const foundPostType = "Found"
+    const foundPostType = "Found"
+    const handleLostSelect =() =>{
+        console.log("Lost")
+        setView(1)
+    }
+    const handleFoundSelect =() =>{
+        setView(2)
+        console.log("Found")
+    }
     const renderPost = ({item}) => {
         return (
             <PostCard post={item} isPoster={false}/>
@@ -106,6 +116,9 @@ const foundPostType = "Found"
         return (
 
             <View style={{flex:1}}>
+                <View style={{flex: 0.5}}>
+                    <SlideButton onPostsPress={handleLostSelect} onPetsPress={handleFoundSelect} ></SlideButton>
+                </View>
                 <NoDataAvailable text="No posts available"/>
                 <TouchableOpacity onPress={handleFilterPress} style={{flexDirection: 'row',
                     marginTop: '3%', marginRight: '3%', marginBottom: '5%',
@@ -126,7 +139,9 @@ const foundPostType = "Found"
             <SafeAreaView style={styles.root}>
 
                 <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
-
+                {/*<View style={{backgroundColor:"red"}}>*/}
+                {/*    <SlideButton onPostsPress={handleLostSelect} onPetsPress={handleFoundSelect} ></SlideButton>*/}
+                {/*</View>*/}
                 <TouchableOpacity onPress={handleFilterPress} style={{ flexDirection: 'row',
                     marginTop: '3%', marginRight: '3%', marginBottom: '5%',
                     justifyContent: 'center', alignItems: 'center',
