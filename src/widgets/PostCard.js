@@ -29,7 +29,7 @@ const PostCard = ({post,isPoster}) => {
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
     let renderedPost;
-    console.log("post card \n",post)
+    // console.log("post card \n",post)
     if (post instanceof AdoptionPost) {
         renderedPost = <AdoptionPostRenderer post={post} />;
      }

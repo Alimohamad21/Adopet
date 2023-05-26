@@ -69,15 +69,15 @@ const ProfileScreen = () => {
 
             headerLeft: () => (
 
-                    <MenuImage
-                        onPress={() => {
-                            navigation.openDrawer();
-                        }}
-                    />
+                <MenuImage
+                    onPress={() => {
+                        navigation.openDrawer();
+                    }}
+                />
 
             ),
             headerRight: () =>(
-                    <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
+                <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
 
 
 
@@ -134,14 +134,14 @@ const ProfileScreen = () => {
     const renderPet = ({item}) => {
         return (
             <View style={{  alignItems:"center",paddingTop:"5%",paddingBottom:"10%"}}>
-            <Image  source={{uri: item.pet.image}} style={styles.petIcon}/>
+                <Image  source={{uri: item.pet.image}} style={styles.petIcon}/>
                 <Text style={{fontWeight:"bold",fontSize:18}}>{item.pet.name}</Text>
-        <TouchableOpacity onPress={()=>{
-            handleViewDetails(item)
-        }} style={styles.petDetailsButton}>
-            <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
-            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
-        </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                    handleViewDetails(item)
+                }} style={styles.petDetailsButton}>
+                    <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
+                    <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
+                </TouchableOpacity>
 
             </View>
         );
@@ -149,10 +149,10 @@ const ProfileScreen = () => {
     const renderFooter = () => {
         return (
             <TouchableOpacity onPress={handleCreatePetProfileNavigation} style={{  alignItems:"center",marginTop:"15%"}}>
-              <View style={{alignItems:"center",flexDirection:"row"}}>
-                <FontAwesome name={'plus-circle'} style={{fontSize: 30,color:appPurpleDark}}></FontAwesome>
-                <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"7%"}}>Add Pet</Text>
-              </View>
+                <View style={{alignItems:"center",flexDirection:"row"}}>
+                    <FontAwesome name={'plus-circle'} style={{fontSize: 30,color:appPurpleDark}}></FontAwesome>
+                    <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"7%"}}>Add Pet</Text>
+                </View>
             </TouchableOpacity>
         );
     };
@@ -165,66 +165,71 @@ const ProfileScreen = () => {
         <SafeAreaView style={{flex:1}}>
             { !hideComponents &&
                 <Animated.View style={{ opacity: animatedValue }}>
-                <View style={styles.profileIconContainer}>
+                    <View style={styles.profileIconContainer}>
 
-                {
-                    currentUser.profilePicture !== '' ?
-                        <Image source={{uri: currentUser.profilePicture}} style={styles.profileIcon}/> :
-                        <Image source={require('../assets/default_user.png') }
-                               style={styles.profileIcon}/>}
-            </View>
+                        {
+                            currentUser.profilePicture !== '' ?
+                                <Image source={{uri: currentUser.profilePicture}} style={styles.profileIcon}/> :
+                                <Image source={require('../assets/default_user.png') }
+                                       style={styles.profileIcon}/>}
+                    </View>
 
 
-            <View style={{alignItems:"center"}}>
-                <View style={{flexDirection:"row",justifyContent:"center"}}>
-                    <Text style={styles.nameText}>{currentUser.fullName}</Text>
-                </View>
-                <View style={{flexDirection:"row",justifyContent:"center"}}>
-                    <Text style={styles.location}>{currentUser.city}</Text>
-                </View>
-                <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
-                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
-                    <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
-                </View>
-                <TouchableOpacity onPress={handleEditDetails} style={{flexDirection:"row",justifyContent:"center"}}>
-                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
-                    <Text style={styles.editDetails} >Edit details</Text>
-                </TouchableOpacity>
-            </View>
+                    <View style={{alignItems:"center"}}>
+                        <View style={{flexDirection:"row",justifyContent:"center"}}>
+                            <Text style={styles.nameText}>{currentUser.fullName}</Text>
+                        </View>
+                        <View style={{flexDirection:"row",justifyContent:"center"}}>
+                            <Text style={styles.location}>{currentUser.city}</Text>
+                        </View>
+                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
+                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                            <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
+                        </View>
+                        <TouchableOpacity onPress={handleEditDetails} style={{flexDirection:"row",justifyContent:"center"}}>
+                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                            <Text style={styles.editDetails} >Edit details</Text>
+                        </TouchableOpacity>
+                    </View>
 
                 </Animated.View>
             }
-            <View style={{flex:0.2,marginTop:"2%"}}>
+            <View style={{height:"5%",marginTop:"2%"}}>
                 <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
             </View>
 
 
 
             {view === 1 &&
-                <View  style={{alignItems:"center",paddingTop:"15%"}}>
+                <View  style={{alignItems:"center",paddingTop:"10%",
+                    height: hideComponents ===1 ? "50%" : "80%",
+
+                }}>
                     {userPosts &&
 
-                        <FlatList showsVerticalScrollIndicator={true} vertical={true} numColumns={1}
-                        data={userPosts} renderItem={renderPost}
-                        keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
-                            onScroll={handleScroll}
+                        <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                  data={userPosts} renderItem={renderPost}
+                                  keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                                  // onScroll={handleScroll}
+                           // onScrollBeginDrag={handleScroll}
+                                   onScrollEndDrag={handleScroll}
                         />
                     }
                 </View>
             }
             { view ===2  &&
-                <View style={{ alignItems:"center",marginTop:"15%"}}>
+                <View style={{ alignItems:"center",marginTop:"15%",height: hideComponents ===1 ? "50%" : "100%",}}>
                     {userPets && userPets.length > 0 ? (
                         <FlatList  showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
-                              data = {userPets} renderItem={renderPet}
-                              keyExtractor={(pet) => `${pet.id}`}
-                              onScroll={handleScroll}
+                                   data = {userPets} renderItem={renderPet}
+                                   keyExtractor={(pet) => `${pet.id}`}
+                                   //onScroll={handleScroll}
+                                   onScrollEndDrag={handleScroll}
+                            // contentContainerStyle={{}}
 
-                             // contentContainerStyle={{}}
+                                   ListFooterComponent={renderFooter}
 
-                               ListFooterComponent={renderFooter}
-
-                    />) : (renderFooter())
+                        />) : (renderFooter())
                     }
 
                 </View>

@@ -10,10 +10,7 @@ import {
     TouchableOpacity,
     TouchableHighlight,
 } from 'react-native';
-import MenuImage from '../widgets/MenuImage';
 
-import SearchBar from '../widgets/SearchBar';
-import {red} from 'react-native-reanimated/src';
 import {FlatList, KeyboardAvoidingView, StatusBar} from 'native-base';
 import {
     AdoptionScreenRoute,
@@ -24,8 +21,7 @@ import {
     services,
     ViewPetScreenRoute
 } from '../utilities/constants';
-import {blueGrey100, blueGrey300, blueGrey50} from 'react-native-paper/src/styles/themes/v2/colors';
-import {CurrentUserContext} from '../providers/CurrentUserProvider';
+
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ScreenLoadingIndicator from '../widgets/ScreenLoadingIndicator';
 import PostServices from '../services/PostServices';
