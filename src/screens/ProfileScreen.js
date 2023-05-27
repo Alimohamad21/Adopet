@@ -28,7 +28,7 @@ import PostCard from "../widgets/PostCard";
 import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
 import UserServices from "../services/UserServices";
-
+import functions from '@react-native-firebase/functions';
 const ProfileScreen = () => {
     const [view,setView] = useState(1)
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
@@ -47,9 +47,10 @@ const ProfileScreen = () => {
     }, []);
 
     const handleScroll = (event) => {
-        console.log(animatedValue)
+
         const currentOffset = event.nativeEvent.contentOffset.y;
-        const direction = currentOffset > 0 && currentOffset > previousOffset ? 'down' : 'up';
+        // console.log(currentOffset)
+        const direction = currentOffset > 0 && currentOffset >= previousOffset ? 'down' : 'up';
         setHideComponents(direction === 'down');
         setPreviousOffset(currentOffset);
 
@@ -62,6 +63,7 @@ const ProfileScreen = () => {
         }
     };
     useLayoutEffect(() => {
+
         navigation.setOptions({
             headerShadowVisible: false,
 
@@ -86,6 +88,11 @@ const ProfileScreen = () => {
         console.log(currentUser)
     }, []);
     useEffect(   () => {
+        // functions()
+        //     .httpsCallable('get_user_phone_number')({"text":currentUser.phoneNumber})
+        //     .then(response => {
+        //         console.log(response)
+        //     });
         const getUserPosts = async () => {
             const res = await PostServices.getUserPosts(currentUser.uid)
             setUserPosts(res)
@@ -211,8 +218,8 @@ const ProfileScreen = () => {
                                   data={userPosts} renderItem={renderPost}
                                   keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
                                   // onScroll={handleScroll}
-                           // onScrollBeginDrag={handleScroll}
-                                   onScrollEndDrag={handleScroll}
+                            // onScrollBeginDrag={handleScroll}
+                                 onScrollEndDrag={handleScroll}
                         />
                     }
                 </View>

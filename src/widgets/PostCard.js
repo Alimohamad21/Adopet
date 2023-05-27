@@ -59,20 +59,39 @@ const PostCard = ({post,isPoster}) => {
         });
     };
     const RatingsWidget = () => {
-        const widget = [];
         const ratingInt = Math.floor(userRating);
-        let emptyStars=5-ratingInt;
-        for (let i = 0; i < ratingInt; i++) {
-            widget.push(<FontAwesome name={'star'} style={{fontSize: 10}}/>);
+
+        const emptyStars = 5 - ratingInt;
+
+        const fullStars = Array(ratingInt).fill().map((_, index) => (
+            <FontAwesome key={`star-${index}`} name={'star'} style={{ fontSize: 10 }} />
+        ));
+
+        const halfStar = userRating - ratingInt !== 0 && (
+            <FontAwesome key="star-half" name={'star-half-o'} style={{ fontSize: 10 }} />
+        );
+
+
+        const emptyStarsArray = Array(emptyStars).fill().map((_, index) => (
+            <FontAwesome key={`star-empty-${index}`} name={'star-o'} style={{ fontSize: 10 }} />
+        ));
+        let starsRating
+        if (!halfStar){
+            starsRating=  [
+                ...fullStars,
+                ...emptyStarsArray,
+            ];
         }
-        if (userRating - ratingInt !== 0) {
-            widget.push(<FontAwesome name={'star-half-o'} style={{fontSize: 10}}/>);
-            emptyStars-=1;
+        else{
+            starsRating = [
+                ...fullStars,
+                halfStar,
+                ...emptyStarsArray,
+            ];
         }
-        for (let i = 0; i < emptyStars; i++) {
-            widget.push(<FontAwesome name={'star-o'} style={{fontSize: 10}}/>);
-        }
-        return widget;
+
+        starsRating = starsRating.length > 5 ? starsRating.slice(0,5) : starsRating;
+         return starsRating
     };
     const handleViewDetails = (post) => {
         navigation.navigate(ViewPetScreenRoute, {pet: post.pet});
