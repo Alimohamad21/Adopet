@@ -33,7 +33,6 @@ export const CreatePetProfileScreenRoute='Create pet profile';
 
 
 //Lists
-
 export const catAndDogColors = [
     { label: 'Black', value: 'black' },
     { label: 'White', value: 'white' },

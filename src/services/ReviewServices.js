@@ -34,6 +34,38 @@ class ReviewServices {
         }
     }
 
+    static async checkIfReviewIsConfirmed(postId, reviewerId, revieweeId) {
+        let isConfirmed;
+        try {
+            const querySnapshot = await firestore().collection('reviews')
+                .where('postId', '==', postId)
+                .where('revieweeId', '==', reviewerId)
+                .where('reviewerId', '==', revieweeId)
+            .get();
+            isConfirmed = querySnapshot.docs.length > 0;
+        } catch (error) {
+            console.error('Error getting reviews by user:', error);
+            isConfirmed = false;
+        }
+        return isConfirmed;
+    }
+
+    static async checkIfAlreadyReviewed(postId, reviewerId, revieweeId) {
+        let isReviewed;
+        try {
+            const querySnapshot = await firestore().collection('reviews')
+                .where('postId', '==', postId)
+                .where('revieweeId', '==', revieweeId)
+                .where('reviewerId', '==', reviewerId)
+                .get();
+            isReviewed = querySnapshot.docs.length > 0;
+        } catch (error) {
+            console.error('Error getting reviews by user:', error);
+            isReviewed = false;
+        }
+        return isReviewed;
+    }
+
     /**
      *
      * @param {Review} review
