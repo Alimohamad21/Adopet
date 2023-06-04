@@ -141,8 +141,8 @@ class HostingPost extends Post {
                 userThatPostedPhoneNumber, createdAt,type,endDate,startDate,duration) {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDate = startDate.toDate().toString();
+        this.endDate = endDate.toDate().toString();
         this.duration = duration;
     }
 
