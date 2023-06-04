@@ -24,6 +24,10 @@ class PostServices {
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
+            case 'Hosting':
+                posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+
             // case 'event':
             //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
             //     break;
@@ -56,6 +60,8 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+            case 'Hosting':
+                posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             // case 'event':
             //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
@@ -107,6 +113,8 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+            case 'Hosting':
+                posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             // case 'event':
             //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
@@ -159,6 +167,8 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+            case 'Hosting':
+                posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             // case 'event':
             //     allPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
@@ -173,7 +183,7 @@ class PostServices {
     }
 
     static async addAdoptionPost(adoptionPost) {
-        await firestore().collection('adoption-posts').add(AdoptionPost.toJson(adoptionPost));
+        await firestore().collection('posts').add(AdoptionPost.toJson(adoptionPost));
     }
 
     static async getUserPosts(userID) {
@@ -196,6 +206,8 @@ class PostServices {
                     break;
                 case 'Found':
                     userPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
+                case 'Hosting':
+                    userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
                     break;
                 // case 'event':
                 //     userPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
