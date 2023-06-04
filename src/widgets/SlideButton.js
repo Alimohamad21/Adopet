@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, Animated, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native'
 
-const SlideButton = ({onPostsPress,onPetsPress}) => {
+const SlideButton = ({onFirstPress,onSecondPress, firstText, secondText}) => {
     const [active, setActive] = useState(false)
     let transformX = useRef(new Animated.Value(0)).current
 
@@ -30,11 +30,12 @@ const SlideButton = ({onPostsPress,onPetsPress}) => {
     return (
         <SafeAreaView style={{
             flex: 1,
-            alignItems: 'center'
+            alignItems: 'center',
+            marginBottom:"13%"
         }}>
             <View style={{
                 flexDirection: 'row',
-                position: 'relative',
+                // position: 'relative',
                 height: 50,
                 width:"80%",
                 borderRadius: 22,
@@ -43,7 +44,7 @@ const SlideButton = ({onPostsPress,onPetsPress}) => {
             }}>
                 <Animated.View
                     style={{
-                        position: 'absolute',
+                         position: 'absolute',
                         height: 50 - 2*2,
                         top: 2,
                         bottom: 2,
@@ -63,14 +64,14 @@ const SlideButton = ({onPostsPress,onPetsPress}) => {
                     justifyContent: 'center',
                     alignItems: 'center'
                 }} onPress={() => {
-                    onPostsPress();
+                    onFirstPress();
                     setActive(false)
 
                 }
 
                 }>
                     <Text>
-                        Posts
+                        {firstText}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
@@ -79,12 +80,12 @@ const SlideButton = ({onPostsPress,onPetsPress}) => {
                     alignItems: 'center',
 
                 }} onPress={() => {
-                    onPetsPress();
+                    onSecondPress();
                     setActive(true)
                 }
                 }>
                     <Text>
-                        Pets
+                        {secondText}
                     </Text>
                 </TouchableOpacity>
             </View>

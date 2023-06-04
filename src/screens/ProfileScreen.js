@@ -169,7 +169,7 @@ const ProfileScreen = () => {
     };
 
     return(
-        <SafeAreaView style={{flex:1}}>
+        <SafeAreaView style={{flex:1,backgroundColor:"white"}}>
             { !hideComponents &&
                 <Animated.View style={{ opacity: animatedValue }}>
                     <View style={styles.profileIconContainer}>
@@ -202,7 +202,7 @@ const ProfileScreen = () => {
                 </Animated.View>
             }
             <View style={{height:"5%",marginTop:"2%"}}>
-                <SlideButton onPostsPress={handlePostsSelect} onPetsPress={handlePetsSelect} ></SlideButton>
+                <SlideButton onFirstPress={handlePostsSelect} onSecondPress={handlePetsSelect} firstText={"Posts"} secondText={"Pets"} ></SlideButton>
             </View>
 
 

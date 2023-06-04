@@ -1,6 +1,6 @@
 import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Animated} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {appPurpleDark, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
+import {appPurpleDark, appPurpleLight, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
 import React, {useContext, useEffect, useState} from 'react';
 import call from 'react-native-phone-call';
 import {useNavigation} from '@react-navigation/native';
@@ -11,7 +11,7 @@ import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 import UserServices from "../services/UserServices";
 import PostServices from "../services/PostServices";
 import {Portal, Provider} from "react-native-paper";
-import {AdoptionPost,LostPost} from "../models/Post";
+import {AdoptionPost, FoundPost, LostPost} from "../models/Post";
 
 
 /**
@@ -34,8 +34,11 @@ const PostCard = ({post,isPoster}) => {
         renderedPost = <AdoptionPostRenderer post={post} />;
      }
         else if (post instanceof LostPost ) {
-        renderedPost = <LostPostRenderer post={post} />;
+        renderedPost = <LostAndFoundPostRenderer post={post} type={"Lost"} />;
      }
+    else if (post instanceof FoundPost ) {
+        renderedPost = <LostAndFoundPostRenderer post={post} type={"Found"} />;
+    }
 
     useEffect(  () => {
     const checkIsPostSaved = async ()=>{
@@ -44,7 +47,7 @@ const PostCard = ({post,isPoster}) => {
     }
     const getUserRating = async () => {
             const user = await UserServices.getUser(post.userThatPostedId);
-            console.log(`RATING: ${user.getAverageRating()}`);
+            // console.log(`RATING: ${user.getAverageRating()}`);
             setUserReviewsCount(user.ratingsCount)
             setUserRating(user.getAverageRating());
         };
@@ -155,9 +158,9 @@ const PostCard = ({post,isPoster}) => {
 
     const PostNumColumns = 1;
 // item size
-    const POST_ITEM_HEIGHT = 450;
+    const POST_ITEM_HEIGHT = isPoster ?  height/5 : height/4;
     const POST_ITEM_MARGIN = 15;
-
+    const POST_BORDERS_WIDTH = 1;
     const styles = StyleSheet.create({
         root: {
             flex: 1,
@@ -171,13 +174,15 @@ const PostCard = ({post,isPoster}) => {
         },
 
         postContainer: {
-            marginTop: '7%',
+            marginTop: '2%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
-            width: (SCREEN_WIDTH - (PostNumColumns + 1) * POST_ITEM_MARGIN) / PostNumColumns,
+            width: (SCREEN_WIDTH - (PostNumColumns + 1) * POST_ITEM_MARGIN +17) / PostNumColumns,
             height: POST_ITEM_HEIGHT + 50,
-            //backgroundColor: "#e4e5eb",
-            backgroundColor: '#e6e9fa',
+            backgroundColor: "white",
+            // backgroundColor: '#e6e9fa',
+            // borderWidth:1,
+            borderColor:appPurpleDark,
             marginBottom: '7%',
             borderRadius: 5,
 
@@ -186,7 +191,12 @@ const PostCard = ({post,isPoster}) => {
 
             flexDirection: 'row',
             justifyContent: 'space-between',
-
+            paddingBottom:"2%",
+            borderWidth:POST_BORDERS_WIDTH,
+            borderColor:appPurpleDark,
+            borderTopLeftRadius:7,
+            borderTopRightRadius:7,
+            backgroundColor: "#e6e9fa"
         },
         profileContainer: {
             flex: 1,
@@ -198,28 +208,40 @@ const PostCard = ({post,isPoster}) => {
         profileBtnIcon: {
             marginRight: '2%',
             borderRadius: 50,
-            height: '120%',
-            width: '15%',
+            height: SCREEN_WIDTH/9.5,
+            width: SCREEN_WIDTH/9.5,
 
         },
         postBody: {
-            justifyContent: 'center',
-            alignItems: 'center',
+            flexDirection:"row",
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            // borderBottomWidth:1,
+            // borderTopWidth:1,
+            borderRightWidth:POST_BORDERS_WIDTH,
+            borderColor:appPurpleDark,
+            borderBottomWidth: isPoster ? POST_BORDERS_WIDTH : 0 ,
+            borderBottomRightRadius: 0,
+            borderBottomLeftRadius: 0
         },
         postImage: {
-            height: '100%',
-            width: '100%',
+
+            // marginRight:"2%",
+            height: SCREEN_WIDTH/2.7,
+            width: SCREEN_WIDTH/2.7,
         },
         postTitle: {
-            fontSize: 20,
+            paddingLeft:"1%",
+            fontSize: 16,
             color: 'black',
             fontWeight: 'bold',
 
         },
         imageContainer: {
-            alignItems: 'center',
-            width: '90%',
-            height: '60%',
+            // marginLeft:"7%",
+            // alignItems: 'center',
+            // width: '90%',
+            // height: '60%',
         },
         detailsButton: {
             flexDirection: 'row',
@@ -232,20 +254,28 @@ const PostCard = ({post,isPoster}) => {
             paddingBottom: '1%',
         },
         horizontalSeparator: {
-            borderBottomColor: 'grey',
+            borderBottomColor: appPurpleDark,
             borderBottomWidth: 1,
             marginVertical: 10,
         },
         verticalSeparator: {
-            borderRightColor: 'grey',
-            borderRightWidth: 2,
+            borderRightColor: appPurpleDark,
+            borderRightWidth: 1,
 
-            height: '120%',
+            // height: '120%',
         },
 
         postFooter: {
             flexDirection: 'row',
             justifyContent: 'space-evenly',
+            borderWidth:POST_BORDERS_WIDTH,
+            borderColor:appPurpleDark,
+            paddingTop:"2%",
+            paddingBottom:"2%",
+            borderBottomLeftRadius:7,
+            borderBottomRightRadius:7,
+            backgroundColor: "#e6e9fa"
+
         },
         fadingComponent:{
             position: 'absolute',
@@ -354,10 +384,8 @@ const PostCard = ({post,isPoster}) => {
             </Provider>
         );
     }
-    /**
-     * @param {LostPost} post
-     */
-    function LostPostRenderer({ post }) {
+
+    function LostAndFoundPostRenderer({ post,type }) {
         return(
             <Provider>
 
@@ -380,8 +408,8 @@ const PostCard = ({post,isPoster}) => {
 
                             </View>
                         </View>
-
-                        <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
+                        <View style={{marginTop: '3%',marginLeft:"40%"}}>
+                        <View style={{marginRight: '0%', flexDirection: 'row'}}>
                             <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
                             <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
                             <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
@@ -394,44 +422,81 @@ const PostCard = ({post,isPoster}) => {
 
                             </TouchableOpacity>
                         </View>
+                            {/*<Text style={{fontSize: 12, marginLeft: '2%'}}>{post.createdAt.toDate().toString()}</Text>*/}
+                        </View>
                     </View>
-                    <View style={styles.postBody}>
+                    <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.postBody}>
                         <View style={styles.imageContainer}>
                             <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
                         </View>
+                        <View style={{
+                            alignItems:"flex-start",
+                            marginLeft:"1%",
+
+                        }}>
                         <Text style={styles.postTitle}>{post.pet.name}</Text>
                         <Text style={{
-                            paddingLeft: '2%',
+                             paddingLeft: '1%',
                             paddingRight: '2%',
-                            color: 'black',
+
+                            width: SCREEN_WIDTH/1.8,
+                            flexShrink: 1,
+                            color: 'grey',
+                            fontSize:13,
                         }}>{post.pet.description}</Text>
-                        <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.detailsButton}>
-                            <FontAwesome name={'paw'}
-                                         style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
-                            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Text>Lost Near:</Text>
-                        <Text>{post.lostLocation}</Text>
-                        <Text>{post.lostDateAndTime}</Text>
-                    </View>
+                            {
+                                type === "Lost" &&
+
+                                <View style={{marginTop:"2%"}}>
+                                <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Lost Near:</Text>
+                                <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.lostLocation}</Text>
+                                </View>
+                                <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Time Lost:</Text>
+                                <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.lostDateAndTime}</Text>
+                                </View>
+
+                                </View>
 
 
-                    {!isPoster &&
-                        <View>
-                            <View style={styles.horizontalSeparator}/>
-                            <View style={styles.postFooter}>
-                                <TouchableOpacity onPress={callPhoneNumber}>
-                                    <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                                </TouchableOpacity>
-                                <View style={styles.verticalSeparator}/>
-                                <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
-                                    <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                                </TouchableOpacity>
-                            </View>
+                            }
+                            {
+                                type === "Found" &&
+
+                                <View style={{marginTop:"2%"}}>
+                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                        <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Found Near:</Text>
+                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.foundLocation}</Text>
+                                    </View>
+                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Time Found:</Text>
+                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.foundDateAndTime}</Text>
+                                    </View>
+
+                                </View>
+
+
+                            }
+
+                        {/*<TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.detailsButton}>*/}
+                        {/*    <FontAwesome name={'paw'}*/}
+                        {/*                 style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>*/}
+                        {/*    <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>*/}
+                        {/*</TouchableOpacity>*/}
+
                         </View>
-
+                    </TouchableOpacity>
+                    {!isPoster &&
+                        <View style={styles.postFooter}>
+                            <TouchableOpacity onPress={callPhoneNumber}>
+                                <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                            </TouchableOpacity>
+                            <View style={styles.verticalSeparator}/>
+                            <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
+                                <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                            </TouchableOpacity>
+                        </View>
                     }
 
                     <Portal>
