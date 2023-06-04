@@ -1,17 +1,18 @@
 import firestore from '@react-native-firebase/firestore';
-import {AdoptionPost, HostingPost, LostPost} from '../models/Post';
+import {AdoptionPost, FoundPost, HostingPost, LostPost} from '../models/Post';
 import {firebase} from "@react-native-firebase/auth";
 
 class PostServices {
     static async getPostsInitial(postType) {
         console.log(postType)
+        console.log("treee")
         const snapshot = await firestore()
             .collection('posts')
             .orderBy('createdAt', 'desc')
             .where("type","==",postType)
-            .limit(15)
+            .limit(5)
             .get();
-
+        console.log(snapshot.docs)
         let posts
         switch (postType) {
             case 'Adoption':
@@ -19,6 +20,9 @@ class PostServices {
                 break;
             case 'Lost':
                  posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
+            case 'Found':
+                posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
@@ -33,6 +37,7 @@ class PostServices {
         }
 
         const lastDocument = snapshot.docs[snapshot.docs.length - 1];
+
         return {newPosts: posts, lastDocument: lastDocument};
     }
 
@@ -42,7 +47,7 @@ class PostServices {
             .orderBy('createdAt', 'desc')
             .startAfter(prevLastDocument)
             .where("type","==",postType)
-            .limit(15)
+            .limit(5)
             .get();
 
         let posts
@@ -53,6 +58,8 @@ class PostServices {
             case 'Lost':
                 posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
+            case 'Found':
+                posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -104,6 +111,8 @@ class PostServices {
             case 'Lost':
                 posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
+            case 'Found':
+                posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -156,6 +165,8 @@ class PostServices {
             case 'Lost':
                 posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
+            case 'Found':
+                posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -193,6 +204,8 @@ class PostServices {
                 case 'Lost':
                     userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
                     break;
+                case 'Found':
+                    userPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
                 case 'Hosting':
                     userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
                     break;
@@ -227,6 +240,9 @@ class PostServices {
                         break;
                     case 'Hosting':
                         allPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data() }));
+                        break;
+                    case 'Found':
+                        allPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
                         break;
                     // Add cases for other post types as needed
                     default:
