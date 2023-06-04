@@ -60,6 +60,7 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -113,6 +114,7 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -167,6 +169,7 @@ class PostServices {
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
+                break;
             case 'Hosting':
                 posts = snapshot.docs.map((doc) => HostingPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
@@ -206,8 +209,9 @@ class PostServices {
                     break;
                 case 'Found':
                     userPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
+                    break;
                 case 'Hosting':
-                    userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
+                    userPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data()}));
                     break;
                 // case 'event':
                 //     userPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
