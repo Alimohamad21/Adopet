@@ -5,7 +5,6 @@ class Review {
         rating,
         ratingTime,
         comment,
-        complaintList,
         postType,
         petName,
         reviewerId,
@@ -15,11 +14,10 @@ class Review {
         postId
     ) {
         this.id = id;
-        this.isPendingConfirmation = isConfirmed;
+        this.isConfirmed = isConfirmed;
         this.rating = rating;
         this.ratingTime = ratingTime;
         this.comment = comment;
-        this.complaintList = complaintList;
         this.postType = postType;
         this.petName = petName;
         this.reviewerId = reviewerId;
@@ -36,7 +34,6 @@ class Review {
             json.rating,
             json.ratingTime,
             json.comment,
-            json.complaintList,
             json.postType,
             json.petName,
             json.reviewerId,
@@ -46,14 +43,16 @@ class Review {
             json.postId
         );
     }
-
+    /**
+     *
+     * @param {Review} review
+     **/
     static toJson(review) {
         return {
             isConfirmed: review.isConfirmed,
             rating: review.rating,
             ratingTime: review.ratingTime,
             comment: review.comment,
-            complaintList: review.complaintList,
             postType: review.postType,
             petName: review.petName,
             reviewerId: review.reviewerId,
