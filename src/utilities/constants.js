@@ -1,5 +1,4 @@
 // COLORS
-import lostAndFoundScreen from "../screens/LostAndFoundScreen";
 
 export const appPurpleDark = '#8059F0';
 export const appPurpleLight = '#C9BAF3';

@@ -3,6 +3,8 @@ import {View, Text, Button, TextInput, Modal, TouchableOpacity, StyleSheet} from
 import {Rating,AirbnbRating} from 'react-native-ratings';
 import {CheckBox} from 'react-native-elements';
 import TransparentLoadingIndicator from './TransparentLoadingIndicator';
+import Dialog from "react-native-dialog";
+
 
 const RatingPopUp = ({isVisible, onSubmit}) => {
     const [rating, setRating] = useState(3);
@@ -27,10 +29,10 @@ const RatingPopUp = ({isVisible, onSubmit}) => {
     };
 
     return (
-        <Modal visible={isVisible}>
-            <View>
+        <View>
+        <Dialog.Container visible={isVisible}>
                 {isLoading && <TransparentLoadingIndicator/>}
-                <Text>Rate your experience:</Text>
+                <Dialog.Description>Rate your experience:</Dialog.Description>
                 <AirbnbRating
                     count={5}
                     reviews={["Terrible", "Bad", "Good", "Very Good", "Excellent"]}
@@ -43,9 +45,9 @@ const RatingPopUp = ({isVisible, onSubmit}) => {
                     onChangeText={handleCommentChange}
                     placeholder="Enter your comment..."
                 />
-                <Button title="Submit" onPress={handleSubmit}/>
-            </View>
-        </Modal>
+                <Dialog.Button onPress={handleSubmit} label="Submit" />
+        </Dialog.Container>
+        </View>
     );
 };
 const styles = StyleSheet.create({});

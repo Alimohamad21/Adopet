@@ -3,8 +3,8 @@ import {Bubble, Composer, GiftedChat, InputToolbar, Send} from 'react-native-gif
 
 import ChatServices from '../services/ChatServices';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import {appPurpleDark, ChatScreenRoute} from '../utilities/constants';
+import {View,StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
+import {appPurpleDark, appPurpleLight, ChatScreenRoute} from '../utilities/constants';
 import ImagePickerButton from '../widgets/ImagePickerButton';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -16,6 +16,7 @@ import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import RatingPopUp from '../widgets/RatingPopUp';
 import Review from '../models/Review';
 import ReviewServices from '../services/ReviewServices';
+import ConfirmationPopUp from '../widgets/ConfirmationPopUp';
 
 
 export function ChatScreen() {
@@ -30,13 +31,28 @@ export function ChatScreen() {
     const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [ratingShown, setRatingShown] = useState(false);
+    const [handOverPopUpShown, setHandOverPopUpShown] = useState(false);
+    const [showConfirmHandOverButton,setShowConfirmationHandOverButton] =useState(false);
     let otherUserFullName = '';
     let otherUserImageUrl = '';
-    let otherUserId='';
+    let otherUserId = '';
 
 
     useEffect(() => {
-        console.log('2nd UseEffect');
+        const checkIfReviewed = async () =>{
+            if (currentUser.uid === chat.userThatPostedId) {
+                otherUserFullName = chat.userThatRequestedFullName;
+                otherUserId = chat.userThatRequestedId;
+            } else {
+                otherUserFullName = chat.userThatPostedFullName;
+                otherUserId = chat.userThatPostedId;
+            }
+            const rated=await ReviewServices.checkIfAlreadyReviewed(chat.postId,currentUser.uid,otherUserId)
+            console.log('ALREADY RATED:',rated);
+            setShowConfirmationHandOverButton(!rated);
+        }
+        console.log('Calling check if reviewed:')
+        checkIfReviewed();
         if (chat) {
             handleChat();
             resetUnReadMessages();
@@ -63,7 +79,7 @@ export function ChatScreen() {
                         }}/>}
                         <Text style={{fontSize: 17, color: 'white', fontWeight: 'bold'}}>{otherUserFullName}</Text>
                     </View>
-                    <TouchableOpacity onPress={handleRatingPopUp} style={{flexDirection: 'row'}}>
+                    <TouchableOpacity style={{flexDirection: 'row'}}>
                         <Text style={{
                             fontSize: 13,
                             marginTop: '3%',
@@ -86,27 +102,24 @@ export function ChatScreen() {
         }
     }, []);
 
-    function handleRatingPopUp() {
-        setRatingShown(true);
-    }
 
     //Identify sender and receiver in the chat
     //Format messages to be to view them on screen
     function handleChat() {
-        console.log("Before  handleChat")
+        console.log('Before  handleChat');
         if (currentUser.uid === chat.userThatPostedId) {
             otherUserFullName = chat.userThatRequestedFullName;
             otherUserImageUrl = chat.userThatRequestedProfilePicture;
-            console.log("Inside first condition in handleChat")
-            otherUserId=chat.userThatRequestedId;
-            console.log(`Setting other user id to:${otherUserId} ${chat.userThatRequestedId}`)
+            console.log('Inside first condition in handleChat');
+            otherUserId = chat.userThatRequestedId;
+            console.log(`Setting other user id to:${otherUserId} ${chat.userThatRequestedId}`);
         } else {
             otherUserFullName = chat.userThatPostedFullName;
             otherUserImageUrl = chat.userThatPostedProfilePicture;
-            console.log("Inside second condition in handleChat")
-            otherUserId=chat.userThatPostedId;
+            console.log('Inside second condition in handleChat');
+            otherUserId = chat.userThatPostedId;
         }
-        console.log("After  handleChat")
+        console.log('After  handleChat');
         if (chat.messages.length > 0) {
             const formattedMessages = chat.messages.map((message, index) => getFormattedMessage(message, index));
             formattedMessages.sort((a, b) => b.createdAt - a.createdAt);
@@ -263,16 +276,14 @@ export function ChatScreen() {
         setSelectedImage(null);
         setIsConfirmationModalVisible(false);
     };
-    const onRatingSubmit=async (rating, comment) => {
+    const onRatingSubmit = async (rating, comment) => {
         if (currentUser.uid === chat.userThatPostedId) {
             otherUserFullName = chat.userThatRequestedFullName;
-            otherUserId=chat.userThatRequestedId;
+            otherUserId = chat.userThatRequestedId;
         } else {
             otherUserFullName = chat.userThatPostedFullName;
-            otherUserId=chat.userThatPostedId;
+            otherUserId = chat.userThatPostedId;
         }
-        const isConfirmed=await ReviewServices.checkIfReviewIsConfirmed(chat.postId,currentUser.uid,otherUserId);
-        console.log(`isConfirmed: ${isConfirmed}`);
         console.log(`rating: ${rating}`);
         console.log(`comment: ${comment}`);
         console.log(`chat.postType: ${chat.postType}`);
@@ -282,12 +293,59 @@ export function ChatScreen() {
         console.log(`otherUserFullName: ${otherUserFullName}`);
         console.log(`otherUserId: ${otherUserId}`);
         console.log(`chat.postId: ${chat.postId}`);
-        const review = new Review('', isConfirmed, rating, Date.now(), comment, chat.postType, chat.petName,currentUser.uid,currentUser.fullName,otherUserFullName,otherUserId,chat.postId);
+        const review = new Review('', false, rating, new Date(), comment, chat.postType, chat.petName, currentUser.uid, currentUser.fullName, otherUserFullName, otherUserId, chat.postId);
         await ReviewServices.addReview(review);
         setRatingShown(false);
-    }
+        setShowConfirmationHandOverButton(false);
+    };
     const renderRating = () => {
         return <RatingPopUp isVisible={ratingShown} onSubmit={onRatingSubmit}/>;
+    };
+    const showRatingPopUp = () => {
+        setHandOverPopUpShown(false);
+        setRatingShown(true);
+    };
+    const showHandOverPopUp = () => {
+        setHandOverPopUpShown(true);
+    };
+    const onCancelHandOverPopUp = () => {
+        setHandOverPopUpShown(false);
+    };
+
+    const renderFloatingButton = () => {
+        return (
+            <View
+                style={styles.floatingButton}
+            >
+                <TouchableOpacity onPress={showHandOverPopUp}>
+                <View
+                    style={{
+                        padding: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 16,
+                            fontWeight: 'bold',
+                            color: '#fff',
+                        }}
+                    >
+                        Confirm Hand Over
+                    </Text>
+                </View>
+            </TouchableOpacity>
+            </View>
+        );
+    };
+
+
+    const renderHandOverPopUp = () => {
+        return <ConfirmationPopUp visible={handOverPopUpShown}
+                                  confirmationText={`Are you sure you want to confirm that ${chat.petName} has been handed over?`}
+                                  onConfirm={showRatingPopUp}
+                                  onCancel={onCancelHandOverPopUp}/>;
     };
 
     const renderSend = (props) => {
@@ -310,11 +368,12 @@ export function ChatScreen() {
 
     };
     return (
-
         <GiftedChat
             renderAccessory={
-                renderRating
+                renderHandOverPopUp
             }
+            renderActions={renderRating}
+           renderChatFooter={showConfirmHandOverButton?renderFloatingButton:null}
             messages={messages}
             onSend={messages => onSend(messages)}
             user={{
@@ -387,9 +446,30 @@ export function ChatScreen() {
             isLoadingEarlierMessages={true}
             scrollToBottom={true}
         />
-
     );
 
 }
+const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        alignItems: 'center',
+    },
+    floatingButton:{
+        position: 'absolute',
+        top: '1%',
+        right: '25%',
+        backgroundColor: '#42f560',
+        borderRadius: 25,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    }
+});
+
 
 export default ChatScreen;
