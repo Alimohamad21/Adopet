@@ -83,17 +83,19 @@ class ChatServices {
         const chatRoomRef = firestore().collection('chats').doc(chatId);
         let prevMessagesLength=0;
         const unsubscribe = chatRoomRef.onSnapshot((doc) => {
-            const messages = doc.data().messages;
-            console.log('added message: ', messages[messages.length - 1]);
-            const index = messages.length - 1;
-            if (firstTime) {
-                prevMessagesLength=messages.length;
-                firstTime = false;
-                return;
+            if(doc!=null) {
+                const messages = doc.data().messages;
+                console.log('added message: ', messages[messages.length - 1]);
+                const index = messages.length - 1;
+                if (firstTime) {
+                    prevMessagesLength = messages.length;
+                    firstTime = false;
+                    return;
+                }
+                if (prevMessagesLength !== messages.length)
+                    onMessageReceived(messages[index], index + 1);
+                prevMessagesLength = messages.length;
             }
-            if(prevMessagesLength!==messages.length)
-                onMessageReceived(messages[index], index + 1);
-            prevMessagesLength=messages.length;
         });
         return unsubscribe;
 
