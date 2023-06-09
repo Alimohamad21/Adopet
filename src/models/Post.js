@@ -19,7 +19,6 @@ class Post {
 
     toJson() {
         return {
-            id: this.id,
             userThatPostedId: this.userThatPostedId,
             userThatPostedFullName: this.userThatPostedFullName,
             userThatPostedCity: this.userThatPostedCity,
@@ -48,7 +47,7 @@ class AdoptionPost extends Post {
             new Pet(json.petType, json.petImage, json.petName, json.petDescription,
                 json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
             , json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
-            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt);
+            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
     }
 
     toJson() {

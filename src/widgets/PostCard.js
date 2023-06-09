@@ -112,7 +112,7 @@ const PostCard = ({post,isPoster}) => {
             const newChat = new Chat('',
                 [],
                 post.pet.name,
-                'Adoption',
+                post.type,
                 post.userThatPostedFullName,
                 post.userThatPostedId,
                 post.userThatPostedProfilePicture,
