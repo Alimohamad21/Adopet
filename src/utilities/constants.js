@@ -26,6 +26,8 @@ export const SavedPostsScreenRoute='Saved';
 export const OTPScreenRoute='Verify Phone Number';
 export const FilterPostsScreenRoute = "Filters";
 export const LostAndFoundScreenRoute = "Lost and Found";
+export const HostingScreenRoute = "Hosting";
+
 
 
 export const CreatePetProfileScreenRoute='Create pet profile';
