@@ -9,7 +9,6 @@ import {
     Image,
     TouchableHighlight
 } from 'react-native';
-// import { Calendar } from 'react-native-calendars';
 import {
     appPurpleDark,
     appPurpleLight,
@@ -29,6 +28,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
 import UserPet from '../models/UserPet';
+import {Calendar} from "react-native-calendars";
 
 const CreatePetProfileScreen = ({navigation}) => {
 
@@ -236,9 +236,9 @@ const CreatePetProfileScreen = ({navigation}) => {
                         </TouchableHighlight>
 
 
-                        {/*{showCalendar && <Calendar style={styles.calendar}*/}
-                        {/*                           onDayPress={handleAgeChange}*/}
-                        {/*                           markedDates={{[age]: {selected: true}}}/>}*/}
+                        {showCalendar && <Calendar style={styles.calendar}
+                                                   onDayPress={handleAgeChange}
+                                                   markedDates={{[age]: {selected: true}}}/>}
 
                         {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
 
