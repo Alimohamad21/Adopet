@@ -149,7 +149,7 @@ const ProfileScreen = () => {
                     <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>handleEditPetDetails(item.pet)} style={{flexDirection:"row",justifyContent:"center"}}>
+                <TouchableOpacity onPress={()=>handleEditPetDetails(item)} style={{flexDirection:"row",justifyContent:"center"}}>
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
                     <Text style={styles.editDetails} >Edit Pet Details</Text>
                 </TouchableOpacity>
@@ -172,7 +172,7 @@ const ProfileScreen = () => {
         navigation.navigate(EditUserDetailsScreenRoute);
     };
     const handleEditPetDetails = (pet) => {
-        navigation.navigate(EditPetDetailsScreenRoute,{pet:pet});
+        navigation.navigate(EditPetDetailsScreenRoute,{userPet:pet});
 
     };
 

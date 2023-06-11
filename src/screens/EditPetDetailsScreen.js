@@ -9,7 +9,7 @@ import {
     Image,
     TouchableHighlight
 } from 'react-native';
-// import { Calendar } from 'react-native-calendars';
+import {Calendar} from 'react-native-calendars';
 import {
     appPurpleDark,
     appPurpleLight,
@@ -35,19 +35,19 @@ const EditPetDetailsScreen = ({navigation}) => {
 
     const {currentUser} = useContext(CurrentUserContext);
     const route = useRoute();
-    const {pet} = route.params;
+    const {userPet} = route.params;
     /** @type {Pet} */
-    const [imageUri, setImageUri] = useState(pet.image);
-    const [name, setName] = useState(pet.name);
-    const [age, setAge] = useState(pet.birthDate);
-    const [type, setType] = useState({value:pet.type});
-    const [color, setColor] = useState(pet.color);
-    const [breed, setBreed] = useState(pet.breed);
+    const [imageUri, setImageUri] = useState(userPet.pet.image);
+    const [name, setName] = useState(userPet.pet.name);
+    const [age, setAge] = useState(userPet.pet.birthDate);
+    const [type, setType] = useState({value: userPet.pet.type});
+    const [color, setColor] = useState(userPet.pet.color);
+    const [breed, setBreed] = useState(userPet.pet.breed);
     const [breedList, setBreedList] = useState('');
-    const [gender, setGender] = useState({value:pet.gender});
-    const [isSpayed, setIsSpayed] = useState({value:pet.isNeutered});
-    const [vaccinations, setVaccinations] = useState(pet.vaccinations);
-    const [description, setDescription] = useState(pet.description);
+    const [gender, setGender] = useState({value: userPet.pet.gender});
+    const [isSpayed, setIsSpayed] = useState({value: userPet.pet.isNeutered});
+    const [vaccinations, setVaccinations] = useState(userPet.pet.vaccinations);
+    const [description, setDescription] = useState(userPet.pet.description);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isNameEmpty, setIsNameEmpty] = useState(false);
@@ -62,22 +62,22 @@ const EditPetDetailsScreen = ({navigation}) => {
     const [showCalendar, setShowCalendar] = useState(false);
 
 
-    console.log("inside edit pet details form",pet);
+    console.log("inside edit pet details form", userPet);
 
     const types = [
-        { label: 'Cat', value: 'cat' },
-        { label: 'Dog', value: 'dog' },
+        {label: 'Cat', value: 'cat'},
+        {label: 'Dog', value: 'dog'},
     ];
 
     const isSpayedOptions = [
-        { label: 'Yes', value: true },
-        { label: 'No', value: false },
+        {label: 'Yes', value: true},
+        {label: 'No', value: false},
     ];
 
 
     const genderOptions = [
-        { label: 'Male', value: 'Male' },
-        { label: 'Female', value: 'Female' },
+        {label: 'Male', value: 'Male'},
+        {label: 'Female', value: 'Female'},
     ];
 
     const handleAddPhoto = async () => {
@@ -93,7 +93,7 @@ const EditPetDetailsScreen = ({navigation}) => {
     };
 
     const handleColorChange = (text) => {
-        setColor(text);
+        setColor(text.value);
         setIsColorEmpty(false);
     };
 
@@ -103,13 +103,13 @@ const EditPetDetailsScreen = ({navigation}) => {
 
 
     const handleBreedChange = (value) => {
-        setBreed(value);
+        setBreed(value.value);
         setIsBreedEmpty(false);
     };
 
 
     const handleVaccinationsChange = (text) => {
-        setVaccinations(text);
+        setVaccinations(text.value);
         setIsVaccinationsEmpty(false);
     };
 
@@ -143,7 +143,7 @@ const EditPetDetailsScreen = ({navigation}) => {
     }
     const getRadioButtonFormat = (option) => {
 
-      return {value:option,label:option}
+        return {value: option, label: option}
     }
 
     const validateInputs = () => {
@@ -200,8 +200,9 @@ const EditPetDetailsScreen = ({navigation}) => {
         if (isValidInputs) {
             setIsLoading(true);
             const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
-            const userPet = new UserPet('', currentUser.uid, new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value));
-            await PetServices.addPet(userPet);
+            const pet = new UserPet(userPet.id, currentUser.uid, new Pet(type.value, photo, name, description, age, color, breed, gender.value, isSpayed.value, vaccinations));
+            console.log("editing pet!!!!",JSON.stringify(pet));
+            await PetServices.editPet(pet);
             navigation.replace(ProfileScreenRoute);
         }
     }
@@ -217,16 +218,17 @@ const EditPetDetailsScreen = ({navigation}) => {
 
                 <View style={styles.container}>
 
-                    <Text style={styles.titles} >Edit photo</Text>
-                    <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
-                        <FontAwesome name={'plus-circle'} onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
+                    <Text style={styles.titles}>Edit photo</Text>
+                    <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)">
+                        <FontAwesome name={'plus-circle'} onPress={handleAddPhoto}
+                                     style={styles.addPhoto}></FontAwesome>
                     </TouchableHighlight>
-                    {imageUri && <Image source={{uri:imageUri}} style={styles.image}/>}
+                    {imageUri && <Image source={{uri: imageUri}} style={styles.image}/>}
 
                     {isPhotoEmpty && <Text style={styles.wrongCredentialsText}>Please add a picture of your pet.</Text>}
 
 
-                    <Text style={styles.titles} >Name</Text>
+                    <Text style={styles.titles}>Name</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Name"
@@ -241,38 +243,41 @@ const EditPetDetailsScreen = ({navigation}) => {
                     </View>
 
                     <TouchableHighlight
-                        underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
-                        <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines"/>
+                        underlayColor="rgba(128, 128, 128, 0.1)">
+                        <FontAwesome name="calendar" size={23} style={styles.faIcons} onPress={toggleCalendar}
+                                     icon="fa-solid fa-calendar-lines"/>
                     </TouchableHighlight>
 
 
-                    {/*{showCalendar && <Calendar style={styles.calendar}*/}
-                    {/*                           onDayPress={handleAgeChange}*/}
-                    {/*                           markedDates={{[age]: {selected: true}}}/>}*/}
+                    {showCalendar && <Calendar style={styles.calendar}
+                                               onDayPress={handleAgeChange}
+                                               markedDates={{[age]: {selected: true}}}/>}
 
                     {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
 
 
-
-                    <Text style={styles.titles} >Pet Type </Text>
+                    <Text style={styles.titles}>Pet Type </Text>
                     <RadioButtonComponent
                         options={types}
                         selectedOption={type}
                         onSelect={handleTypeChange}
                     />
-                    {isTypeEmpty && <Text style={styles.wrongCredentialsText}>Please select whether you have a cat or a dog.</Text>}
+                    {isTypeEmpty &&
+                        <Text style={styles.wrongCredentialsText}>Please select whether you have a cat or a dog.</Text>}
 
 
-                    <Text style={styles.titles} >Color </Text>
+                    <Text style={styles.titles}>Color </Text>
                     <DropdownComponent onSelect={handleColorChange} data={catAndDogColors} placeholder={color}/>
                     {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
 
-                    <Text style={styles.titles} >Breed</Text>
-                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={breed}/>
+                    <Text style={styles.titles}>Breed</Text>
+                    <DropdownComponent onSelect={handleBreedChange}
+                                       data={breedList === 'cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)}
+                                       placeholder={breed}/>
                     {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
 
 
-                    <Text style={styles.titles} >Pet gender</Text>
+                    <Text style={styles.titles}>Pet gender</Text>
                     <RadioButtonComponent
                         options={genderOptions}
                         selectedOption={gender}
@@ -281,21 +286,26 @@ const EditPetDetailsScreen = ({navigation}) => {
                     {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's gender</Text>}
 
 
-                    <Text style={styles.titles} >Is your pet spayed? </Text>
+                    <Text style={styles.titles}>Is your pet spayed? </Text>
                     <RadioButtonComponent
                         options={isSpayedOptions}
                         selectedOption={isSpayed}
                         onSelect={handleIsSpayedChange}
                     />
-                    {isSpayedEmpty && <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or not.</Text>}
+                    {isSpayedEmpty &&
+                        <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or
+                            not.</Text>}
 
 
-                    <Text style={styles.titles} >Vaccinations</Text>
-                    <DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions} placeholder={vaccinations}/>
+                    <Text style={styles.titles}>Vaccinations</Text>
+                    <DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions}
+                                       placeholder={vaccinations}/>
 
-                    {isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}
+                    {isVaccinationsEmpty &&
+                        <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not
+                            vaccinated.</Text>}
 
-                    <Text style={styles.titles} >Pet description</Text>
+                    <Text style={styles.titles}>Pet description</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Describe your pet. ie playful, likes to cuddle, etc"
@@ -308,7 +318,7 @@ const EditPetDetailsScreen = ({navigation}) => {
                 <View style={{alignItems: 'center'}}>
                     <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
                         <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleCreatePetProfile}>
-                            <Text style={styles.createPetProfileBtnText}>Create Pet Profile</Text>
+                            <Text style={styles.createPetProfileBtnText}>Save Changes</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
