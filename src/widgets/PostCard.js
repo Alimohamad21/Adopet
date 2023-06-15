@@ -1,6 +1,12 @@
 import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Animated} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {appPurpleDark, appPurpleLight, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
+import {
+    appPurpleDark,
+    appPurpleLight,
+    ChatScreenRoute,
+    ProfileScreenRoute,
+    ViewPetScreenRoute
+} from '../utilities/constants';
 import React, {useContext, useEffect, useState} from 'react';
 import call from 'react-native-phone-call';
 import {useNavigation} from '@react-navigation/native';
@@ -102,6 +108,10 @@ const PostCard = ({post,isPoster}) => {
     const handleViewDetails = (post) => {
         navigation.navigate(ViewPetScreenRoute, {pet: post.pet});
     };
+    const handleProfileNavigation = (userId) =>{
+        navigation.navigate(ProfileScreenRoute, {userParam:userId});
+
+    }
     const handleChatNavigation = async (post) => {
         setIsLoading(true);
         const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id);
@@ -496,7 +506,7 @@ const PostCard = ({post,isPoster}) => {
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
 
-                        <View style={styles.profileContainer}>
+                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
                             {post.userThatPostedProfilePicture === ""  ?
                                 <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
@@ -510,7 +520,7 @@ const PostCard = ({post,isPoster}) => {
                                 </View>
 
                             </View>
-                        </View>
+                        </TouchableOpacity>
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>

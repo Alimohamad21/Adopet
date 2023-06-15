@@ -29,6 +29,7 @@ import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
 import UserServices from "../services/UserServices";
 import functions from '@react-native-firebase/functions';
+import ScreenLoadingIndicator from "../widgets/ScreenLoadingIndicator";
 
 const ProfileScreen = () => {
     const [view, setView] = useState(1)
@@ -44,7 +45,8 @@ const ProfileScreen = () => {
     const fadeOut = useRef(null);
     const fadeIn = useRef(null);
     const isCurrentUser = userParam == null;
-    const user = isCurrentUser ? currentUser : userParam;
+    const [user, setUser] = useState();
+    // const user = isCurrentUser ? currentUser : userParam;
 
     useMemo(() => {
         fadeOut.current = Animated.timing(animatedValue, {toValue: 0, useNativeDriver: true});
@@ -97,10 +99,28 @@ const ProfileScreen = () => {
         //     .then(response => {
         //         console.log(response)
         //     });
-        const getUserPosts = async () => {
-            const res = await PostServices.getUserPosts(user.uid)
+        const getUserPosts = async (userId) => {
+            const res = await PostServices.getUserPosts(userId)
             setUserPosts(res)
         }
+        const getUserPets = async (userId) => {
+            const pets = await UserServices.getUserPets(userId);
+            setUserPets(pets);
+        }
+        const setProfileUser = async () => {
+            if (isCurrentUser) {
+                setUser(currentUser);
+                getUserPosts(currentUser.uid).then()
+                getUserPets(currentUser.uid).then()
+            } else {
+                const res = await UserServices.getUser(userParam);
+                setUser(res);
+                getUserPosts(res.uid).then()
+                getUserPets(res.uid).then()
+            }
+
+        }
+
         //
         // const unsubscribe = navigation.addListener('focus', async () => {
         //     const user = await UserServices.getUser(currentUser.uid);
@@ -109,14 +129,7 @@ const ProfileScreen = () => {
         // return unsubscribe;
 
         //TO DO:  load Pets from database or from current user object
-        const getUserPets = async () => {
-            const pets = await UserServices.getUserPets(user.uid);
-            setUserPets(pets);
-        }
-
-        getUserPosts().then()
-        getUserPets().then()
-
+        setProfileUser().then();
 
     }, [navigation])
 
@@ -152,8 +165,8 @@ const ProfileScreen = () => {
                     <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
-               {isCurrentUser && <TouchableOpacity onPress={() => handleEditPetDetails(item)}
-                                  style={{flexDirection: "row", justifyContent: "center"}}>
+                {isCurrentUser && <TouchableOpacity onPress={() => handleEditPetDetails(item)}
+                                                    style={{flexDirection: "row", justifyContent: "center"}}>
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
                     <Text style={styles.editDetails}>Edit Pet Details</Text>
                 </TouchableOpacity>}
@@ -180,6 +193,11 @@ const ProfileScreen = () => {
         navigation.navigate(EditPetDetailsScreenRoute, {userPet: pet});
 
     };
+    if (!user){
+
+        return <ScreenLoadingIndicator></ScreenLoadingIndicator>
+    }
+    else
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
@@ -206,8 +224,8 @@ const ProfileScreen = () => {
                             <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
                             <Text style={styles.phone}>{user.phoneNumber}</Text>
                         </View>
-                        {isCurrentUser &&<TouchableOpacity onPress={handleEditDetails}
-                                          style={{flexDirection: "row", justifyContent: "center"}}>
+                        {isCurrentUser && <TouchableOpacity onPress={handleEditDetails}
+                                                            style={{flexDirection: "row", justifyContent: "center"}}>
                             <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
                             <Text style={styles.editDetails}>Edit details</Text>
                         </TouchableOpacity>}
@@ -249,9 +267,9 @@ const ProfileScreen = () => {
                                   onScrollEndDrag={handleScroll}
                             // contentContainerStyle={{}}
 
-                                  ListFooterComponent={renderFooter}
+                                  ListFooterComponent={isCurrentUser && renderFooter}
 
-                        />) : (renderFooter())
+                        />) : isCurrentUser &&(renderFooter())
                     }
 
                 </View>
