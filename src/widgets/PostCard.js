@@ -161,13 +161,13 @@ const PostCard = ({post,isPoster}) => {
 
     const PostNumColumns = 1;
 // item size
-    const POST_ITEM_HEIGHT = isPoster ?  height/5 : height/4;
+    const POST_ITEM_HEIGHT = isPoster ?  height/3 : (height/3 + height/20);
     const POST_ITEM_MARGIN = 15;
     const POST_BORDERS_WIDTH = 1;
     const styles = StyleSheet.create({
         root: {
             flex: 1,
-            position: 'absolute',
+            // position: 'absolute',
             justifyContent: 'center',
             alignItems: 'center',
         },
@@ -177,16 +177,16 @@ const PostCard = ({post,isPoster}) => {
         },
 
         postContainer: {
-            marginTop: '2%',
+            // marginTop: '2%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             width: (SCREEN_WIDTH - (PostNumColumns + 1) * POST_ITEM_MARGIN +17) / PostNumColumns,
-            height: POST_ITEM_HEIGHT + 50,
+            height: POST_ITEM_HEIGHT ,
             backgroundColor: "white",
             // backgroundColor: '#e6e9fa',
             // borderWidth:1,
             borderColor:appPurpleDark,
-            marginBottom: '7%',
+            // marginBottom: '7%',
             borderRadius: 5,
 
         },

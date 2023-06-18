@@ -1,8 +1,10 @@
 import firestore from '@react-native-firebase/firestore';
 import {AdoptionPost, FoundPost, HostingPost, LostPost} from '../models/Post';
 import {firebase} from "@react-native-firebase/auth";
+import Pet from "../models/Pet";
 
 class PostServices {
+
     static async getPostsInitial(postType) {
         console.log(postType)
         console.log("treee")
@@ -78,6 +80,7 @@ class PostServices {
     static async getPostsFiltered(filters,postType) {
 
         // console.log(petType,ageRange,selectedBreeds,isNeutered);
+        console.log(filters)
 
         const postsCollection = await firestore().collection('posts')
         let query = postsCollection
@@ -85,9 +88,15 @@ class PostServices {
             query = query.where("petType",'==', filters.petType)
         }
         if (filters.ageRange) {
+            console.log(Pet.getPetBirthdate(filters.ageRange.min).toString())
+            console.log(Pet.getPetBirthdate(filters.ageRange.max).toString())
+            const minBirthdate = Pet.getPetBirthdate(filters.ageRange.min).toString();
+            const maxBirthdate = Pet.getPetBirthdate(filters.ageRange.max).toString();
             query = query
-                .where("petAge", '>=', parseInt(filters.ageRange.min))
-                .where("petAge", '<=', parseInt(filters.ageRange.max))
+
+                .where("petBirthDate", '<=', minBirthdate)
+                .where("petBirthDate", '>=', maxBirthdate)
+                .orderBy("petBirthDate")
         }
         // if (selectedColors.length > 0){
         //     query = query.where("petColor",'in',selectedColors)
@@ -104,6 +113,7 @@ class PostServices {
             .where("type","==",postType)
             .limit(15)
             .get();
+        // console.log(snapshot.docs)
         let posts
         switch (postType) {
             case 'Adoption':
@@ -139,10 +149,12 @@ class PostServices {
             query = query.where("petType",'==', filters.petType)
         }
         if (filters.ageRange) {
+            const minBirthdate = Pet.getPetBirthdate(filters.ageRange.min).toString();
+            const maxBirthdate = Pet.getPetBirthdate(filters.ageRange.max).toString();
             query = query
-                .where("petAge", '>=', parseInt(filters.ageRange.min))
-                .where("petAge", '<=', parseInt(filters.ageRange.max))
-                .orderBy('petAge')
+                .where("petBirthDate", '<=', minBirthdate)
+                .where("petBirthDate", '>=', maxBirthdate)
+                .orderBy("petBirthDate")
         }
 
         if (filters.selectedBreeds.length > 0){
@@ -260,6 +272,8 @@ class PostServices {
             return false;
         }
     }
+
+
 }
 
 export default PostServices;

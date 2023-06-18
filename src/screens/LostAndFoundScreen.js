@@ -135,12 +135,21 @@ const LostAndFoundScreen = ({route}) => {
             console.log(newPosts)
         };
         const getLostPostsFiltered = async () => {
-            const {newLostPosts, lastLostDocument} = await PostServices.getPostsFiltered(filters,lostPostType);
-            setLostPosts(newLostPosts);
-            setPrevLastLostDocument(lastLostDocument);
+            const {newPosts, lastDocument} = await PostServices.getPostsFiltered(filters,lostPostType);
+            console.log(newPosts)
+            setLostPosts(newPosts);
+            setPrevLastLostDocument(lastDocument);
             setIsAllPostsLoaded(false)
         };
-        isFiltered ? getLostPostsFiltered() : (getLostPosts() , getFoundPosts())
+        const getFoundPostsFiltered = async () => {
+            const {newPosts, lastDocument} = await PostServices.getPostsFiltered(filters,foundPostType);
+            console.log(newPosts)
+            setFoundPosts(newPosts);
+            setPrevLastFoundDocument(lastDocument);
+            setIsAllPostsLoaded(false)
+        };
+
+        isFiltered ? (getLostPostsFiltered(),getFoundPostsFiltered()) : (getLostPosts() , getFoundPosts())
 
 
     }, [route]);
@@ -202,8 +211,9 @@ const LostAndFoundScreen = ({route}) => {
                                   data={lostPosts} renderItem={renderPost}
                                   keyExtractor={(lostPost) => `${lostPost.id}`}
                              onEndReached={onLostEndReached}
-
+                                refreshing={isPaginating}
                                   extraData={route}
+                                  removeClippedSubviews={true}
                         />
 
 
@@ -222,7 +232,8 @@ const LostAndFoundScreen = ({route}) => {
 
                 }
 
-                { isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View> }
+                { isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/>
+                </View> }
             </SafeAreaView>
         );
     }
