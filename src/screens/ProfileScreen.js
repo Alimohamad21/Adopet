@@ -15,11 +15,15 @@ import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
+    AddAdoptionPostScreen,
+    AdoptionScreenRoute,
     appPurpleDark,
     ChatScreenRoute,
-    EditUserDetailsScreenRoute,
+    EditUserDetailsScreenRoute, FilterPostsScreenRoute,
     UploadImageScreenRoute,
     ViewPetScreenRoute,
+    AddAdoptionPostScreenRoute, PostTypesListScreenRoute,
+
 } from "../utilities/constants";
 import {  CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -133,6 +137,9 @@ const ProfileScreen = () => {
     const handleCreatePetProfileNavigation = () =>{
         navigation.navigate(CreatePetProfileScreenRoute)
     }
+    const handleAddPostPress=()=> {
+        navigation.navigate(PostTypesListScreenRoute)
+    };
     const renderPost = ({item}) => {
         return (
             <PostCard post={item} isPoster={true}/>
@@ -224,6 +231,17 @@ const ProfileScreen = () => {
                     }
                 </View>
             }
+            <TouchableOpacity onPress={handleAddPostPress} style={{ flexDirection: 'row',
+                marginTop: '3%', marginRight: '3%', marginBottom: '5%',
+                justifyContent: 'center', alignItems: 'center',
+                position: 'absolute', bottom: 0, right: 0, zIndex: 999,
+                backgroundColor:appPurpleDark,
+                width:"20%",
+                borderRadius:7
+            }}>
+                <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Add Post</Text>
+                <FontAwesome name={'plus'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
+            </TouchableOpacity>
             { view ===2  &&
                 <View style={{ alignItems:"center",marginTop:"15%",height: hideComponents ===1 ? "50%" : "100%",}}>
                     {userPets && userPets.length > 0 ? (
