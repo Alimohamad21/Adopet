@@ -77,20 +77,33 @@ const ProfileScreen = () => {
             headerTitle: "",
 
             headerLeft: () => (
+                <View>
+                    {
+                        !isCurrentUser && <TouchableOpacity>
+                            <FontAwesome onPress={handleClose} name={"arrow-left"}
+                                         style={{fontSize: 20, marginBottom: "35%"}}></FontAwesome>
+                        </TouchableOpacity>
 
-                <MenuImage
-                    onPress={() => {
-                        navigation.openDrawer();
-                    }}
-                />
+                    }
+                    {isCurrentUser &&
+                        <MenuImage
+                            onPress={() => {
+                                navigation.openDrawer();
+                            }}
+                        />
+                    }
 
-            ),
-            headerRight: () => (
-                <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
+                </View>
 
 
-            ),
-        });
+    ),
+        headerRight: () => (
+            <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
+
+
+        ),
+    })
+        ;
         // console.log(currentUser)
     }, []);
     useEffect(() => {
@@ -133,7 +146,9 @@ const ProfileScreen = () => {
 
     }, [navigation])
 
-
+    const handleClose = () => {
+        navigation.goBack();
+    }
     const handlePostsSelect = () => {
         console.log("Posts")
         setView(1)
@@ -193,93 +208,99 @@ const ProfileScreen = () => {
         navigation.navigate(EditPetDetailsScreenRoute, {userPet: pet});
 
     };
-    if (!user){
+    if (!user) {
 
         return <ScreenLoadingIndicator></ScreenLoadingIndicator>
-    }
-    else
+    } else
 
-    return (
-        <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
-            {!hideComponents &&
-                <Animated.View style={{opacity: animatedValue}}>
-                    <View style={styles.profileIconContainer}>
+        return (
+            <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
+                {!hideComponents &&
+                    <Animated.View style={{opacity: animatedValue}}>
+                        <View style={styles.profileIconContainer}>
 
-                        {
-                            user.profilePicture !== '' ?
-                                <Image source={{uri: user.profilePicture}} style={styles.profileIcon}/> :
-                                <Image source={require('../assets/default_user.png')}
-                                       style={styles.profileIcon}/>}
-                    </View>
-
-
-                    <View style={{alignItems: "center"}}>
-                        <View style={{flexDirection: "row", justifyContent: "center"}}>
-                            <Text style={styles.nameText}>{user.fullName}</Text>
+                            {
+                                user.profilePicture !== '' ?
+                                    <Image source={{uri: user.profilePicture}} style={styles.profileIcon}/> :
+                                    <Image source={require('../assets/default_user.png')}
+                                           style={styles.profileIcon}/>}
                         </View>
-                        <View style={{flexDirection: "row", justifyContent: "center"}}>
-                            <Text style={styles.location}>{user.city}</Text>
+
+
+                        <View style={{alignItems: "center"}}>
+                            <View style={{flexDirection: "row", justifyContent: "center"}}>
+                                <Text style={styles.nameText}>{user.fullName}</Text>
+                            </View>
+                            <View style={{flexDirection: "row", justifyContent: "center"}}>
+                                <Text style={styles.location}>{user.city}</Text>
+                            </View>
+                            <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                                <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                                <Text style={styles.phone}>{user.phoneNumber}</Text>
+                            </View>
+                            {isCurrentUser && <TouchableOpacity onPress={handleEditDetails}
+                                                                style={{
+                                                                    flexDirection: "row",
+                                                                    justifyContent: "center"
+                                                                }}>
+                                <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                                <Text style={styles.editDetails}>Edit details</Text>
+                            </TouchableOpacity>}
                         </View>
-                        <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
-                            <Text style={styles.phone}>{user.phoneNumber}</Text>
-                        </View>
-                        {isCurrentUser && <TouchableOpacity onPress={handleEditDetails}
-                                                            style={{flexDirection: "row", justifyContent: "center"}}>
-                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
-                            <Text style={styles.editDetails}>Edit details</Text>
-                        </TouchableOpacity>}
-                    </View>
 
-                </Animated.View>
-            }
-            <View style={{height: "5%", marginTop: "2%"}}>
-                <SlideButton onFirstPress={handlePostsSelect} onSecondPress={handlePetsSelect} firstText={"Posts"}
-                             secondText={"Pets"}></SlideButton>
-            </View>
-
-
-            {view === 1 &&
-                <View style={{
-                    alignItems: "center", paddingTop: "10%",
-                    height: hideComponents === 1 ? "50%" : "80%",
-
-                }}>
-                    {userPosts &&
-
-                        <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
-                                  data={userPosts} renderItem={renderPost}
-                                  keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
-                            // onScroll={handleScroll}
-                            // onScrollBeginDrag={handleScroll}
-                                  onScrollEndDrag={handleScroll}
-                        />
-                    }
-                </View>
-            }
-            {view === 2 &&
-                <View style={{alignItems: "center", marginTop: "15%", height: hideComponents === 1 ? "50%" : "100%",}}>
-                    {userPets && userPets.length > 0 ? (
-                        <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
-                                  data={userPets} renderItem={renderPet}
-                                  keyExtractor={(pet) => `${pet.id}`}
-                            //onScroll={handleScroll}
-                                  onScrollEndDrag={handleScroll}
-                            // contentContainerStyle={{}}
-
-                                  ListFooterComponent={isCurrentUser && renderFooter}
-
-                        />) : isCurrentUser &&(renderFooter())
-                    }
-
+                    </Animated.View>
+                }
+                <View style={{height: "5%", marginTop: "2%"}}>
+                    <SlideButton onFirstPress={handlePostsSelect} onSecondPress={handlePetsSelect} firstText={"Posts"}
+                                 secondText={"Pets"}></SlideButton>
                 </View>
 
-            }
 
-        </SafeAreaView>
+                {view === 1 &&
+                    <View style={{
+                        alignItems: "center", paddingTop: "10%",
+                        height: hideComponents === 1 ? "50%" : "80%",
+
+                    }}>
+                        {userPosts &&
+
+                            <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                      data={userPosts} renderItem={renderPost}
+                                      keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                                // onScroll={handleScroll}
+                                // onScrollBeginDrag={handleScroll}
+                                      onScrollEndDrag={handleScroll}
+                            />
+                        }
+                    </View>
+                }
+                {view === 2 &&
+                    <View style={{
+                        alignItems: "center",
+                        marginTop: "15%",
+                        height: hideComponents === 1 ? "50%" : "100%",
+                    }}>
+                        {userPets && userPets.length > 0 ? (
+                            <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                      data={userPets} renderItem={renderPet}
+                                      keyExtractor={(pet) => `${pet.id}`}
+                                //onScroll={handleScroll}
+                                      onScrollEndDrag={handleScroll}
+                                // contentContainerStyle={{}}
+
+                                      ListFooterComponent={isCurrentUser && renderFooter}
+
+                            />) : isCurrentUser && (renderFooter())
+                        }
+
+                    </View>
+
+                }
+
+            </SafeAreaView>
 
 
-    );
+        );
 
 };
 const {width, height} = Dimensions.get('window');

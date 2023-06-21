@@ -323,7 +323,7 @@ const PostCard = ({post,isPoster}) => {
 
 
 
-                        <View style={styles.profileContainer}>
+                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
                             {post.userThatPostedProfilePicture === ""  ?
                                 <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
@@ -337,7 +337,7 @@ const PostCard = ({post,isPoster}) => {
                                 </View>
 
                             </View>
-                        </View>
+                        </TouchableOpacity>
 
                         <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
                             <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
@@ -405,7 +405,7 @@ const PostCard = ({post,isPoster}) => {
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
 
-                        <View style={styles.profileContainer}>
+                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
                             {post.userThatPostedProfilePicture === ""  ?
                                 <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
@@ -419,7 +419,7 @@ const PostCard = ({post,isPoster}) => {
                                 </View>
 
                             </View>
-                        </View>
+                        </TouchableOpacity>
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
