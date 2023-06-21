@@ -213,7 +213,7 @@ const LostAndFoundScreen = ({route}) => {
                              onEndReached={onLostEndReached}
                                 refreshing={isPaginating}
                                   extraData={route}
-                                  removeClippedSubviews={true}
+                                  //removeClippedSubviews={true}
                         />
 
 

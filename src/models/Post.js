@@ -79,7 +79,7 @@ class LostPost extends Post {
         this.pet = pet;
         this.lostLocation = lostLocation;
         //const dateString = moment(date).format('YYYY-MM-DD HH:mm:ss')
-        this.lostDateAndTime = lostDateAndTime.toDate().toString();
+        this.lostDateAndTime = lostDateAndTime.toDate().toDateString();
 
     }
 
@@ -121,7 +121,7 @@ class FoundPost extends Post {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
         this.foundLocation = foundLocation;
-        this.foundDateAndTime = foundDateAndTime.toDate().toString();
+        this.foundDateAndTime = foundDateAndTime.toDate().toDateString();
 
 
     }
