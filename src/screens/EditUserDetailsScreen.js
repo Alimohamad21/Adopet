@@ -1,4 +1,4 @@
-import React, { useContext, useLayoutEffect, useRef, useState } from "react";
+import React, {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {
   appPurpleDark,
   appPurpleLight,
@@ -81,6 +81,9 @@ const EditUserDetailsScreen = () => {
       headerRight: () => <View />,
     });
   }, []);
+  useEffect( () => {
+
+  },[currentUser]);
   const handleFullNameChange = (text) => {
     setFullName(text);
     //setIsFullNameEmpty(false);
@@ -185,7 +188,14 @@ const EditUserDetailsScreen = () => {
     //setIsLoading(false);
     //navigation.navigate(UploadImageScreenRoute);
   };
-
+  const handleRemovePicture= async ()=>{
+    setIsLoading(true);
+    await UserServices.removeProfilePicture(currentUser.uid);
+    const user = currentUser;
+    user.profilePicture = "";
+    setCurrentUser(user);
+    setIsLoading(false);
+  }
   const handleUpdate = async () => {
     setEmail(removeSpacesFromString(email));
     setFullName(fullName.trim());
@@ -216,7 +226,7 @@ const EditUserDetailsScreen = () => {
     // }
     if (isValidInputs) {
       setIsLoading(true);
-      const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.fcmTokens,0,0);
+      const user = new User(currentUser.uid, fullName, city, phoneNumber, email, currentUser.profilePicture, currentUser.ownedPets, currentUser.savedPosts,currentUser.fcmTokens,currentUser.ratingsCount,currentUser.ratingsSum);
       await UserServices.updateUser(user, currentUser.uid).then(() => {
         setCurrentUser(user);
       }).then(() => {
@@ -235,17 +245,24 @@ const EditUserDetailsScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }} style={styles.scrollView}>
         <View >
+          <TouchableOpacity onPress={handleRemovePicture}>
+            <FontAwesome  style={{ fontSize: 22, color: "red", marginLeft:"65%", zIndex: 1 }} name={"times-circle"}></FontAwesome>
+          </TouchableOpacity>
+
           <View style={styles.profileIconContainer}>
 
             {
               currentUser.profilePicture !== "" ?
                 <Image source={{ uri: currentUser.profilePicture }} style={styles.profileIcon} /> :
                 <Image source={require("../assets/default_user.png")}
-                       style={styles.profileIcon} />}
+                       style={styles.profileIcon} />
+            }
           </View>
           <TouchableOpacity onPress={handlePictureChange} style={{ flexDirection: "row", justifyContent: "center" }}>
             <FontAwesome style={{ fontSize: 19, color: appPurpleDark }} name={"camera"}></FontAwesome>
             <Text style={styles.editPicture} >Edit profile picture</Text>
+
+
           </TouchableOpacity>
 
           <View style={styles.container}>

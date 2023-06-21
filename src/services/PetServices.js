@@ -29,6 +29,12 @@ class PetServices{
             return false;
         }
     }
+    static async deletePet(petId){
+
+        const docRef = firestore().collection('pets').doc(petId);
+
+        await docRef.delete();
+    }
 }
 
 export default PetServices
