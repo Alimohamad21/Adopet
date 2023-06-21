@@ -3,12 +3,14 @@ import Chat from '../models/Chat';
 import NotificationServices from './NotificationServices';
 
 import {firebase} from '@react-native-firebase/auth';
+import {encryptRSA} from '../utilities/securityUtilities';
+import UserServices from './UserServices';
 
 const {FieldValue} = firestore;
 
 class ChatServices {
 
-    static async getChat(userThatPostedId, userThatRequestedId, postId) {
+    static async getChat(userThatPostedId, userThatRequestedId, postId,currentUserId) {
         const snapshot = await firestore().collection('chats')
             .where('userThatPostedId', '==', userThatPostedId)
             .where('userThatRequestedId', '==', userThatRequestedId)
@@ -17,7 +19,8 @@ class ChatServices {
         if (snapshot.docs.length === 0) {
             return null;
         }
-        return snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}))[0];
+        const chatPromise= snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}, currentUserId))[0];
+        return await chatPromise;
     }
 
     static async getUserPostsChats(uid) {
@@ -25,8 +28,10 @@ class ChatServices {
             .where('userThatPostedId', '==', uid)
             .get();
         let nonEmptyChats = [];
-        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}));
-        for (const chat of allChats) {
+        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()},uid));
+        console.log("all chats:",allChats.length)
+        for (const chatPromise of allChats) {
+            const chat=await chatPromise;
             if (chat.messages.length > 0) {
                 nonEmptyChats.push(chat);
             }
@@ -42,8 +47,9 @@ class ChatServices {
             .where('userThatRequestedId', '==', uid)
             .get();
         let nonEmptyChats = [];
-        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()}));
-        for (const chat of allChats) {
+        let allChats = snapshot.docs.map(doc => Chat.fromJson({id: doc.id, ...doc.data()},uid));
+        for (const chatPromise of allChats) {
+            const chat=await chatPromise;
             if (chat.messages.length > 0) {
                 nonEmptyChats.push(chat);
             }
@@ -59,9 +65,18 @@ class ChatServices {
         return doc.id;
     }
 
-    static async sendMessage(chatId, messageId,text, uid, createdAt, receiverId, senderFullName) {
+    static async sendMessage(chatId, messageId,text, uid, createdAt, receiverId, senderFullName,senderPublicKey,receiverPublicKey) {
+        console.log("INSIDE SEND MESSAGE")
+        const receiverCipher=await encryptRSA(receiverPublicKey,text);
+        console.log("INSIDE SEND MESSAGE AFTER ENCRYPT 1")
+        const senderCipher=await encryptRSA(senderPublicKey,text);
+        console.log("INSIDE SEND MESSAGE AFTER ENCRYPT 2")
+        const ciphers={};
+        ciphers[uid]=senderCipher;
+        ciphers[receiverId]=receiverCipher;
+        console.log("CIPHERS:",ciphers);
         await firestore().collection('chats').doc(chatId).update({
-            'messages': FieldValue.arrayUnion({text: text, uid: uid, createdAt: createdAt,_id:messageId}),
+            'messages': FieldValue.arrayUnion({text: ciphers, uid: uid, createdAt: createdAt,_id:messageId}),
         });
         await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: ${text}`);
     }
@@ -78,13 +93,16 @@ class ChatServices {
         return Chat.fromJson({id: doc.id, ...doc.data()});
     }
 
-    static async listenForChatMessages(chatId, onMessageReceived) {
+    static async listenForChatMessages(chatId, onMessageReceived,currentUserId) {
         let firstTime = true;
         const chatRoomRef = firestore().collection('chats').doc(chatId);
         let prevMessagesLength=0;
-        const unsubscribe = chatRoomRef.onSnapshot((doc) => {
-            if(doc!=null) {
-                const messages = doc.data().messages;
+        const unsubscribe = chatRoomRef.onSnapshot(async (doc) => {
+            if (doc != null) {
+                let messages=[]
+                if(doc.data().messages.length>0){
+                    messages = await Chat.decrypt(doc.data().messages,currentUserId);
+                }
                 console.log('added message: ', messages[messages.length - 1]);
                 const index = messages.length - 1;
                 if (firstTime) {

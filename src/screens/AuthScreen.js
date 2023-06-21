@@ -7,6 +7,7 @@ import {CurrentUserProvider, CurrentUserContext} from '../providers/CurrentUserP
 import NotificationServices from "../services/NotificationServices";
 import user from "../models/User";
 import AuthServices from '../services/AuthServices';
+import {generateRSAKeyPair, getPrivateKey, storeKeyPair} from '../utilities/securityUtilities';
 
 export function AuthScreen({navigation}) {
 
@@ -16,7 +17,12 @@ export function AuthScreen({navigation}) {
             if (authUser) {
                 const fcmToken = await NotificationServices.getToken();
                 await UserServices.addFcmToken(authUser.uid,fcmToken);
-                UserServices.getUser(authUser.uid).then((user) => {
+                UserServices.getUser(authUser.uid).then(async (user) => {
+                    if (user.publicKey === '') {
+                        let pair = await generateRSAKeyPair()
+                        storeKeyPair(user.uid,pair.privateKey,pair.publicKey)
+                        user.publicKey=pair.publicKey;
+                    }
                     setCurrentUser(user);
                     navigation.replace(MainAppRoute);
                 });

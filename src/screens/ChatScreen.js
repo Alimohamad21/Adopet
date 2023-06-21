@@ -94,7 +94,7 @@ export function ChatScreen() {
             });
 
             //Listen to messages sent to view them as soon as they are received
-            const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived).then(() => {
+            const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived,currentUser.uid).then(() => {
                 return () => {
                     unsubscribe();
                 };
@@ -220,6 +220,8 @@ export function ChatScreen() {
             ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedId : chat.userThatPostedId,
                 message.user.name,
+                currentUser.publicKey,
+                currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedPublicKey : chat.userThatPostedPublicKey,
             ).then(() => {
                 console.log('Message sent');
                 incrementUnReadMessages();

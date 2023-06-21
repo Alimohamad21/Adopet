@@ -104,11 +104,12 @@ const PostCard = ({post,isPoster}) => {
     };
     const handleChatNavigation = async (post) => {
         setIsLoading(true);
-        const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id);
+        const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id,currentUser.uid);
         if (chat) {
             setIsLoading(false);
             navigation.navigate(ChatScreenRoute, {chat: chat});
         } else {
+            const poster=await UserServices.getUser(post.userThatPostedId)
             const newChat = new Chat('',
                 [],
                 post.pet.name,
@@ -121,7 +122,9 @@ const PostCard = ({post,isPoster}) => {
                 currentUser.profilePicture,
                 post.id,
                 0,
-                0
+                0,
+                poster.publicKey,
+                currentUser.publicKey
             );
             newChat.id = await ChatServices.initializeChat(newChat);
             setIsLoading(false);
