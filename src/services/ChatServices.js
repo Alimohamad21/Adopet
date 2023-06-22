@@ -3,7 +3,7 @@ import Chat from '../models/Chat';
 import NotificationServices from './NotificationServices';
 
 import {firebase} from '@react-native-firebase/auth';
-import {encryptRSA} from '../utilities/securityUtilities';
+import {encryptRSA, getPrivateKey, sign} from '../utilities/securityUtilities';
 import UserServices from './UserServices';
 
 const {FieldValue} = firestore;
@@ -70,13 +70,15 @@ class ChatServices {
         const receiverCipher=await encryptRSA(receiverPublicKey,text);
         console.log("INSIDE SEND MESSAGE AFTER ENCRYPT 1")
         const senderCipher=await encryptRSA(senderPublicKey,text);
+        const privateKey=await getPrivateKey();
+        let senderSignature=await sign(privateKey,text);
         console.log("INSIDE SEND MESSAGE AFTER ENCRYPT 2")
         const ciphers={};
         ciphers[uid]=senderCipher;
         ciphers[receiverId]=receiverCipher;
         console.log("CIPHERS:",ciphers);
         await firestore().collection('chats').doc(chatId).update({
-            'messages': FieldValue.arrayUnion({text: ciphers, uid: uid, createdAt: createdAt,_id:messageId}),
+            'messages': FieldValue.arrayUnion({text: ciphers, uid: uid, createdAt: createdAt,_id:messageId,signature:senderSignature}),
         });
         await NotificationServices.sendNotification(receiverId, senderFullName, `${senderFullName}: ${text}`);
     }
@@ -93,7 +95,7 @@ class ChatServices {
         return Chat.fromJson({id: doc.id, ...doc.data()});
     }
 
-    static async listenForChatMessages(chatId, onMessageReceived,currentUserId) {
+    static async listenForChatMessages(chatId, onMessageReceived,currentUserId,otherUserPublicKey) {
         let firstTime = true;
         const chatRoomRef = firestore().collection('chats').doc(chatId);
         let prevMessagesLength=0;
@@ -101,7 +103,7 @@ class ChatServices {
             if (doc != null) {
                 let messages=[]
                 if(doc.data().messages.length>0){
-                    messages = await Chat.decrypt(doc.data().messages,currentUserId);
+                    messages = await Chat.decrypt(doc.data().messages,currentUserId,otherUserPublicKey);
                 }
                 console.log('added message: ', messages[messages.length - 1]);
                 const index = messages.length - 1;

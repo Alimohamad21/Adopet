@@ -31,13 +31,35 @@ export async function encryptRSA(publicKey, message) {
 }
 
 export async function decryptRSA(privateKey, ciphertext) {
-    return await RSA.decrypt(ciphertext, privateKey);
+    let decryption='';
+    try{
+        decryption= await RSA.decrypt(ciphertext, privateKey);
+    }
+    catch (e){
+        console.log("error in decryption: ",e)
+    }
+    return decryption;
 }
 
 export async function sign(privateKey,message){
-    return await RSAKeychain.sign(message,privateKey);
+    let signature=''
+    try {
+        signature = await RSA.sign(message, privateKey);
+    }
+    catch (e) {
+        console.log('Error in signature:',e)
+    }
+    return signature;
 }
 
 export async function verifySignature(signature,message,publicKey){
-    return await RSAKeychain.verify(message,signature,publicKey);
+    let verified=false;
+    console.log("params",signature,message,publicKey)
+    try{
+        verified= await RSA.verify(signature,message,publicKey);
+    }
+    catch (e){
+        console.log("error in verify:",e);
+    }
+    return verified;
 }
