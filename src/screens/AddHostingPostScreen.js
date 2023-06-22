@@ -20,7 +20,7 @@ import {CurrentUserContext} from '../providers/CurrentUserProvider';
 import TransparentLoadingIndicator from '../widgets/TransparentLoadingIndicator';
 import PetServices from '../services/PetServices';
 import Pet from '../models/Pet'
-import Post, { AdoptionPost } from "../models/Post";
+import Post, { AdoptionPost, HostingPost } from "../models/Post";
 import RadioButtonComponent from "../widgets/RadioButtonComponent";
 import DropdownComponent from '../widgets/DropdownComponent';
 
@@ -34,8 +34,9 @@ import PostServices from "../services/PostServices";
 import UserServices from "../services/UserServices";
 import ConfirmationPopUp from '../widgets/ConfirmationPopUp';
 import SuccessPopUp from '../widgets/SuccessPopUp';
+import DurationPopUp from "../widgets/DurationPopUp";
 
-const AddAdoptionPostScreen = ({navigation}) => {
+const AddHostingPostScreen = ({navigation}) => {
 
   const {currentUser} = useContext(CurrentUserContext);
 
@@ -43,6 +44,8 @@ const AddAdoptionPostScreen = ({navigation}) => {
   const [imageUri, setImageUri] = useState(null);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [type, setType] = useState('');
   const [color, setColor] = useState('');
   const [breed, setBreed] = useState('');
@@ -62,12 +65,17 @@ const AddAdoptionPostScreen = ({navigation}) => {
   const [isGenderEmpty, setIsGenderEmpty] = useState(false);
   const [isSpayedEmpty, setIsSpayedEmpty] = useState(false);
   const [isVaccinationsEmpty, setIsVaccinationsEmpty] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [isFromDateEmpty, setIsFromDateEmpty] = useState(false);
+  const [isToDateEmpty, setIsToDateEmpty] = useState(false);
+  const [showAgeCalendar, setShowAgeCalendar] = useState(false);
+  const [showFromCalendar, setShowFromCalendar] = useState(false);
+  const [showToCalendar, setShowToCalendar] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [showAddPet, setShowAddPet] = useState(false);
   const [createPostPopUp, setCreatePostPopUp] = useState(false);
   const [selectedPet, setSelectedPet] =useState(null);
   const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+  const [showDurationPopUp, setDurationPopUp] = useState(false);
 
   useEffect(   () => {
     const getUserPets = async () => {
@@ -114,12 +122,18 @@ const AddAdoptionPostScreen = ({navigation}) => {
     setIsColorEmpty(false);
   };
 
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
+  const toggleAgeCalendar = () => {
+    setShowAgeCalendar(!showAgeCalendar);
+  };
+  const toggleFromCalendar = () => {
+    setShowFromCalendar(!showFromCalendar);
+  };
+  const toggleToCalendar = () => {
+    setShowToCalendar(!showToCalendar);
   };
 
 
-    const handleToggle = () => {
+  const handleToggle = () => {
     setIsVisible(!isVisible);
   };
   const handleShowAddPet = (item) => {
@@ -127,7 +141,7 @@ const AddAdoptionPostScreen = ({navigation}) => {
     setCreatePostPopUp(true);
   };
 
-    const handleBreedChange = (value) => {
+  const handleBreedChange = (value) => {
     setBreed(value);
     setIsBreedEmpty(false);
   };
@@ -163,7 +177,17 @@ const AddAdoptionPostScreen = ({navigation}) => {
   const handleAgeChange = (date) => {
     setAge(date.dateString);
     setIsAgeEmpty(false);
-    toggleCalendar();
+    toggleAgeCalendar();
+  }
+  const handleFromDateChange = (date) => {
+    setFromDate(date.dateString);
+    setIsFromDateEmpty(false);
+    toggleFromCalendar();
+  }
+  const handleToDateChange = (date) => {
+    setToDate(date.dateString);
+    setIsToDateEmpty(false);
+    toggleToCalendar();
   }
 
   const validateInputs = () => {
@@ -210,32 +234,80 @@ const AddAdoptionPostScreen = ({navigation}) => {
       isValidInputs = false;
       setIsAgeEmpty(true);
     }
+    if (fromDate === '') {
+      isValidInputs = false;
+      setIsFromDateEmpty(true);
+    }
+    if (toDate === '') {
+      isValidInputs = false;
+      setIsToDateEmpty(true);
+    }
     return isValidInputs;
   };
-  const handleAddPostFromUserPets = async (item) => {
-    const date = new Date;
-    //setIsLoading(true);
-    const adoptionPost = new AdoptionPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, item.pet.isNeutered, item.pet.vaccinations), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Adoption');
-    await PostServices.addAdoptionPost(adoptionPost);
-   // navigation.replace(ProfileScreenRoute);
-    setCreatePostPopUp(false);
+  const getDuration = (from, to)=> {
+    let duration = '';
+    try {
+      const fromMonth = parseInt(from.split('-')[1]) - 1;
+      const fromYear = parseInt(to.split('-')[0]);
+      const toMonth = parseInt(from.split('-')[1]) - 1;
+      const toYear = parseInt(to.split('-')[0]);
+      const diffInMonths = (toMonth + 12 * toYear) - (fromMonth + 12 * fromYear);
+      const years = Math.floor(diffInMonths / 12);
+      const months = diffInMonths % 12;
+      if (years !== 0) {
+        duration = `${years} years and ${months} months`;
+      } else {
+        duration = `${months} months`;
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+    return duration;
+  }
+  const handleAddPostFromUserPets = async (item, from, to) => {
+
+    const fromTimestamp = new Date(from);
+
+    const toTimestamp = new Date(to);
+
+    const date = new Date();
+
+    setIsLoading(true);
+    const hostingPost = new HostingPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, item.pet.isNeutered, item.pet.vaccinations), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Hosting', toTimestamp, fromTimestamp, getDuration(from,to));
+    await PostServices.addHostingPost(hostingPost);
+    // navigation.replace(ProfileScreenRoute);
+    setDurationPopUp(false);
     setShowSuccessPopUp(true);
   }
 
   const handleAddPostManually = async () => {
     const isValidInputs = validateInputs();
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
     const date = new Date();
+    // const differenceInMilliseconds = Math.abs(toDate.getTime() - fromDate.getTime());
+    // const durationInWeeks = Math.floor(differenceInMilliseconds / 604800000);
     if (isValidInputs) {
-     // setIsLoading(true);
+      //setIsLoading(true);
       const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
-      const adoptionPost = new AdoptionPost('', new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Adoption')
-      await PostServices.addAdoptionPost(adoptionPost);
+      const hostingPost = new HostingPost('', new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Hosting', to, from, getDuration(fromDate,toDate))
+      await PostServices.addHostingPost(hostingPost);
       setShowSuccessPopUp(true);
+      console.log(showSuccessPopUp);
     }
   }
-  const onCancelPutPetForAdoption = () => {
+  const onCancelPutPetForHosting = () => {
     setCreatePostPopUp(false);
   };
+  const onCancelSelectDuration = () => {
+    setDurationPopUp(false);
+  };
+  const showSelectDuration = (item) => {
+    setSelectedPet(item);
+    setDurationPopUp(true);
+  };
+
   const onConfirmSuccess = () => {
     setShowSuccessPopUp(false);
     navigation.replace(ProfileScreenRoute);
@@ -243,31 +315,32 @@ const AddAdoptionPostScreen = ({navigation}) => {
   const renderPet = ({ item }) => {
     return (
       <View>
-      <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=>{
-        handleShowAddPet(item)}}>
-        <Image
-          source={{ uri: item.pet.image }}
-          style={styles.petIcon}
-        />
-        <Text style={{ fontWeight: 'bold', fontSize: 16, alignItems: 'center' }}>
-          {item.pet.name}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=>{
+          showSelectDuration(item)}}>
+          <Image
+            source={{ uri: item.pet.image }}
+            style={styles.petIcon}
+          />
+          <Text style={{ fontWeight: 'bold', fontSize: 16, alignItems: 'center' }}>
+            {item.pet.name}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
   return (
     <View style={styles.screen}>
-      {selectedPet && <ConfirmationPopUp
-        visible={createPostPopUp}
-        confirmationText={`Are you sure you want to put ${selectedPet.pet.name} up for adoption?`}
-        onConfirm={() => handleAddPostFromUserPets(selectedPet)}
-        onCancel={onCancelPutPetForAdoption}
+      {selectedPet && <DurationPopUp
+        pet = {selectedPet}
+        visible={showDurationPopUp}
+        confirmationText={`Are you sure you want to put ${selectedPet.pet.name} up for hosting? If yes please specify the duration`}
+        onConfirm={handleAddPostFromUserPets}
+        onCancel={onCancelSelectDuration}
       />}
       {selectedPet && <SuccessPopUp
         visible={showSuccessPopUp}
-        confirmationText={`${selectedPet.pet.name} was successfully placed for adoption`}
+        confirmationText={`${selectedPet.pet.name} was successfully placed for hosting`}
         onConfirm={onConfirmSuccess}
       />}
       <Text style={styles.option}>Choose from your pets</Text>
@@ -286,113 +359,143 @@ const AddAdoptionPostScreen = ({navigation}) => {
       </TouchableOpacity>
 
       {isVisible && <View>
-      <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
-      {isLoading && <TransparentLoadingIndicator/>}
-      <ScrollView showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={styles.scrollView}>
+        <StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>
+        {isLoading && <TransparentLoadingIndicator/>}
+        <ScrollView showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}} style={styles.scrollView}>
 
-        <View style={styles.container}>
+          <View style={styles.container}>
+            <Text style={styles.titles} >Add photo</Text>
+            <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)">
+              <FontAwesome name={'plus-circle'} onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
+            </TouchableHighlight>
+            {imageUri && <Image source={{uri:imageUri}} style={styles.image}/>}
 
-          <Text style={styles.titles} >Add photo</Text>
-          <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)">
-            <FontAwesome name={'plus-circle'} onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
-          </TouchableHighlight>
-          {imageUri && <Image source={{uri:imageUri}} style={styles.image}/>}
-
-          {isPhotoEmpty && <Text style={styles.wrongCredentialsText}>Please add a picture of your pet.</Text>}
+            {isPhotoEmpty && <Text style={styles.wrongCredentialsText}>Please add a picture of your pet.</Text>}
 
 
-          <Text style={styles.titles} >Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={handleNameChange}
-          />
-          {isNameEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's name</Text>}
+            <Text style={styles.titles} >Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              value={name}
+              onChangeText={handleNameChange}
+            />
+            {isNameEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's name</Text>}
 
-          <View style={styles.calendarComponent}>
-            <Text>Birthdate</Text>
-            <Text style={{left: 10}}> {age} </Text>
+            <View style={styles.calendarComponent}>
+              <Text>Birthdate</Text>
+              <Text style={{left: 10}}> {age} </Text>
+            </View>
+
+            <TouchableHighlight
+              underlayColor="rgba(128, 128, 128, 0.1)">
+              <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleAgeCalendar}/>
+            </TouchableHighlight>
+
+
+            {showAgeCalendar && <Calendar style={styles.calendar}
+                                       onDayPress={handleAgeChange}
+                                       markedDates={{[age]: {selected: true}}}/>}
+
+            {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
+
+
+
+            <Text style={styles.titles} >Pet Type </Text>
+            <RadioButtonComponent
+              options={types}
+              selectedOption={type}
+              onSelect={handleTypeChange}
+            />
+            {isTypeEmpty && <Text style={styles.wrongCredentialsText}>Please select whether you have a cat or a dog.</Text>}
+
+
+            <Text style={styles.titles} >Color </Text>
+            <DropdownComponent onSelect={handleColorChange} data={catAndDogColors} placeholder={"Color"}/>
+            {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
+
+            <Text style={styles.titles} >Breed</Text>
+            <DropdownComponent onSelect={handleBreedChange} data={breedList === 'Cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
+            {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
+
+
+            <Text style={styles.titles} >Pet gender</Text>
+            <RadioButtonComponent
+              options={genderOptions}
+              selectedOption={gender}
+              onSelect={handleGenderChange}
+            />
+            {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's gender</Text>}
+
+
+            <Text style={styles.titles} >Is your pet spayed? </Text>
+            <RadioButtonComponent
+              options={isSpayedOptions}
+              selectedOption={isSpayed}
+              onSelect={handleIsSpayedChange}
+            />
+            {isSpayedEmpty && <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or not.</Text>}
+
+
+            <Text style={styles.titles} >Vaccinations</Text>
+            <DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions} placeholder={"Vaccinations"}/>
+
+            {isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}
+
+            <Text style={styles.titles} >Pet description</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Describe your pet. ie playful, likes to cuddle, etc"
+              value={description}
+              onChangeText={handleDescriptionChange}
+            />
+            <View style={styles.calendarComponent}>
+              <Text>From</Text>
+              <Text style={{left: 10}}> {fromDate} </Text>
+            </View>
+            <TouchableHighlight
+              underlayColor="rgba(128, 128, 128, 0.1)">
+              <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleFromCalendar}/>
+            </TouchableHighlight>
+
+
+            {showFromCalendar && <Calendar style={styles.calendar}
+                                       onDayPress={handleFromDateChange}
+                                       markedDates={{[fromDate]: {selected: true}}}/>}
+
+            {isFromDateEmpty && <Text style={styles.wrongCredentialsText}>Please select the start of duration</Text>}
+
+
+            <View style={styles.calendarComponent}>
+              <Text>To</Text>
+              <Text style={{left: 10}}> {toDate} </Text>
+            </View>
+            <TouchableHighlight
+              underlayColor="rgba(128, 128, 128, 0.1)">
+              <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleToCalendar}/>
+            </TouchableHighlight>
+
+            {showToCalendar && <Calendar style={styles.calendar}
+                                       onDayPress={handleToDateChange}
+                                       markedDates={{[toDate]: {selected: true}}}/>}
+
+            {isToDateEmpty && <Text style={styles.wrongCredentialsText}>Please select the end of duration</Text>}
+
           </View>
-
-          <TouchableHighlight
-            underlayColor="rgba(128, 128, 128, 0.1)">
-            <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleCalendar}/>
-          </TouchableHighlight>
-
-
-          {showCalendar && <Calendar style={styles.calendar}
-                                     onDayPress={handleAgeChange}
-                                     markedDates={{[age]: {selected: true}}}/>}
-
-          {isAgeEmpty && <Text style={styles.wrongCredentialsText}>Please select your pet's age</Text>}
-
-
-
-          <Text style={styles.titles} >Pet Type </Text>
-          <RadioButtonComponent
-            options={types}
-            selectedOption={type}
-            onSelect={handleTypeChange}
-          />
-          {isTypeEmpty && <Text style={styles.wrongCredentialsText}>Please select whether you have a cat or a dog.</Text>}
-
-
-          <Text style={styles.titles} >Color </Text>
-          <DropdownComponent onSelect={handleColorChange} data={catAndDogColors} placeholder={"Color"}/>
-          {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
-
-          <Text style={styles.titles} >Breed</Text>
-          <DropdownComponent onSelect={handleBreedChange} data={breedList === 'Cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
-          {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
-
-
-          <Text style={styles.titles} >Pet gender</Text>
-          <RadioButtonComponent
-            options={genderOptions}
-            selectedOption={gender}
-            onSelect={handleGenderChange}
-          />
-          {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's gender</Text>}
-
-
-          <Text style={styles.titles} >Is your pet spayed? </Text>
-          <RadioButtonComponent
-            options={isSpayedOptions}
-            selectedOption={isSpayed}
-            onSelect={handleIsSpayedChange}
-          />
-          {isSpayedEmpty && <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or not.</Text>}
-
-
-          <Text style={styles.titles} >Vaccinations</Text>
-          <DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions} placeholder={"Vaccinations"}/>
-
-          {isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}
-
-          <Text style={styles.titles} >Pet description</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Describe your pet. ie playful, likes to cuddle, etc"
-            value={description}
-            onChangeText={handleDescriptionChange}
-          />
-
-        </View>
-        <View style={{alignItems: 'center'}}>
-          <SuccessPopUp
-            visible={showSuccessPopUp}
-            confirmationText={`${name} was successfully placed for adoption`}
-            onConfirm={onConfirmSuccess}
-          />
-          <View style={{marginBottom:"25%",flex: 1, width: '100%', alignItems: 'center'}}>
-            <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleAddPostManually}>
-              <Text style={styles.createPetProfileBtnText}>Add Post</Text>
-            </TouchableOpacity>
+          <View style={{alignItems: 'center'}}>
+            <SuccessPopUp
+              visible={showSuccessPopUp}
+              confirmationText={`${name} was successfully placed for hosting`}
+              onConfirm={onConfirmSuccess}
+            />
+            <View style={{marginBottom:"25%",flex: 1, width: '100%', alignItems: 'center'}}>
+              <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleAddPostManually}>
+                <Text style={styles.createPetProfileBtnText}>Add Post</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       </View>}
 
     </View>
@@ -648,4 +751,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddAdoptionPostScreen;
+export default AddHostingPostScreen;

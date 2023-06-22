@@ -30,6 +30,7 @@ import {
     LostAndFoundScreenRoute,
     HostingScreenRoute,
     AddAdoptionPostScreenRoute,
+    AddHostingPostScreenRoute,
     PostTypesListScreenRoute
 } from './src/utilities/constants';
 import SignupScreen from './src/screens/SignupScreen';
@@ -52,6 +53,7 @@ import CreatePetProfileScreen from "./src/screens/CreatePetProfileScreen";
 import LostAndFoundScreen from "./src/screens/LostAndFoundScreen";
 import HostingScreen from "./src/screens/HostingScreen";
 import AddAdoptionPostScreen from "./src/screens/AddAdoptionPostScreen";
+import AddHostingPostScreen from "./src/screens/AddHostingPostScreen";
 import PostTypesListScreen from "./src/screens/PostTypesListScreen";
 
 
@@ -94,6 +96,7 @@ function AppStackScreens() {
             <AppStack.Screen name={LostAndFoundScreenRoute} component={LostAndFoundScreen}/>
             <AppStack.Screen name={HostingScreenRoute} component={HostingScreen}/>
             <AppStack.Screen name={AddAdoptionPostScreenRoute} component={AddAdoptionPostScreen}/>
+            <AppStack.Screen name={AddHostingPostScreenRoute} component={AddHostingPostScreen}/>
             <AppStack.Screen name={PostTypesListScreenRoute} component={PostTypesListScreen}/>
             <AppStack.Screen name={FilterPostsScreenRoute} component={FilterPostsScreen} options={{
                 presentation: 'modal',

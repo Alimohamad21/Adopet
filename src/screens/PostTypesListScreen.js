@@ -14,6 +14,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
   AddAdoptionPostScreenRoute,
+  AddHostingPostScreenRoute,
   appPurpleDark, appPurpleLight,
   borderGrey,
   catAndDogColors,
@@ -31,8 +32,11 @@ const PostTypesListScreen = () => {
   const [view,setView] = useState(1)
   const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
 
-  const handleAddNavigationPostPress=()=> {
+  const handleAddAdoptionPostPress=()=> {
     navigation.navigate(AddAdoptionPostScreenRoute)
+  };
+  const handleAddHostingPostPress=()=> {
+    navigation.navigate(AddHostingPostScreenRoute)
   };
   return (
     <View style={styles.screen}>
@@ -44,7 +48,7 @@ const PostTypesListScreen = () => {
 
         <View style={{alignItems: 'center'}}>
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
-            <TouchableOpacity style={styles.btnContainer} onPress={handleAddNavigationPostPress}>
+            <TouchableOpacity style={styles.btnContainer} onPress={handleAddAdoptionPostPress}>
               <Text style={styles.btnText}>Adoption Post</Text>
             </TouchableOpacity>
           </View>
@@ -52,7 +56,7 @@ const PostTypesListScreen = () => {
 
         <View style={{alignItems: 'center'}}>
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
-            <TouchableOpacity style={styles.btnContainer} onPress={handleAddNavigationPostPress}>
+            <TouchableOpacity style={styles.btnContainer} onPress={handleAddHostingPostPress}>
               <Text style={styles.btnText}>Hosting Post</Text>
             </TouchableOpacity>
           </View>

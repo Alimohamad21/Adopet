@@ -162,8 +162,8 @@ class HostingPost extends Post {
                 userThatPostedPhoneNumber, createdAt,type,endDate,startDate,duration) {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
-        this.startDate = startDate.toDate().toString();
-        this.endDate = endDate.toDate().toString();
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.duration = duration;
     }
 
@@ -173,7 +173,7 @@ class HostingPost extends Post {
             json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
           json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
           json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,
-          json.type,json.startDate,json.endDate,json.duration);
+          json.type,json.startDate.toDate().toString(),json.endDate.toDate().toString(),json.duration);
     }
 
     toJson() {

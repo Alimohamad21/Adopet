@@ -258,7 +258,7 @@ const CreatePetProfileScreen = ({navigation}) => {
                     {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
 
                     <Text style={styles.titles} >Breed</Text>
-                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
+                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'Cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
                     {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
 
 
