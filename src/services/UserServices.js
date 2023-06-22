@@ -29,6 +29,10 @@ class UserServices {
         return true;
     }
 
+    static async addPublicKey(uid,publicKey){
+        await firestore().collection('users').doc(uid).update({publicKey:publicKey});
+    }
+
     static async updateUser(user, uid) {
         try {
             user.email = user.email.toLowerCase();
