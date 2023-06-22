@@ -15,11 +15,15 @@ import PetDetails from '../widgets/PetDetails';
 import MenuImage from "../widgets/MenuImage";
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
+    AddAdoptionPostScreen,
+    AdoptionScreenRoute,
     appPurpleDark,
     ChatScreenRoute, EditPetDetailsScreenRoute,
-    EditUserDetailsScreenRoute,
+    EditUserDetailsScreenRoute, FilterPostsScreenRoute,
     UploadImageScreenRoute,
     ViewPetScreenRoute,
+    AddAdoptionPostScreenRoute, PostTypesListScreenRoute,
+
 } from "../utilities/constants";
 import {CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -164,6 +168,9 @@ const ProfileScreen = () => {
     const handleCreatePetProfileNavigation = () => {
         navigation.navigate(CreatePetProfileScreenRoute)
     }
+    const handleAddPostPress=()=> {
+        navigation.navigate(PostTypesListScreenRoute)
+    };
     const renderPost = ({item}) => {
         return (
             <PostCard post={item} isPoster={isCurrentUser}/>
@@ -247,6 +254,66 @@ const ProfileScreen = () => {
                                 <Text style={styles.editDetails}>Edit details</Text>
                             </TouchableOpacity>}
                         </View>
+                        <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
+                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                            <Text style={styles.phone}>{currentUser.phoneNumber}</Text>
+                        </View>
+                        <TouchableOpacity onPress={handleEditDetails} style={{flexDirection:"row",justifyContent:"center"}}>
+                            <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                            <Text style={styles.editDetails} >Edit details</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </Animated.View>
+            }
+            <View style={{height:"5%",marginTop:"2%"}}>
+                <SlideButton onFirstPress={handlePostsSelect} onSecondPress={handlePetsSelect} firstText={"Posts"} secondText={"Pets"} ></SlideButton>
+            </View>
+
+
+
+            {view === 1 &&
+                <View  style={{alignItems:"center",paddingTop:"10%",
+                    height: hideComponents ===1 ? "50%" : "80%",
+
+                }}>
+                    {userPosts &&
+
+                        <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                  data={userPosts} renderItem={renderPost}
+                                  keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                                  // onScroll={handleScroll}
+                            // onScrollBeginDrag={handleScroll}
+                                 onScrollEndDrag={handleScroll}
+                        />
+                    }
+                </View>
+            }
+            <TouchableOpacity onPress={handleAddPostPress} style={{ flexDirection: 'row',
+                marginTop: '3%', marginRight: '3%', marginBottom: '5%',
+                justifyContent: 'center', alignItems: 'center',
+                position: 'absolute', bottom: 0, right: 0, zIndex: 999,
+                backgroundColor:appPurpleDark,
+                width:"20%",
+                borderRadius:7
+            }}>
+                <Text style={{ fontSize: 15, color:"white",fontWeight:"bold" }}>Add Post</Text>
+                <FontAwesome name={'plus'} style={{ marginLeft: '5%',fontWeight:"bold", fontSize: 15,color:"white" }}></FontAwesome>
+            </TouchableOpacity>
+            { view ===2  &&
+                <View style={{ alignItems:"center",marginTop:"15%",height: hideComponents ===1 ? "50%" : "100%",}}>
+                    {userPets && userPets.length > 0 ? (
+                        <FlatList  showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                   data = {userPets} renderItem={renderPet}
+                                   keyExtractor={(pet) => `${pet.id}`}
+                                   //onScroll={handleScroll}
+                                   onScrollEndDrag={handleScroll}
+                            // contentContainerStyle={{}}
+
+                                   ListFooterComponent={renderFooter}
+
+                        />) : (renderFooter())
+                    }
 
                     </Animated.View>
                 }

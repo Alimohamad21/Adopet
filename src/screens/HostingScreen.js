@@ -50,6 +50,7 @@ const HostingScreen = ({route}) => {
 
 
     const onEndReached = async () => {
+
         console.log("all posts loaded:",isAllPostsLoaded)
         if (!hostingPosts.length || isAllPostsLoaded) {
             // don't load more data if scrolling up or if no data has been loaded yet
@@ -68,7 +69,8 @@ const HostingScreen = ({route}) => {
         }
         else{
             const {newPosts, lastDocument} = await PostServices.getPostsPaginated(prevLastDocument,postType);
-            setHostingPosts([...hostingPosts, ...newPosts]);
+            //setHostingPosts([...hostingPosts, ...newPosts]);
+            setHostingPosts(prevData => [...prevData, ...newPosts]);
             setIsPaginating(false);
             setPrevLastDocument(lastDocument);
             if(newPosts<5)

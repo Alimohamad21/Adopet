@@ -133,7 +133,7 @@ android {
 
     defaultConfig {
         applicationId "com.adopet"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 23
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -191,6 +191,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-secure-key-store')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules

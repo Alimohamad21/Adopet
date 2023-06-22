@@ -14,7 +14,7 @@ class Post {
 
     static fromJson(json) {
         return new Post(json.id, json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
-            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
+          json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
     }
 
     toJson() {
@@ -44,10 +44,10 @@ class AdoptionPost extends Post {
 
     static fromJson(json) {
         return new AdoptionPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription,
-                json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
-            , json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
-            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
+          new Pet(json.petType, json.petImage, json.petName, json.petDescription,
+            json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations)
+          , json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
+          json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type);
     }
 
     toJson() {
@@ -79,15 +79,15 @@ class LostPost extends Post {
         this.pet = pet;
         this.lostLocation = lostLocation;
         //const dateString = moment(date).format('YYYY-MM-DD HH:mm:ss')
-        this.lostDateAndTime = lostDateAndTime.toDate().toString();
+        this.lostDateAndTime = lostDateAndTime.toDate().toDateString();
 
     }
 
     static fromJson(json) {
         console.log(json.lostDateAndTime)
         return new LostPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.lostLocation,json.lostDateAndTime);
+          new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.lostLocation,json.lostDateAndTime);
     }
 
     toJson() {
@@ -121,7 +121,7 @@ class FoundPost extends Post {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
         this.foundLocation = foundLocation;
-        this.foundDateAndTime = foundDateAndTime.toDate().toString();
+        this.foundDateAndTime = foundDateAndTime.toDate().toDateString();
 
 
     }
@@ -129,8 +129,8 @@ class FoundPost extends Post {
     static fromJson(json) {
         console.log(json.lostDateAndTime)
         return new FoundPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.foundLocation,json.foundDateAndTime);
+          new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.foundLocation,json.foundDateAndTime);
     }
 
     toJson() {
@@ -162,18 +162,18 @@ class HostingPost extends Post {
                 userThatPostedPhoneNumber, createdAt,type,endDate,startDate,duration) {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
-        this.startDate = startDate.toDate().toString();
-        this.endDate = endDate.toDate().toString();
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.duration = duration;
     }
 
     static fromJson(json) {
         return new HostingPost(json.id,
-            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate,
-                json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
-            json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,
-            json.type,json.startDate,json.endDate,json.duration);
+          new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate,
+            json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
+          json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,
+          json.type,json.startDate.toDate().toString(),json.endDate.toDate().toString(),json.duration);
     }
 
     toJson() {

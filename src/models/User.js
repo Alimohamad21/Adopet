@@ -1,5 +1,5 @@
 class User {
-    constructor(uid, fullName, city, phoneNumber, email, profilePicture, ownedPets, savedPosts, fcmTokens, ratingsCount, ratingsSum) {
+    constructor(uid, fullName, city, phoneNumber, email, profilePicture, ownedPets, savedPosts, fcmTokens, ratingsCount, ratingsSum,publicKey='') {
         this.uid = uid;
         this.city = city;
         this.phoneNumber = phoneNumber;
@@ -11,10 +11,11 @@ class User {
         this.fcmTokens = fcmTokens;
         this.ratingsCount = ratingsCount;
         this.ratingsSum = ratingsSum;
+        this.publicKey=publicKey;
     }
 
     static fromJson(json) {
-        return new User(json.uid, json.fullName, json.city, json.phoneNumber, json.email, json.profilePicture, json.ownedPets, json.savedPosts, json.fcmTokens, json.ratingsCount, json.ratingsSum);
+        return new User(json.uid, json.fullName, json.city, json.phoneNumber, json.email, json.profilePicture, json.ownedPets, json.savedPosts, json.fcmTokens, json.ratingsCount, json.ratingsSum,json.publicKey || '');
     }
 
     getAverageRating(){

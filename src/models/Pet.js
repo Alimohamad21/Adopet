@@ -36,6 +36,13 @@ class Pet {
         }
         return age;
     }
+    static getPetBirthdate(age) {
+        const currentDate = new Date(); // Get current date
+        const currentYear = currentDate.getFullYear(); // Get current year
+        const birthYear = currentYear - age; // Calculate birth year
+        const birthdate = new Date(birthYear, currentDate.getMonth(), currentDate.getDate()); // Create birthdate object
+        return birthdate.toISOString().slice(0,10); // Return birthdate in yyyy-mm-dd format
+    }
 
     static toJson(pet) {
         return {

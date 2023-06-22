@@ -83,7 +83,8 @@ const EditPetDetailsScreen = ({navigation}) => {
     const handleAddPhoto = async () => {
         const uri = await pickImage();
         if (!uri) return;
-        setImageUri(uri);
+        const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, uri);
+        setImageUri(photo);
         setIsPhotoEmpty(false);
     }
 
@@ -193,14 +194,19 @@ const EditPetDetailsScreen = ({navigation}) => {
         return isValidInputs;
     };
 
-
+    const handlePetDelete = async () => {
+        setIsLoading(true);
+       await PetServices.deletePet(userPet.id);
+        setIsLoading(false);
+        navigation.replace(ProfileScreenRoute);
+    }
     const handleCreatePetProfile = async () => {
         const isValidInputs = validateInputs();
 
         if (isValidInputs) {
             setIsLoading(true);
-            const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
-            const pet = new UserPet(userPet.id, currentUser.uid, new Pet(type.value, photo, name, description, age, color, breed, gender.value, isSpayed.value, vaccinations));
+
+            const pet = new UserPet(userPet.id, currentUser.uid, new Pet(type.value, imageUri, name, description, age, color, breed, gender.value, isSpayed.value, vaccinations));
             console.log("editing pet!!!!",JSON.stringify(pet));
             await PetServices.editPet(pet);
             navigation.replace(ProfileScreenRoute);
@@ -316,10 +322,17 @@ const EditPetDetailsScreen = ({navigation}) => {
                 </View>
 
                 <View style={{alignItems: 'center'}}>
-                    <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
+                    <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center', marginBottom:"3%"}}>
                         <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleCreatePetProfile}>
                             <Text style={styles.createPetProfileBtnText}>Save Changes</Text>
                         </TouchableOpacity>
+
+                    </View>
+                    <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center', marginBottom:"3%"}}>
+                        <TouchableOpacity style={styles.removePetBtn} onPress={handlePetDelete}>
+                            <Text style={styles.createPetProfileBtnText}>Delete Pet</Text>
+                        </TouchableOpacity>
+
                     </View>
                 </View>
 
@@ -468,6 +481,14 @@ const styles = StyleSheet.create({
         fontFamily: 'sans-serif-medium',
         marginTop: 6,
         color: 'white',
+
+    },
+    removePetBtn: {
+        backgroundColor: "red",
+        alignItems: 'center',
+        width: '85%',
+        height: 35,
+        borderRadius: 7,
 
     },
 

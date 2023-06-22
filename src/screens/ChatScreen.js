@@ -48,11 +48,11 @@ export function ChatScreen() {
                 otherUserFullName = chat.userThatPostedFullName;
                 otherUserId = chat.userThatPostedId;
             }
-            const rated = await ReviewServices.checkIfAlreadyReviewed(chat.postId, currentUser.uid, otherUserId)
+            const rated = await ReviewServices.checkIfAlreadyReviewed(chat.postId, currentUser.uid, otherUserId);
             console.log('ALREADY RATED:', rated);
             setShowConfirmationHandOverButton(!rated);
-        }
-        console.log('Calling check if reviewed:')
+        };
+        console.log('Calling check if reviewed:');
         checkIfReviewed();
         if (chat) {
             handleChat();
@@ -93,9 +93,10 @@ export function ChatScreen() {
 
                 </View>,
             });
-
+            const otherUserPublicKey=currentUser.publicKey===chat.userThatRequestedPublicKey?chat.userThatPostedPublicKey:chat.userThatRequestedPublicKey;
             //Listen to messages sent to view them as soon as they are received
-            const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived).then(() => {
+            const unsubscribe = ChatServices.listenForChatMessages(chat.id, onMessageReceived, currentUser.uid, otherUserPublicKey
+            ).then(() => {
                 return () => {
                     unsubscribe();
                 };
@@ -232,6 +233,8 @@ export function ChatScreen() {
             ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedId : chat.userThatPostedId,
                 message.user.name,
+                currentUser.publicKey,
+                currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedPublicKey : chat.userThatPostedPublicKey,
             ).then(() => {
                 console.log('Message sent');
                 incrementUnReadMessages();
@@ -481,7 +484,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-    }
+    },
 });
 
 
