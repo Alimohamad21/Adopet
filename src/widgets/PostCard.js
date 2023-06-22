@@ -1,6 +1,12 @@
 import {Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Animated} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {appPurpleDark, appPurpleLight, ChatScreenRoute, ViewPetScreenRoute} from '../utilities/constants';
+import {
+    appPurpleDark,
+    appPurpleLight,
+    ChatScreenRoute,
+    ProfileScreenRoute,
+    ViewPetScreenRoute
+} from '../utilities/constants';
 import React, {useContext, useEffect, useState} from 'react';
 import call from 'react-native-phone-call';
 import {useNavigation} from '@react-navigation/native';
@@ -12,6 +18,7 @@ import UserServices from "../services/UserServices";
 import PostServices from "../services/PostServices";
 import {Portal, Provider} from "react-native-paper";
 import {AdoptionPost, FoundPost, HostingPost, LostPost} from "../models/Post";
+import ConfirmationPopUp from "./ConfirmationPopUp";
 
 
 /**
@@ -28,6 +35,9 @@ const PostCard = ({post,isPoster}) => {
     const [userReviewsCount,setUserReviewsCount]=useState(null);
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
+    const [handOverPopUpShown, setHandOverPopUpShown] = useState(false);
+
+
     let renderedPost;
     // console.log("post card \n",post)
     if (post instanceof AdoptionPost) {
@@ -44,6 +54,8 @@ const PostCard = ({post,isPoster}) => {
     }
 
     useEffect(  () => {
+        console.log(post.id)
+
         const checkIsPostSaved = async ()=>{
             const bool = await UserServices.isPostSaved(currentUser.uid,post.id);
             setIsPostSaved(bool);
@@ -154,6 +166,24 @@ const PostCard = ({post,isPoster}) => {
             }, 1000); // adjust as needed
         });
 
+    }
+    const onCancelHandOverPopUp = () => {
+        setHandOverPopUpShown(false);
+    };
+
+    const deletePost = async () => {
+        setHandOverPopUpShown(false);
+        setIsLoading(true);
+        await PostServices.deletePost(post.id);
+        setIsLoading(false);
+        navigation.navigate(ProfileScreenRoute);
+    };
+    const handlePostsDelete =() => {
+        setHandOverPopUpShown(true);
+        return  <ConfirmationPopUp visible={handOverPopUpShown}
+                                   confirmationText={`Are you sure you want to delete this post?`}
+                                   onConfirm={deletePost}
+                                   onCancel={onCancelHandOverPopUp}/>;
     }
     const {width, height} = Dimensions.get('window');
 // orientation must fixed
@@ -353,6 +383,7 @@ const PostCard = ({post,isPoster}) => {
                         <View style={styles.imageContainer}>
                             <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
                         </View>
+
                         <View style={{flexDirection: "column"}}>
                             <Text style={styles.postTitle}>{post.pet.name}</Text>
                             <Text style={{
@@ -398,107 +429,107 @@ const PostCard = ({post,isPoster}) => {
             </Provider>
         );
     }
-    function HostPostRenderer({ post}) {
-        return(
-            <Provider>
-
-                <View style={styles.postContainer}>
-                    {isLoading && <TransparentLoadingIndicator/>}
-                    <View style={styles.postHeader}>
-
-                        <View style={styles.profileContainer}>
-                            {post.userThatPostedProfilePicture === ""  ?
-                                <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
-                                <Image source={{uri: post.userThatPostedProfilePicture}}
-                                       style={styles.profileBtnIcon}/>}
-                            <View>
-                                <Text
-                                    style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
-                                <View style={{flexDirection: 'row',alignItems:'center'}}>
-                                    <RatingsWidget/>
-                                    <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
-                                </View>
-
-                            </View>
-                        </View>
-                        <View style={{marginTop: '3%',marginLeft:"40%"}}>
-                            <View style={{marginRight: '0%', flexDirection: 'row'}}>
-                                <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
-                                <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
-                                <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
-                                    {isPostSaved &&
-                                        <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
-                                    }
-                                    {!isPostSaved &&
-                                        <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
-                                    }
-
-                                </TouchableOpacity>
-                            </View>
-                            {/*<Text style={{fontSize: 12, marginLeft: '2%'}}>{post.createdAt.toDate().toString()}</Text>*/}
-                        </View>
-                    </View>
-                    <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.postBody}>
-                        <View style={styles.imageContainer}>
-                            <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
-                        </View>
-                        <View style={{
-                            alignItems:"flex-start",
-                            marginLeft:"1%",
-
-                        }}>
-                            <Text style={styles.postTitle}>{post.pet.name}</Text>
-                            <Text style={{
-                                paddingLeft: '1%',
-                                paddingRight: '2%',
-
-                                width: SCREEN_WIDTH/1.8,
-                                flexShrink: 1,
-                                color: 'grey',
-                                fontSize:13,
-                            }}>{post.pet.description}</Text>
-
-                                <View style={{marginTop:"2%"}}>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Start Date:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.startDate}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>End Date:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.endDate}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Duration:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.duration}</Text>
-                                    </View>
-
-                                </View>
-
-                        </View>
-                    </TouchableOpacity>
-                    {!isPoster &&
-                        <View style={styles.postFooter}>
-                            <TouchableOpacity onPress={callPhoneNumber}>
-                                <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                            </TouchableOpacity>
-                            <View style={styles.verticalSeparator}/>
-                            <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
-                                <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
-                            </TouchableOpacity>
-                        </View>
-                    }
-
-                    <Portal>
-                        <Animated.View style={styles.fadingComponent}>
-                            <Text>{fadedText}</Text>
-                        </Animated.View>
-                    </Portal>
-
-                </View>
-
-            </Provider>
-        );
-    }
+    // function HostPostRenderer({ post}) {
+    //     return(
+    //         <Provider>
+    //
+    //             <View style={styles.postContainer}>
+    //                 {isLoading && <TransparentLoadingIndicator/>}
+    //                 <View style={styles.postHeader}>
+    //
+    //                     <View style={styles.profileContainer}>
+    //                         {post.userThatPostedProfilePicture === ""  ?
+    //                             <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+    //                             <Image source={{uri: post.userThatPostedProfilePicture}}
+    //                                    style={styles.profileBtnIcon}/>}
+    //                         <View>
+    //                             <Text
+    //                                 style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
+    //                             <View style={{flexDirection: 'row',alignItems:'center'}}>
+    //                                 <RatingsWidget/>
+    //                                 <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
+    //                             </View>
+    //
+    //                         </View>
+    //                     </View>
+    //                     <View style={{marginTop: '3%',marginLeft:"40%"}}>
+    //                         <View style={{marginRight: '0%', flexDirection: 'row'}}>
+    //                             <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
+    //                             <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
+    //                             <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+    //                                 {isPostSaved &&
+    //                                     <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
+    //                                 }
+    //                                 {!isPostSaved &&
+    //                                     <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+    //                                 }
+    //
+    //                             </TouchableOpacity>
+    //                         </View>
+    //                         {/*<Text style={{fontSize: 12, marginLeft: '2%'}}>{post.createdAt.toDate().toString()}</Text>*/}
+    //                     </View>
+    //                 </View>
+    //                 <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.postBody}>
+    //                     <View style={styles.imageContainer}>
+    //                         <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
+    //                     </View>
+    //                     <View style={{
+    //                         alignItems:"flex-start",
+    //                         marginLeft:"1%",
+    //
+    //                     }}>
+    //                         <Text style={styles.postTitle}>{post.pet.name}</Text>
+    //                         <Text style={{
+    //                             paddingLeft: '1%',
+    //                             paddingRight: '2%',
+    //
+    //                             width: SCREEN_WIDTH/1.8,
+    //                             flexShrink: 1,
+    //                             color: 'grey',
+    //                             fontSize:13,
+    //                         }}>{post.pet.description}</Text>
+    //
+    //                             <View style={{marginTop:"2%"}}>
+    //                                 <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+    //                                     <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Start Date:</Text>
+    //                                     <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.startDate}</Text>
+    //                                 </View>
+    //                                 <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+    //                                     <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>End Date:</Text>
+    //                                     <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.endDate}</Text>
+    //                                 </View>
+    //                                 <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+    //                                     <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Duration:</Text>
+    //                                     <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.duration}</Text>
+    //                                 </View>
+    //
+    //                             </View>
+    //
+    //                     </View>
+    //                 </TouchableOpacity>
+    //                 {!isPoster &&
+    //                     <View style={styles.postFooter}>
+    //                         <TouchableOpacity onPress={callPhoneNumber}>
+    //                             <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+    //                         </TouchableOpacity>
+    //                         <View style={styles.verticalSeparator}/>
+    //                         <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
+    //                             <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+    //                         </TouchableOpacity>
+    //                     </View>
+    //                 }
+    //
+    //                 <Portal>
+    //                     <Animated.View style={styles.fadingComponent}>
+    //                         <Text>{fadedText}</Text>
+    //                     </Animated.View>
+    //                 </Portal>
+    //
+    //             </View>
+    //
+    //         </Provider>
+    //     );
+    // }
     function LostAndFoundPostRenderer({ post,type }) {
         return(
             <Provider>
@@ -522,6 +553,16 @@ const PostCard = ({post,isPoster}) => {
 
                             </View>
                         </View>
+                        {/*{isPoster &&*/}
+                        {/*    <View>*/}
+                        {/*        <TouchableOpacity onPress={()=>handlePostsDelete()}  style={{marginLeft: '10%'}}>*/}
+                        {/*            <FontAwesome name={"trash"}*/}
+                        {/*                         style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>*/}
+                        {/*        </TouchableOpacity>*/}
+
+
+                        {/*    </View>*/}
+                        }
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>

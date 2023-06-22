@@ -11,17 +11,17 @@ class PostServices {
         const snapshot = await firestore()
             .collection('posts')
             .orderBy('createdAt', 'desc')
-            .where("type","==",postType)
+            .where("type", "==", postType)
             .limit(5)
             .get();
         console.log(snapshot.docs)
         let posts
         switch (postType) {
             case 'Adoption':
-                 posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
+                posts = snapshot.docs.map((doc) => AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             case 'Lost':
-                 posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
+                posts = snapshot.docs.map((doc) => LostPost.fromJson({id: doc.id, ...doc.data()}));
                 break;
             case 'Found':
                 posts = snapshot.docs.map((doc) => FoundPost.fromJson({id: doc.id, ...doc.data()}));
@@ -43,12 +43,12 @@ class PostServices {
         return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getPostsPaginated(prevLastDocument,postType) {
+    static async getPostsPaginated(prevLastDocument, postType) {
         const snapshot = await firestore()
             .collection('posts')
             .orderBy('createdAt', 'desc')
             .startAfter(prevLastDocument)
-            .where("type","==",postType)
+            .where("type", "==", postType)
             .limit(5)
             .get();
 
@@ -77,15 +77,15 @@ class PostServices {
         return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getPostsFiltered(filters,postType) {
+    static async getPostsFiltered(filters, postType) {
 
         // console.log(petType,ageRange,selectedBreeds,isNeutered);
         console.log(filters)
 
         const postsCollection = await firestore().collection('posts')
         let query = postsCollection
-        if (filters.petType != null){
-            query = query.where("petType",'==', filters.petType)
+        if (filters.petType != null) {
+            query = query.where("petType", '==', filters.petType)
         }
         if (filters.ageRange) {
             console.log(Pet.getPetBirthdate(filters.ageRange.min).toString())
@@ -101,16 +101,16 @@ class PostServices {
         // if (selectedColors.length > 0){
         //     query = query.where("petColor",'in',selectedColors)
         // }
-        if (filters.selectedBreeds.length > 0){
-            query = query.where("petBreed",'in',filters.selectedBreeds)
+        if (filters.selectedBreeds.length > 0) {
+            query = query.where("petBreed", 'in', filters.selectedBreeds)
         }
-        if(filters.isNeutered != null){
-            query = query.where("petIsNeutered", '==', filters.isNeutered )
+        if (filters.isNeutered != null) {
+            query = query.where("petIsNeutered", '==', filters.isNeutered)
         }
 
 
         const snapshot = await query
-            .where("type","==",postType)
+            .where("type", "==", postType)
             .limit(15)
             .get();
         // console.log(snapshot.docs)
@@ -140,13 +140,13 @@ class PostServices {
         return {newPosts: posts, lastDocument: lastDocument};
     }
 
-    static async getPostsFilteredPaginated(filters,prevLastDocument,postType) {
+    static async getPostsFilteredPaginated(filters, prevLastDocument, postType) {
         console.log(filters)
 
         const postsCollection = await firestore().collection('posts')
         let query = postsCollection
-        if (filters.petType != null){
-            query = query.where("petType",'==', filters.petType)
+        if (filters.petType != null) {
+            query = query.where("petType", '==', filters.petType)
         }
         if (filters.ageRange) {
             const minBirthdate = Pet.getPetBirthdate(filters.ageRange.min).toString();
@@ -157,17 +157,17 @@ class PostServices {
                 .orderBy("petBirthDate")
         }
 
-        if (filters.selectedBreeds.length > 0){
-            query = query.where("petBreed",'in',filters.selectedBreeds)
+        if (filters.selectedBreeds.length > 0) {
+            query = query.where("petBreed", 'in', filters.selectedBreeds)
         }
         console.log(typeof filters.isNeutered)
-        if(typeof filters.isNeutered === 'boolean'){
-            query = query.where("petIsNeutered", '==', filters.isNeutered )
+        if (typeof filters.isNeutered === 'boolean') {
+            query = query.where("petIsNeutered", '==', filters.isNeutered)
         }
 
 
         const snapshot = await query
-            .where("type","==",postType)
+            .where("type", "==", postType)
             .startAfter(prevLastDocument)
             .limit(15)
             .get();
@@ -214,16 +214,16 @@ class PostServices {
 
             switch (postType) {
                 case 'Adoption':
-                    userPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
+                    userPosts.push(AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
                     break;
                 case 'Lost':
-                    userPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data()}));
+                    userPosts.push(LostPost.fromJson({id: doc.id, ...doc.data()}));
                     break;
                 case 'Found':
-                    userPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
+                    userPosts.push(FoundPost.fromJson({id: doc.id, ...doc.data()}));
                     break;
                 case 'Hosting':
-                    userPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data()}));
+                    userPosts.push(HostingPost.fromJson({id: doc.id, ...doc.data()}));
                     break;
                 // case 'event':
                 //     userPosts.push(EventPost.fromJson({ id: doc.id, ...doc.data() }));
@@ -236,6 +236,7 @@ class PostServices {
 
         return userPosts;
     }
+
     static async getPostsByIds(postIds) {
         try {
             const collectionRef = firestore().collection('posts');
@@ -249,16 +250,16 @@ class PostServices {
 
                 switch (postType) {
                     case 'Adoption':
-                        allPosts.push(AdoptionPost.fromJson({ id: doc.id, ...doc.data() }));
+                        allPosts.push(AdoptionPost.fromJson({id: doc.id, ...doc.data()}));
                         break;
                     case 'Lost':
-                        allPosts.push(LostPost.fromJson({ id: doc.id, ...doc.data() }));
+                        allPosts.push(LostPost.fromJson({id: doc.id, ...doc.data()}));
                         break;
                     case 'Hosting':
-                        allPosts.push(HostingPost.fromJson({ id: doc.id, ...doc.data() }));
+                        allPosts.push(HostingPost.fromJson({id: doc.id, ...doc.data()}));
                         break;
                     case 'Found':
-                        allPosts.push(FoundPost.fromJson({ id: doc.id, ...doc.data()}));
+                        allPosts.push(FoundPost.fromJson({id: doc.id, ...doc.data()}));
                         break;
                     // Add cases for other post types as needed
                     default:
@@ -271,6 +272,13 @@ class PostServices {
             console.error('Error getting posts:', error);
             return false;
         }
+    }
+
+    static async deletePost(postId) {
+        const docRef = firestore().collection('posts').doc(postId);
+
+        await docRef.delete();
+
     }
 
 
