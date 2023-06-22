@@ -31,6 +31,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
 import UserPet from '../models/UserPet';
+import PostServices from "../services/PostServices";
 // import {Calendar} from "react-native-calendars";
 
 const AddFoundPostScreen = ({navigation}) => {
@@ -97,7 +98,7 @@ const AddFoundPostScreen = ({navigation}) => {
 
         if (date === '') {
             isValidInputs = false;
-            setIsDateEmpty(true);
+            setIsDateFoundEmpty(true);
         }
         return isValidInputs;
     };
@@ -110,12 +111,11 @@ const AddFoundPostScreen = ({navigation}) => {
             setIsLoading(true);
             const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
             const foundPost = new FoundPost('', currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Found', photo, title, location, date)
-            }
             await PostServices.addFoundPost(foundPost);
             setShowSuccessPopUp(true);
             console.log(showSuccessPopUp);
         }
-    }
+        }
 
 
     return (
@@ -179,7 +179,7 @@ const AddFoundPostScreen = ({navigation}) => {
 
                 <View style={{alignItems: 'center'}}>
                     <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
-                        <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleCreatePetProfile}>
+                        <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleAddPost}>
                             <Text style={styles.createPetProfileBtnText}>Create Pet Profile</Text>
                         </TouchableOpacity>
                     </View>
