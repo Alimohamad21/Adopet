@@ -117,9 +117,10 @@ class FoundPost extends Post {
     /**
      * @param {Pet} pet
      */
-    constructor(id, pet, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type,foundLocation,foundDateAndTime) {
+    constructor(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type, photo, title, foundLocation,foundDateAndTime) {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
-        this.pet = pet;
+        this.photo = photo;
+        this.title = title;
         this.foundLocation = foundLocation;
         this.foundDateAndTime = foundDateAndTime.toDate().toDateString();
 
@@ -128,24 +129,15 @@ class FoundPost extends Post {
 
     static fromJson(json) {
         console.log(json.lostDateAndTime)
-        return new FoundPost(json.id,
-          new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.foundLocation,json.foundDateAndTime);
+        return new FoundPost(json.id, json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,
+            json.photo, json.title, json.foundLocation,json.foundDateAndTime);
     }
 
     toJson() {
         return {
             ...super.toJson(),
-            petType: this.pet.type,
-            petImage: this.pet.image,
-            petName: this.pet.name,
-            petBirthDate: this.pet.birthDate,
-            petColor: this.pet.color,
-            petBreed: this.pet.breed,
-            petGender: this.pet.gender,
-            petDescription: this.pet.description,
-            petIsNeutered: this.pet.isNeutered,
-            petVaccinations: this.pet.vaccinations,
+            photo: this.photo,
+            title: this.title,
             foundLocation: this.foundLocation,
             foundDateAndTime: this.foundDateAndTime
 
