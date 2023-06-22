@@ -32,6 +32,9 @@ export const HostingScreenRoute = "Hosting";
 
 
 export const CreatePetProfileScreenRoute='Create pet profile';
+export const AddAdoptionPostScreenRoute='Add Adoption Post';
+export const AddHostingPostScreenRoute='Add Hosting Post';
+export const PostTypesListScreenRoute='Choose Post Type';
 
 
 //Lists

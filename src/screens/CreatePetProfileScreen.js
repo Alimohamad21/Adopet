@@ -9,6 +9,7 @@ import {
     Image,
     TouchableHighlight
 } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import {
     appPurpleDark,
     appPurpleLight,
@@ -59,8 +60,8 @@ const CreatePetProfileScreen = ({navigation}) => {
     const [showCalendar, setShowCalendar] = useState(false);
 
     const types = [
-        { label: 'Cat', value: 'cat' },
-        { label: 'Dog', value: 'dog' },
+        { label: 'Cat', value: 'Cat' },
+        { label: 'Dog', value: 'Dog' },
     ];
 
     const isSpayedOptions = [
@@ -258,7 +259,7 @@ const CreatePetProfileScreen = ({navigation}) => {
                     {isColorEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's color</Text>}
 
                     <Text style={styles.titles} >Breed</Text>
-                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
+                    <DropdownComponent onSelect={handleBreedChange} data={breedList === 'Cat' ? (egyptianCatBreeds) : (egyptianDogBreeds)} placeholder={"Breed"}/>
                     {isBreedEmpty && <Text style={styles.wrongCredentialsText}>Please enter a breed</Text>}
 
 
