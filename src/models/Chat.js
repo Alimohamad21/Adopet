@@ -49,7 +49,7 @@ class Chat {
     }
 
     static async fromJson(json, currentUserId) {
-        const otherUserPublicKey=currentUserId!==json.userThatPostedId?json.userThatRequestedPublicKey:json.userThatPostedPublicKey;
+        const otherUserPublicKey=currentUserId===json.userThatPostedId?json.userThatRequestedPublicKey:json.userThatPostedPublicKey;
         const decryptedMessages= await this.decrypt(json.messages,currentUserId,otherUserPublicKey)
         return new Chat(
             json.id,
