@@ -3,7 +3,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
     appPurpleDark,
     appPurpleLight,
-    ChatScreenRoute,
+    ChatScreenRoute, deleteRed,
     ProfileScreenRoute,
     ViewPetScreenRoute
 } from '../utilities/constants';
@@ -18,6 +18,7 @@ import UserServices from "../services/UserServices";
 import PostServices from "../services/PostServices";
 import {Portal, Provider} from "react-native-paper";
 import {AdoptionPost, FoundPost, HostingPost, LostPost} from "../models/Post";
+import ConfirmationPopUp from "./ConfirmationPopUp";
 
 
 /**
@@ -34,6 +35,9 @@ const PostCard = ({post,isPoster}) => {
     const [userReviewsCount,setUserReviewsCount]=useState(null);
     const addedToSavedText = "Added to saved posts!";
     const removedFromSavedText = "Removed from saved posts!"
+    const [handOverPopUpShown, setHandOverPopUpShown] = useState(false);
+
+
     let renderedPost;
     // console.log("post card \n",post)
     if (post instanceof AdoptionPost) {
@@ -50,6 +54,8 @@ const PostCard = ({post,isPoster}) => {
     }
 
     useEffect(  () => {
+        console.log(post.id)
+
         const checkIsPostSaved = async ()=>{
             const bool = await UserServices.isPostSaved(currentUser.uid,post.id);
             setIsPostSaved(bool);
@@ -167,6 +173,23 @@ const PostCard = ({post,isPoster}) => {
             }, 1000); // adjust as needed
         });
 
+    }
+    const onCancelHandOverPopUp = () => {
+        setHandOverPopUpShown(false);
+    };
+
+    const deletePost = async () => {
+        setHandOverPopUpShown(false);
+        setIsLoading(true);
+        console.log("deleting");
+        await PostServices.deletePost(post.id);
+        setIsLoading(false);
+        console.log("after await");
+        navigation.replace(ProfileScreenRoute);
+    };
+    const handlePostsDelete =() => {
+        setHandOverPopUpShown(true);
+        console.log(handOverPopUpShown);
     }
     const {width, height} = Dimensions.get('window');
 // orientation must fixed
@@ -322,6 +345,11 @@ const PostCard = ({post,isPoster}) => {
         return (
             <Provider>
 
+                <ConfirmationPopUp visible={handOverPopUpShown}
+                                   confirmationText={`Are you sure you want to delete this post?`}
+                                   onConfirm={deletePost}
+                                   onCancel={onCancelHandOverPopUp}/>
+
                 <View style={styles.postContainer}>
 
                     {isLoading && <TransparentLoadingIndicator/>}
@@ -344,28 +372,39 @@ const PostCard = ({post,isPoster}) => {
                                 </View>
 
                             </View>
-                        </TouchableOpacity>
-
-                        <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
-                            <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
-                            <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
-                            <TouchableOpacity onPress={() => handleSavePostClick()} style={{marginLeft: '10%'}}>
-                                {isPostSaved &&
-                                    <FontAwesome name={'bookmark'}
-                                                 style={{fontSize: 25, color: '#C99200'}}></FontAwesome>
-                                }
-                                {!isPostSaved &&
-                                    <FontAwesome name={'bookmark'}
-                                                 style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
-                                }
-
-                            </TouchableOpacity>
                         </View>
+                        <View style={{marginTop: '3%',marginLeft:"40%"}}>
+                            <View style={{marginRight: '0%', flexDirection: 'row'}}>
+                                <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
+                                <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
+                                <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+                                    {isPostSaved &&
+                                        <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
+                                    }
+                                    {!isPostSaved &&
+                                        <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+                                    }
+
+                                </TouchableOpacity>
+                                {isPoster &&
+                                    <View>
+                                        <TouchableOpacity onPress={()=>handlePostsDelete()}  style={{marginLeft: '10%'}}>
+                                            <FontAwesome name={"trash"}
+                                                         style={{fontSize: 25, color: deleteRed, marginLeft: 5}}></FontAwesome>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
+                            </View>
+
+                        </View>
+
+
                     </View>
                     <TouchableOpacity onPress={() => handleViewDetails(post)} style={styles.postBody}>
                         <View style={styles.imageContainer}>
                             <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
                         </View>
+
                         <View style={{flexDirection: "column"}}>
                             <Text style={styles.postTitle}>{post.pet.name}</Text>
                             <Text style={{
@@ -415,6 +454,11 @@ const PostCard = ({post,isPoster}) => {
         return(
             <Provider>
 
+
+                <ConfirmationPopUp visible={handOverPopUpShown}
+                                   confirmationText={`Are you sure you want to delete this post?`}
+                                   onConfirm={deletePost}
+                                   onCancel={onCancelHandOverPopUp}/>
                 <View style={styles.postContainer}>
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
@@ -447,9 +491,20 @@ const PostCard = ({post,isPoster}) => {
                                     }
 
                                 </TouchableOpacity>
+                                {isPoster &&
+                                    <View>
+                                        <TouchableOpacity onPress={()=>handlePostsDelete()}  style={{marginLeft: '10%'}}>
+                                            <FontAwesome name={"trash"}
+                                                         style={{fontSize: 25, color: deleteRed, marginLeft: 5}}></FontAwesome>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
                             </View>
+
                             {/*<Text style={{fontSize: 12, marginLeft: '2%'}}>{post.createdAt.toDate().toString()}</Text>*/}
                         </View>
+
+
                     </View>
                     <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.postBody}>
                         <View style={styles.imageContainer}>
@@ -515,7 +570,10 @@ const PostCard = ({post,isPoster}) => {
     function LostAndFoundPostRenderer({ post,type }) {
         return(
             <Provider>
-
+                <ConfirmationPopUp visible={handOverPopUpShown}
+                                   confirmationText={`Are you sure you want to delete this post?`}
+                                   onConfirm={deletePost}
+                                   onCancel={onCancelHandOverPopUp}/>
                 <View style={styles.postContainer}>
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
@@ -532,14 +590,15 @@ const PostCard = ({post,isPoster}) => {
                                     <RatingsWidget/>
                                     <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
                                 </View>
-
                             </View>
                         </TouchableOpacity>
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
                                 <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
+
                                 <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+
                                     {isPostSaved &&
                                         <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
                                     }
@@ -548,6 +607,15 @@ const PostCard = ({post,isPoster}) => {
                                     }
 
                                 </TouchableOpacity>
+
+                                {isPoster &&
+                                    <View>
+                                        <TouchableOpacity onPress={()=>handlePostsDelete()}  style={{marginLeft: '10%'}}>
+                                            <FontAwesome name={"trash"}
+                                                         style={{fontSize: 25, color: deleteRed, marginLeft: 5}}></FontAwesome>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
                             </View>
                             {/*<Text style={{fontSize: 12, marginLeft: '2%'}}>{post.createdAt.toDate().toString()}</Text>*/}
                         </View>

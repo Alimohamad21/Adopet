@@ -19,7 +19,7 @@ import {
     AdoptionScreenRoute,
     appPurpleDark,
     ChatScreenRoute, EditPetDetailsScreenRoute,
-    EditUserDetailsScreenRoute, FilterPostsScreenRoute,
+    EditUserDetailsScreenRoute, ProfileScreenRoute,
     UploadImageScreenRoute,
     ViewPetScreenRoute,
     AddAdoptionPostScreenRoute, PostTypesListScreenRoute,
@@ -35,6 +35,7 @@ import UserServices from "../services/UserServices";
 import functions from '@react-native-firebase/functions';
 import ScreenLoadingIndicator from "../widgets/ScreenLoadingIndicator";
 
+import PetServices from "../services/PetServices";
 const ProfileScreen = () => {
     const [view, setView] = useState(1)
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
@@ -51,6 +52,8 @@ const ProfileScreen = () => {
     const isCurrentUser = userParam == null;
     const [user, setUser] = useState();
     // const user = isCurrentUser ? currentUser : userParam;
+    const [isLoading, setIsLoading] = useState(false);
+
 
     useMemo(() => {
         fadeOut.current = Animated.timing(animatedValue, {toValue: 0, useNativeDriver: true});
@@ -157,7 +160,13 @@ const ProfileScreen = () => {
         console.log("Posts")
         setView(1)
     }
-    const handlePetsSelect = () => {
+    // const handlePostsDelete =async () => {
+    //     setIsLoading(true);
+    //     await PostServices.deletePost(postId);
+    //     setIsLoading(false);
+    //     navigation.replace(ProfileScreenRoute);
+    // }
+    const handlePetsSelect =() =>{
         setView(2)
         console.log("Pets")
     }
