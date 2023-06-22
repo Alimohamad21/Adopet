@@ -5,6 +5,8 @@ export const appPurpleLight = '#C9BAF3';
 export const borderGrey = '#BBC1CF';
 export  const postGrey= '#F1F1F6';
 
+export const deleteRed = "#8B0000";
+
 //DIRECTORIES
 export const fbStorageUserImagesDirectory = '/user-images';
 export const fbStoragePetImagesDirectory = '/pet-images';

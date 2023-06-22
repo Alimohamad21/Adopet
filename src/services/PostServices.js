@@ -276,7 +276,7 @@ class PostServices {
 
     static async deletePost(postId) {
         const docRef = firestore().collection('posts').doc(postId);
-
+console.log("in delete post services");
         await docRef.delete();
 
     }
