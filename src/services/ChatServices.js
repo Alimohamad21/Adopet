@@ -175,7 +175,7 @@ class ChatServices {
     }
 
     static async resetUnReadMessagesCountForPoster(chatId) {
-         await firestore().collection('chats').doc(chatId).update({
+        await firestore().collection('chats').doc(chatId).update({
             'userThatPostedUnReadMessagesCount':0
         });
     }

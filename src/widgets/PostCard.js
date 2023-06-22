@@ -114,10 +114,6 @@ const PostCard = ({post,isPoster}) => {
     const handleViewDetails = (post) => {
         navigation.navigate(ViewPetScreenRoute, {pet: post.pet});
     };
-    const handleProfileNavigation = (userId) =>{
-        navigation.navigate(ProfileScreenRoute, {userParam:userId});
-
-    }
     const handleChatNavigation = async (post) => {
         setIsLoading(true);
         const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id,currentUser.uid);
@@ -357,10 +353,10 @@ const PostCard = ({post,isPoster}) => {
                     <View style={styles.postHeader}>
 
 
-
-                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
-                            {post.userThatPostedProfilePicture === ""  ?
-                                <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+                        <View style={styles.profileContainer}>
+                            {post.userThatPostedProfilePicture === "" ?
+                                <Image style={styles.profileBtnIcon}
+                                       source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
                                        style={styles.profileBtnIcon}/>}
                             <View>
@@ -463,7 +459,7 @@ const PostCard = ({post,isPoster}) => {
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
 
-                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
+                        <View style={styles.profileContainer}>
                             {post.userThatPostedProfilePicture === ""  ?
                                 <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
@@ -477,7 +473,7 @@ const PostCard = ({post,isPoster}) => {
                                 </View>
 
                             </View>
-                        </TouchableOpacity>
+                        </View>
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
@@ -526,21 +522,21 @@ const PostCard = ({post,isPoster}) => {
                                 fontSize:13,
                             }}>{post.pet.description}</Text>
 
-                                <View style={{marginTop:"2%"}}>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Start Date:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.startDate}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>End Date:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.endDate}</Text>
-                                    </View>
-                                    <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Duration:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.duration}</Text>
-                                    </View>
-
+                            <View style={{marginTop:"2%"}}>
+                                <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                    <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Start Date:</Text>
+                                    <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.startDate}</Text>
                                 </View>
+                                <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                    <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>End Date:</Text>
+                                    <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.endDate}</Text>
+                                </View>
+                                <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
+                                    <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Duration:</Text>
+                                    <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.duration}</Text>
+                                </View>
+
+                            </View>
 
                         </View>
                     </TouchableOpacity>
@@ -578,7 +574,7 @@ const PostCard = ({post,isPoster}) => {
                     {isLoading && <TransparentLoadingIndicator/>}
                     <View style={styles.postHeader}>
 
-                        <TouchableOpacity style={styles.profileContainer} onPress={()=>handleProfileNavigation(post.userThatPostedId)}>
+                        <View style={styles.profileContainer}>
                             {post.userThatPostedProfilePicture === ""  ?
                                 <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
@@ -591,7 +587,7 @@ const PostCard = ({post,isPoster}) => {
                                     <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
                                 </View>
                             </View>
-                        </TouchableOpacity>
+                        </View>
                         <View style={{marginTop: '3%',marginLeft:"40%"}}>
                             <View style={{marginRight: '0%', flexDirection: 'row'}}>
                                 <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
