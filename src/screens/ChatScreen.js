@@ -4,7 +4,7 @@ import {Bubble, Composer, GiftedChat, InputToolbar, Send} from 'react-native-gif
 import ChatServices from '../services/ChatServices';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {View, StyleSheet, Text, Image, TouchableOpacity} from 'react-native';
-import {appPurpleDark, appPurpleLight, ChatScreenRoute} from '../utilities/constants';
+import {appPurpleDark, appPurpleLight, ChatScreenRoute, ProfileScreenRoute} from '../utilities/constants';
 import ImagePickerButton from '../widgets/ImagePickerButton';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -17,6 +17,7 @@ import RatingPopUp from '../widgets/RatingPopUp';
 import Review from '../models/Review';
 import ReviewServices from '../services/ReviewServices';
 import ConfirmationPopUp from '../widgets/ConfirmationPopUp';
+import user from "../models/User";
 
 
 export function ChatScreen() {
@@ -60,7 +61,7 @@ export function ChatScreen() {
                 headerTitle: '',
                 headerRight: () => <View
                     style={{flex: 0.85, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <View style={{
+                    <TouchableOpacity onPress={() => handleProfileNavigation()} style={{
                         flexDirection: 'row',
                         marginTop: '0%',
                         justifyContent: 'flex-start',
@@ -78,7 +79,7 @@ export function ChatScreen() {
                             width: 40,
                         }}/>}
                         <Text style={{fontSize: 17, color: 'white', fontWeight: 'bold'}}>{otherUserFullName}</Text>
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity style={{flexDirection: 'row'}}>
                         <Text style={{
                             fontSize: 13,
@@ -127,6 +128,17 @@ export function ChatScreen() {
             let slicedMessages = formattedMessages.slice(0, 15);
             setMessages(slicedMessages);
         }
+    }
+
+    const handleProfileNavigation = () => {
+        if (currentUser.uid === chat.userThatPostedId) {
+            navigation.navigate(ProfileScreenRoute, {userParam: chat.userThatRequestedId});
+
+        } else {
+            navigation.navigate(ProfileScreenRoute, {userParam: chat.userThatPostedId});
+
+        }
+
     }
 
     function resetUnReadMessages() {

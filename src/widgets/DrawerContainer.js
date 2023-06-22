@@ -26,7 +26,8 @@ export default function DrawerContainer(props) {
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
     const [isLoading, setIsLoading] = useState(false);
     const handleProfileNavigation = () =>{
-        navigation.navigate(ProfileScreenRoute);
+        navigation.navigate(ProfileScreenRoute, {"userParam": null});
+
     }
     const handleHomeNavigation = () => {
         navigation.navigate(HomeScreenRoute);

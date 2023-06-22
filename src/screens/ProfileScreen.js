@@ -25,7 +25,7 @@ import {
     AddAdoptionPostScreenRoute, PostTypesListScreenRoute,
 
 } from "../utilities/constants";
-import {  CreatePetProfileScreenRoute} from "../utilities/constants";
+import {CreatePetProfileScreenRoute} from "../utilities/constants";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import SlideButton from "../widgets/SlideButton";
 import PostCard from "../widgets/PostCard";
@@ -33,21 +33,28 @@ import PostServices from "../services/PostServices";
 import {FlatList} from "native-base";
 import UserServices from "../services/UserServices";
 import functions from '@react-native-firebase/functions';
+import ScreenLoadingIndicator from "../widgets/ScreenLoadingIndicator";
+
 const ProfileScreen = () => {
-    const [view,setView] = useState(1)
+    const [view, setView] = useState(1)
     const {currentUser, setCurrentUser} = useContext(CurrentUserContext);
+    const route = useRoute();
+    const {userParam} = route.params;
     const navigation = useNavigation();
-    const [userPosts,setUserPosts] = useState(null);
-    const [userPets,setUserPets] = useState(null);
+    const [userPosts, setUserPosts] = useState(null);
+    const [userPets, setUserPets] = useState(null);
     const [hideComponents, setHideComponents] = useState(false);
-    const [previousOffset,setPreviousOffset] = useState(0);
+    const [previousOffset, setPreviousOffset] = useState(0);
     const animatedValue = useRef(new Animated.Value(1)).current;
     const fadeOut = useRef(null);
     const fadeIn = useRef(null);
+    const isCurrentUser = userParam == null;
+    const [user, setUser] = useState();
+    // const user = isCurrentUser ? currentUser : userParam;
 
     useMemo(() => {
-        fadeOut.current = Animated.timing(animatedValue, { toValue: 0, useNativeDriver: true });
-        fadeIn.current = Animated.timing(animatedValue, { toValue: 1, useNativeDriver: true });
+        fadeOut.current = Animated.timing(animatedValue, {toValue: 0, useNativeDriver: true});
+        fadeIn.current = Animated.timing(animatedValue, {toValue: 1, useNativeDriver: true});
     }, []);
 
     const handleScroll = (event) => {
@@ -71,36 +78,66 @@ const ProfileScreen = () => {
         navigation.setOptions({
             headerShadowVisible: false,
 
-            headerTitle:"",
+            headerTitle: "",
 
             headerLeft: () => (
+                <View>
+                    {
+                        !isCurrentUser && <TouchableOpacity>
+                            <FontAwesome onPress={handleClose} name={"arrow-left"}
+                                         style={{fontSize: 20, marginBottom: "35%"}}></FontAwesome>
+                        </TouchableOpacity>
 
-                <MenuImage
-                    onPress={() => {
-                        navigation.openDrawer();
-                    }}
-                />
+                    }
+                    {isCurrentUser &&
+                        <MenuImage
+                            onPress={() => {
+                                navigation.openDrawer();
+                            }}
+                        />
+                    }
 
-            ),
-            headerRight: () =>(
-                <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
+                </View>
 
 
+    ),
+        headerRight: () => (
+            <Image style={styles.logo} source={require('../assets/adopet_logo.png')}></Image>
 
-            ),
-        });
-        console.log(currentUser)
+
+        ),
+    })
+        ;
+        // console.log(currentUser)
     }, []);
-    useEffect(   () => {
+    useEffect(() => {
         // functions()
         //     .httpsCallable('get_user_phone_number')({"text":currentUser.phoneNumber})
         //     .then(response => {
         //         console.log(response)
         //     });
-        const getUserPosts = async () => {
-            const res = await PostServices.getUserPosts(currentUser.uid)
+        const getUserPosts = async (userId) => {
+            const res = await PostServices.getUserPosts(userId)
             setUserPosts(res)
         }
+        const getUserPets = async (userId) => {
+            const pets = await UserServices.getUserPets(userId);
+            setUserPets(pets);
+        }
+        const setProfileUser = async () => {
+            if (isCurrentUser) {
+                setUser(currentUser);
+                getUserPosts(currentUser.uid).then()
+                getUserPets(currentUser.uid).then()
+            } else {
+                const res = await UserServices.getUser(userParam);
+                setUser(res);
+                getUserPosts(res.uid).then()
+                getUserPets(res.uid).then()
+            }
+
+        }
+
         //
         // const unsubscribe = navigation.addListener('focus', async () => {
         //     const user = await UserServices.getUser(currentUser.uid);
@@ -109,32 +146,26 @@ const ProfileScreen = () => {
         // return unsubscribe;
 
         //TO DO:  load Pets from database or from current user object
-        const getUserPets = async () => {
-            const pets = await UserServices.getUserPets(currentUser.uid);
-            setUserPets(pets);
-        }
+        setProfileUser().then();
 
-        getUserPosts().then()
-        getUserPets().then()
+    }, [navigation])
 
-
-
-    },[navigation])
-
-
-    const handlePostsSelect =() =>{
+    const handleClose = () => {
+        navigation.goBack();
+    }
+    const handlePostsSelect = () => {
         console.log("Posts")
         setView(1)
     }
-    const handlePetsSelect =() =>{
+    const handlePetsSelect = () => {
         setView(2)
         console.log("Pets")
     }
-    const handleViewDetails= (userPet)=>{
-        navigation.navigate(ViewPetScreenRoute,{pet:userPet.pet});
+    const handleViewDetails = (userPet) => {
+        navigation.navigate(ViewPetScreenRoute, {pet: userPet.pet});
     }
 
-    const handleCreatePetProfileNavigation = () =>{
+    const handleCreatePetProfileNavigation = () => {
         navigation.navigate(CreatePetProfileScreenRoute)
     }
     const handleAddPostPress=()=> {
@@ -142,34 +173,36 @@ const ProfileScreen = () => {
     };
     const renderPost = ({item}) => {
         return (
-            <PostCard post={item} isPoster={true}/>
+            <PostCard post={item} isPoster={isCurrentUser}/>
         );
     };
     const renderPet = ({item}) => {
         return (
-            <View style={{  alignItems:"center",paddingTop:"5%",paddingBottom:"10%"}}>
-                <Image  source={{uri: item.pet.image}} style={styles.petIcon}/>
-                <Text style={{fontWeight:"bold",fontSize:18}}>{item.pet.name}</Text>
-                <TouchableOpacity onPress={()=>{
+            <View style={{alignItems: "center", paddingTop: "5%", paddingBottom: "10%"}}>
+                <Image source={{uri: item.pet.image}} style={styles.petIcon}/>
+                <Text style={{fontWeight: "bold", fontSize: 18}}>{item.pet.name}</Text>
+                <TouchableOpacity onPress={() => {
                     handleViewDetails(item)
                 }} style={styles.petDetailsButton}>
                     <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>handleEditPetDetails(item)} style={{flexDirection:"row",justifyContent:"center"}}>
+                {isCurrentUser && <TouchableOpacity onPress={() => handleEditPetDetails(item)}
+                                                    style={{flexDirection: "row", justifyContent: "center"}}>
                     <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
-                    <Text style={styles.editDetails} >Edit Pet Details</Text>
-                </TouchableOpacity>
+                    <Text style={styles.editDetails}>Edit Pet Details</Text>
+                </TouchableOpacity>}
 
             </View>
         );
     };
     const renderFooter = () => {
         return (
-            <TouchableOpacity onPress={handleCreatePetProfileNavigation} style={{  alignItems:"center",marginTop:"15%"}}>
-                <View style={{alignItems:"center",flexDirection:"row"}}>
-                    <FontAwesome name={'plus-circle'} style={{fontSize: 30,color:appPurpleDark}}></FontAwesome>
-                    <Text style={{fontSize:18,fontWeight:"bold",marginLeft:"7%"}}>Add Pet</Text>
+            <TouchableOpacity onPress={handleCreatePetProfileNavigation}
+                              style={{alignItems: "center", marginTop: "15%"}}>
+                <View style={{alignItems: "center", flexDirection: "row"}}>
+                    <FontAwesome name={'plus-circle'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                    <Text style={{fontSize: 18, fontWeight: "bold", marginLeft: "7%"}}>Add Pet</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -179,30 +212,47 @@ const ProfileScreen = () => {
         navigation.navigate(EditUserDetailsScreenRoute);
     };
     const handleEditPetDetails = (pet) => {
-        navigation.navigate(EditPetDetailsScreenRoute,{userPet:pet});
+        navigation.navigate(EditPetDetailsScreenRoute, {userPet: pet});
 
     };
+    if (!user) {
 
-    return(
-        <SafeAreaView style={{flex:1,backgroundColor:"white"}}>
-            { !hideComponents &&
-                <Animated.View style={{ opacity: animatedValue }}>
-                    <View style={styles.profileIconContainer}>
+        return <ScreenLoadingIndicator></ScreenLoadingIndicator>
+    } else
 
-                        {
-                            currentUser.profilePicture !== '' ?
-                                <Image source={{uri: currentUser.profilePicture}} style={styles.profileIcon}/> :
-                                <Image source={require('../assets/default_user.png') }
-                                       style={styles.profileIcon}/>}
-                    </View>
+        return (
+            <SafeAreaView style={{flex: 1, backgroundColor: "white"}}>
+                {!hideComponents &&
+                    <Animated.View style={{opacity: animatedValue}}>
+                        <View style={styles.profileIconContainer}>
 
-
-                    <View style={{alignItems:"center"}}>
-                        <View style={{flexDirection:"row",justifyContent:"center"}}>
-                            <Text style={styles.nameText}>{currentUser.fullName}</Text>
+                            {
+                                user.profilePicture !== '' ?
+                                    <Image source={{uri: user.profilePicture}} style={styles.profileIcon}/> :
+                                    <Image source={require('../assets/default_user.png')}
+                                           style={styles.profileIcon}/>}
                         </View>
-                        <View style={{flexDirection:"row",justifyContent:"center"}}>
-                            <Text style={styles.location}>{currentUser.city}</Text>
+
+
+                        <View style={{alignItems: "center"}}>
+                            <View style={{flexDirection: "row", justifyContent: "center"}}>
+                                <Text style={styles.nameText}>{user.fullName}</Text>
+                            </View>
+                            <View style={{flexDirection: "row", justifyContent: "center"}}>
+                                <Text style={styles.location}>{user.city}</Text>
+                            </View>
+                            <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                                <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
+                                <Text style={styles.phone}>{user.phoneNumber}</Text>
+                            </View>
+                            {isCurrentUser && <TouchableOpacity onPress={handleEditDetails}
+                                                                style={{
+                                                                    flexDirection: "row",
+                                                                    justifyContent: "center"
+                                                                }}>
+                                <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                                <Text style={styles.editDetails}>Edit details</Text>
+                            </TouchableOpacity>}
                         </View>
                         <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center"}}>
                             <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"phone"}></FontAwesome>
@@ -265,19 +315,62 @@ const ProfileScreen = () => {
                         />) : (renderFooter())
                     }
 
+                    </Animated.View>
+                }
+                <View style={{height: "5%", marginTop: "2%"}}>
+                    <SlideButton onFirstPress={handlePostsSelect} onSecondPress={handlePetsSelect} firstText={"Posts"}
+                                 secondText={"Pets"}></SlideButton>
                 </View>
 
-            }
 
-        </SafeAreaView>
+                {view === 1 &&
+                    <View style={{
+                        alignItems: "center", paddingTop: "10%",
+                        height: hideComponents === 1 ? "50%" : "80%",
+
+                    }}>
+                        {userPosts &&
+
+                            <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                      data={userPosts} renderItem={renderPost}
+                                      keyExtractor={(adoptionPost) => `${adoptionPost.id}`}
+                                // onScroll={handleScroll}
+                                // onScrollBeginDrag={handleScroll}
+                                      onScrollEndDrag={handleScroll}
+                            />
+                        }
+                    </View>
+                }
+                {view === 2 &&
+                    <View style={{
+                        alignItems: "center",
+                        marginTop: "15%",
+                        height: hideComponents === 1 ? "50%" : "100%",
+                    }}>
+                        {userPets && userPets.length > 0 ? (
+                            <FlatList showsVerticalScrollIndicator={false} vertical={true} numColumns={1}
+                                      data={userPets} renderItem={renderPet}
+                                      keyExtractor={(pet) => `${pet.id}`}
+                                //onScroll={handleScroll}
+                                      onScrollEndDrag={handleScroll}
+                                // contentContainerStyle={{}}
+
+                                      ListFooterComponent={isCurrentUser && renderFooter}
+
+                            />) : isCurrentUser && (renderFooter())
+                        }
+
+                    </View>
+
+                }
+
+            </SafeAreaView>
 
 
-
-
-    );
+        );
 
 };
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const imageSize = Math.min(width, height) * 0.4; // adjust the factor as needed
 const borderRadius = imageSize / 2;
 const petImageSize = Math.min(width, height) * 0.18; // adjust the factor as needed
@@ -285,50 +378,50 @@ const petBorderRadius = imageSize / 2;
 const styles = StyleSheet.create({
     logo: {
 
-        marginRight:"41%",
+        marginRight: "41%",
         width: 100,
         height: 100,
         resizeMode: 'contain',
     },
     profileIconContainer: {
 
-        backgroundColor:appPurpleDark,
-        width:"100%",
-        height:height/6,
-        flexDirection:"row",
-        justifyContent:"center"
+        backgroundColor: appPurpleDark,
+        width: "100%",
+        height: height / 6,
+        flexDirection: "row",
+        justifyContent: "center"
     },
     profileIcon: {
 
-        position:"absolute",
+        position: "absolute",
         borderRadius: borderRadius,
-        width:imageSize,
-        height:imageSize,
+        width: imageSize,
+        height: imageSize,
 
 
     },
-    nameText:{
-        marginTop:"7%",
-        fontSize:20,
-        fontWeight:"bold"
+    nameText: {
+        marginTop: "7%",
+        fontSize: 20,
+        fontWeight: "bold"
 
     },
-    location:{
+    location: {
 
-        fontSize:15,
-        fontWeight:"500"
+        fontSize: 15,
+        fontWeight: "500"
     },
-    phone:{
-        marginLeft:"2%",
-        fontSize:15,
-        fontWeight:"500"
+    phone: {
+        marginLeft: "2%",
+        fontSize: 15,
+        fontWeight: "500"
     },
-    editDetails:{
-        marginLeft:"2%",
-        fontSize:15,
-        fontWeight:"500"
+    editDetails: {
+        marginLeft: "2%",
+        fontSize: 15,
+        fontWeight: "500"
     },
-    petIcon:{
+    petIcon: {
 
         borderRadius: petBorderRadius,
         height: petImageSize,
