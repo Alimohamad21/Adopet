@@ -29,7 +29,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
 import UserPet from '../models/UserPet';
-import {Calendar} from "react-native-calendars";
+// import {Calendar} from "react-native-calendars";
 
 const CreatePetProfileScreen = ({navigation}) => {
 
