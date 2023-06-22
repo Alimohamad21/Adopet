@@ -29,9 +29,14 @@ class UserServices {
         return true;
     }
 
+    static async addPublicKey(uid,publicKey){
+        await firestore().collection('users').doc(uid).update({publicKey:publicKey});
+    }
+
     static async updateUser(user, uid) {
         try {
             user.email = user.email.toLowerCase();
+            console.log(User.toJson(user))
             await firestore().collection('users').doc(uid).update(User.toJson(user));
 
         } catch (error) {
@@ -176,6 +181,25 @@ class UserServices {
             return savedPosts;
         } catch (error) {
             console.error('Error getting saved posts Ids:', error);
+            return ;
+        }
+    }
+    static async removeProfilePicture(uid){
+        try {
+            // Get a reference to the user document
+            const userDoc = await firestore().collection('users').doc(uid)
+
+
+            // Update the user's profilePicture field to an empty string
+            await userDoc.update({
+                profilePicture: ''
+            });
+
+            return;
+
+
+        } catch (error) {
+            console.error('Error Removing Profile Picture:', error);
             return ;
         }
     }

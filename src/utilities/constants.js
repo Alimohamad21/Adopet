@@ -1,5 +1,4 @@
 // COLORS
-import lostAndFoundScreen from "../screens/LostAndFoundScreen";
 
 export const appPurpleDark = '#8059F0';
 export const appPurpleLight = '#C9BAF3';
@@ -20,6 +19,7 @@ export const UploadImageScreenRoute = 'UploadImage';
 export const ViewPetScreenRoute = 'Pet Details';
 export const ProfileScreenRoute = 'Profile';
 export const EditUserDetailsScreenRoute = 'Edit Details';
+export const EditPetDetailsScreenRoute = 'Edit Pet';
 export const ChangePasswordScreenRoute = 'Change Password';
 export const ChatScreenRoute = 'Chat Screen';
 export const ViewChatsScreenRoute='Chats';
@@ -38,7 +38,6 @@ export const PostTypesListScreenRoute='Choose Post Type';
 
 
 //Lists
-
 export const catAndDogColors = [
     { label: 'Black', value: 'black' },
     { label: 'White', value: 'white' },

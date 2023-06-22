@@ -7,22 +7,22 @@ import Dialog from "react-native-dialog";
 
 
 const ConfirmationPopUp = ({visible,confirmationText, onConfirm,onCancel}) => {
-  const handleConfirm = () => {
-    onConfirm();
-  };
-  const handleCancel =()=>{
-    onCancel();
-  }
+    const handleConfirm = () => {
+        onConfirm();
+    };
+    const handleCancel =()=>{
+        onCancel();
+    }
 
-  return (
-    <View>
-      <Dialog.Container visible={visible}>
-        <Dialog.Description>{confirmationText}</Dialog.Description>
-        <Dialog.Button onPress={handleCancel} label="Cancel" />
-        <Dialog.Button onPress={handleConfirm} label="Confirm" />
-      </Dialog.Container>
-    </View>
-  );
+    return (
+        <View>
+            <Dialog.Container visible={visible}>
+                <Dialog.Description>{confirmationText}</Dialog.Description>
+                <Dialog.Button onPress={handleCancel} label="Cancel" />
+                <Dialog.Button onPress={handleConfirm} label="Confirm" />
+            </Dialog.Container>
+        </View>
+    );
 };
 const styles = StyleSheet.create({});
 

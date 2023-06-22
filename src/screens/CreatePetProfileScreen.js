@@ -29,6 +29,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
 import UserPet from '../models/UserPet';
+import {Calendar} from "react-native-calendars";
 
 const CreatePetProfileScreen = ({navigation}) => {
 
@@ -208,8 +209,8 @@ const CreatePetProfileScreen = ({navigation}) => {
                 <View style={styles.container}>
 
                         <Text style={styles.titles} >Add photo</Text>
-                        <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
-                            <FontAwesome name={'plus-circle'} onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
+                        <TouchableHighlight underlayColor="rgba(128, 128, 128, 0.1)"  >
+                            <FontAwesome name={'plus-circle'}  onPress={handleAddPhoto} style={styles.addPhoto} ></FontAwesome>
                         </TouchableHighlight>
                     {imageUri && <Image source={{uri:imageUri}} style={styles.image}/>}
 
@@ -231,8 +232,8 @@ const CreatePetProfileScreen = ({navigation}) => {
                     </View>
 
                     <TouchableHighlight
-                            underlayColor="rgba(128, 128, 128, 0.1)" onPress={toggleCalendar}>
-                                <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines"/>
+                            underlayColor="rgba(128, 128, 128, 0.1)" >
+                                <FontAwesome name="calendar" onPress={toggleCalendar} size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines"/>
                         </TouchableHighlight>
 
 

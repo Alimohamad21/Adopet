@@ -18,7 +18,7 @@ import {
     AddAdoptionPostScreen,
     AdoptionScreenRoute,
     appPurpleDark,
-    ChatScreenRoute,
+    ChatScreenRoute, EditPetDetailsScreenRoute,
     EditUserDetailsScreenRoute, FilterPostsScreenRoute,
     UploadImageScreenRoute,
     ViewPetScreenRoute,
@@ -156,6 +156,10 @@ const ProfileScreen = () => {
                     <FontAwesome name={'paw'} style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
                     <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={()=>handleEditPetDetails(item)} style={{flexDirection:"row",justifyContent:"center"}}>
+                    <FontAwesome style={{fontSize: 19, color: appPurpleDark}} name={"edit"}></FontAwesome>
+                    <Text style={styles.editDetails} >Edit Pet Details</Text>
+                </TouchableOpacity>
 
             </View>
         );
@@ -173,6 +177,10 @@ const ProfileScreen = () => {
 
     const handleEditDetails = () => {
         navigation.navigate(EditUserDetailsScreenRoute);
+    };
+    const handleEditPetDetails = (pet) => {
+        navigation.navigate(EditPetDetailsScreenRoute,{userPet:pet});
+
     };
 
     return(

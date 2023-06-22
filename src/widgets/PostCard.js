@@ -104,15 +104,16 @@ const PostCard = ({post,isPoster}) => {
     };
     const handleChatNavigation = async (post) => {
         setIsLoading(true);
-        const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id);
+        const chat = await ChatServices.getChat(post.userThatPostedId, currentUser.uid, post.id,currentUser.uid);
         if (chat) {
             setIsLoading(false);
             navigation.navigate(ChatScreenRoute, {chat: chat});
         } else {
+            const poster=await UserServices.getUser(post.userThatPostedId)
             const newChat = new Chat('',
                 [],
                 post.pet.name,
-                'Adoption',
+                post.type,
                 post.userThatPostedFullName,
                 post.userThatPostedId,
                 post.userThatPostedProfilePicture,
@@ -121,7 +122,9 @@ const PostCard = ({post,isPoster}) => {
                 currentUser.profilePicture,
                 post.id,
                 0,
-                0
+                0,
+                poster.publicKey,
+                currentUser.publicKey
             );
             newChat.id = await ChatServices.initializeChat(newChat);
             setIsLoading(false);
@@ -161,13 +164,13 @@ const PostCard = ({post,isPoster}) => {
 
     const PostNumColumns = 1;
 // item size
-    const POST_ITEM_HEIGHT = isPoster ?  height/5 : height/4;
+    const POST_ITEM_HEIGHT = isPoster ?  height/3 : (height/3 + height/20);
     const POST_ITEM_MARGIN = 15;
-    const POST_BORDERS_WIDTH = 1;
+    const POST_BORDERS_WIDTH = 0;
     const styles = StyleSheet.create({
         root: {
             flex: 1,
-            position: 'absolute',
+            // position: 'absolute',
             justifyContent: 'center',
             alignItems: 'center',
         },
@@ -177,16 +180,16 @@ const PostCard = ({post,isPoster}) => {
         },
 
         postContainer: {
-            marginTop: '2%',
+            // marginTop: '2%',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             width: (SCREEN_WIDTH - (PostNumColumns + 1) * POST_ITEM_MARGIN +17) / PostNumColumns,
-            height: POST_ITEM_HEIGHT + 50,
+            height: POST_ITEM_HEIGHT ,
             backgroundColor: "white",
             // backgroundColor: '#e6e9fa',
             // borderWidth:1,
             borderColor:appPurpleDark,
-            marginBottom: '7%',
+            // marginBottom: '7%',
             borderRadius: 5,
 
         },
@@ -199,7 +202,8 @@ const PostCard = ({post,isPoster}) => {
             borderColor:appPurpleDark,
             borderTopLeftRadius:7,
             borderTopRightRadius:7,
-            backgroundColor: "#e6e9fa"
+            // backgroundColor: "#e6e9fa"
+            backgroundColor: "#dcddf7",
         },
         profileContainer: {
             flex: 1,
@@ -225,6 +229,8 @@ const PostCard = ({post,isPoster}) => {
             borderColor:appPurpleDark,
             borderBottomWidth: isPoster ? POST_BORDERS_WIDTH : 0 ,
             borderBottomRightRadius: 0,
+            //backgroundColor: "#dcddf7",
+            backgroundColor: "#e6e9fa",
             borderBottomLeftRadius: 0
         },
         postImage: {
@@ -277,7 +283,8 @@ const PostCard = ({post,isPoster}) => {
             paddingBottom:"2%",
             borderBottomLeftRadius:7,
             borderBottomRightRadius:7,
-            backgroundColor: "#e6e9fa"
+            //backgroundColor: "#e6e9fa",
+            backgroundColor: "#dcddf7",
 
         },
         fadingComponent:{
@@ -312,18 +319,18 @@ const PostCard = ({post,isPoster}) => {
                     <View style={styles.postHeader}>
 
 
-
                         <View style={styles.profileContainer}>
-                            {post.userThatPostedProfilePicture === ""  ?
-                                <Image style={styles.profileBtnIcon} source={require('../assets/default_user.png')}></Image> :
+                            {post.userThatPostedProfilePicture === "" ?
+                                <Image style={styles.profileBtnIcon}
+                                       source={require('../assets/default_user.png')}></Image> :
                                 <Image source={{uri: post.userThatPostedProfilePicture}}
                                        style={styles.profileBtnIcon}/>}
                             <View>
                                 <Text
                                     style={{marginTop: '2%', marginLeft: '2%'}}>{post.userThatPostedFullName}</Text>
-                                <View style={{flexDirection: 'row',alignItems:'center'}}>
+                                <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                     <RatingsWidget/>
-                                    <Text style={{fontSize:12}}> ({userReviewsCount})</Text>
+                                    <Text style={{fontSize: 12}}> ({userReviewsCount})</Text>
                                 </View>
 
                             </View>
@@ -332,51 +339,58 @@ const PostCard = ({post,isPoster}) => {
                         <View style={{marginRight: '0%', flexDirection: 'row', marginTop: '3%'}}>
                             <FontAwesome name={'map-marker'} style={{fontSize: 15}}></FontAwesome>
                             <Text style={{fontSize: 12, marginLeft: '2%'}}>{post.userThatPostedCity}</Text>
-                            <TouchableOpacity onPress={()=>handleSavePostClick()}  style={{marginLeft: '10%'}}>
+                            <TouchableOpacity onPress={() => handleSavePostClick()} style={{marginLeft: '10%'}}>
                                 {isPostSaved &&
-                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: '#C99200' }}></FontAwesome>
+                                    <FontAwesome name={'bookmark'}
+                                                 style={{fontSize: 25, color: '#C99200'}}></FontAwesome>
                                 }
                                 {!isPostSaved &&
-                                    <FontAwesome name={'bookmark'} style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
+                                    <FontAwesome name={'bookmark'}
+                                                 style={{fontSize: 25, color: appPurpleDark}}></FontAwesome>
                                 }
 
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.postBody}>
+                    <TouchableOpacity onPress={() => handleViewDetails(post)} style={styles.postBody}>
                         <View style={styles.imageContainer}>
                             <Image style={styles.postImage} source={{uri: post.pet.image}}></Image>
                         </View>
-                        <Text style={styles.postTitle}>{post.pet.name}</Text>
-                        <Text style={{
-                            paddingLeft: '2%',
-                            paddingRight: '2%',
-                            color: 'black',
-                        }}>{post.pet.description}</Text>
-                        <TouchableOpacity onPress={()=>handleViewDetails(post)} style={styles.detailsButton}>
-                            <FontAwesome name={'paw'}
-                                         style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>
-                            <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <View style={{flexDirection: "column"}}>
+                            <Text style={styles.postTitle}>{post.pet.name}</Text>
+                            <Text style={{
+                                paddingLeft: '2%',
+                                paddingRight: '2%',
+                                color: 'black',
+                            }}>{post.pet.description}</Text>
+                        </View>
+
+                        {/*<TouchableOpacity style={styles.detailsButton}>*/}
+                        {/*    <FontAwesome name={'paw'}*/}
+                        {/*                 style={{fontSize: 21, marginRight: '2%', color: 'white'}}></FontAwesome>*/}
+                        {/*    <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>Details</Text>*/}
+                        {/*</TouchableOpacity>*/}
+                    </TouchableOpacity>
 
 
                     {!isPoster &&
                         <View>
-                            <View style={styles.horizontalSeparator}/>
+                            {/*<View style={styles.horizontalSeparator}/>*/}
                             <View style={styles.postFooter}>
                                 <TouchableOpacity onPress={callPhoneNumber}>
-                                    <FontAwesome name={'phone'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                    <FontAwesome name={'phone'}
+                                                 style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                                 </TouchableOpacity>
                                 <View style={styles.verticalSeparator}/>
-                                <TouchableOpacity onPress={()=>handleChatNavigation(post)}>
-                                    <FontAwesome name={'commenting'} style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
+                                <TouchableOpacity onPress={() => handleChatNavigation(post)}>
+                                    <FontAwesome name={'commenting'}
+                                                 style={{fontSize: 30, color: appPurpleDark}}></FontAwesome>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     }
 
-                    <Portal >
+                    <Portal>
                         <Animated.View style={styles.fadingComponent}>
                             <Text>{fadedText}</Text>
                         </Animated.View>
@@ -538,7 +552,7 @@ const PostCard = ({post,isPoster}) => {
 
                         }}>
                             <Text style={styles.postTitle}>{post.pet.name}</Text>
-                            <Text style={{
+                            <Text numberOfLines={2}  ellipsizeMode="tail" style={{
                                 paddingLeft: '1%',
                                 paddingRight: '2%',
 
@@ -552,12 +566,12 @@ const PostCard = ({post,isPoster}) => {
 
                                 <View style={{marginTop:"2%"}}>
                                     <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Lost Near:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.lostLocation}</Text>
+                                        <Text  style={{fontWeight:"bold",color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Lost Near:</Text>
+                                        <Text  style={{ color:"black",textAlign:"center",fontSize:12,marginLeft:"2%"}}>{post.lostLocation}</Text>
                                     </View>
                                     <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Time Lost:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.lostDateAndTime}</Text>
+                                        <Text style={{fontWeight:"bold",color:"black",fontSize:13,marginLeft:"1%"}}>Date Lost:</Text>
+                                        <Text   style={{ color:"black",textAlign:"center",fontSize:12,marginLeft:"2%"}}>{post.lostDateAndTime}</Text>
                                     </View>
 
                                 </View>
@@ -569,12 +583,12 @@ const PostCard = ({post,isPoster}) => {
 
                                 <View style={{marginTop:"2%"}}>
                                     <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Found Near:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.foundLocation}</Text>
+                                        <Text style={{fontWeight:"bold",color:"black",fontSize:13,textAlign:"center",marginLeft:"1%"}}>Found Near:</Text>
+                                        <Text style={{ color:"black",textAlign:"center",fontSize:12,marginLeft:"2%"}}>{post.foundLocation}</Text>
                                     </View>
                                     <View style={{flexDirection:"row",alignItems:"center",marginTop:"2%"}}>
-                                        <Text style={{color:"black",fontSize:13,marginLeft:"1%"}}>Time Found:</Text>
-                                        <Text style={{fontWeight:"bold", color:"black",textAlign:"center",marginLeft:"2%"}}>{post.foundDateAndTime}</Text>
+                                        <Text style={{fontWeight:"bold",color:"black",fontSize:13,marginLeft:"1%"}}>Date Found:</Text>
+                                        <Text style={{ color:"black",textAlign:"center",fontSize:12,marginLeft:"2%"}}>{post.foundDateAndTime}</Text>
                                     </View>
 
                                 </View>
