@@ -65,8 +65,8 @@ class Chat {
             json.postId,
             json.userThatPostedUnReadMessagesCount,
             json.userThatRequestedUnReadMessagesCount,
-            json.userThatRequestedPublicKey,
             json.userThatPostedPublicKey,
+            json.userThatRequestedPublicKey,
         );
     }
 

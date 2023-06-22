@@ -26,7 +26,7 @@ class AuthServices {
 
     static async sendPhoneVerificationSMS(phoneNumber) {
         let verificationId=null, error=null;
-        const isAlreadyRegistered=await UserServices.checkIfPhoneNumberExists(phoneNumber)
+        const isAlreadyRegistered=false;
         if(isAlreadyRegistered)
             return {error: "Phone Number is already used", verificationId: verificationId}
         try {
