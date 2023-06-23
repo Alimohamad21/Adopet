@@ -50,7 +50,7 @@ const PostCard = ({post,isPoster}) => {
         renderedPost = <LostAndFoundPostRenderer post={post} type={"Found"} />;
     }
     else if (post instanceof HostingPost ) {
-        renderedPost = <HostPostRenderer post={post} type={"Found"} />;
+        renderedPost = <HostPostRenderer post={post}  />;
     }
 
     useEffect(  () => {
