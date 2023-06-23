@@ -193,7 +193,7 @@ const CreatePetProfileScreen = ({navigation}) => {
             const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
             const userPet = new UserPet('', currentUser.uid, new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value));
             await PetServices.addPet(userPet);
-            navigation.replace(ProfileScreenRoute);
+            navigation.replace(ProfileScreenRoute, {"userParam": null})
         }
     }
 
