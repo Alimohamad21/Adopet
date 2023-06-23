@@ -238,7 +238,7 @@ const AddAdoptionPostScreen = ({navigation}) => {
   };
   const onConfirmSuccess = () => {
     setShowSuccessPopUp(false);
-    navigation.replace(ProfileScreenRoute);
+    navigation.replace(ProfileScreenRoute, {"userParam": null})
   };
   const renderPet = ({ item }) => {
     return (

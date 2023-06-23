@@ -29,7 +29,9 @@ class Chat {
                     cipher = cipherText;
                 }
             }
+
             let text=await decryptRSA(privateKey,cipher);
+
             if(message.uid!==currentUserId) {
                 const isVerified=await verifySignature(message.signature,text,otherUserPublicKey);
                 console.log("VERIFY SIGNATURE RESULT: ",isVerified);
@@ -65,8 +67,8 @@ class Chat {
             json.postId,
             json.userThatPostedUnReadMessagesCount,
             json.userThatRequestedUnReadMessagesCount,
-            json.userThatRequestedPublicKey,
             json.userThatPostedPublicKey,
+            json.userThatRequestedPublicKey,
         );
     }
 

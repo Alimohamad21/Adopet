@@ -203,6 +203,9 @@ class PostServices {
     static async addHostingPost(hostingPost) {
         await firestore().collection('posts').add(hostingPost.toJson());
     }
+    static async addLostPost(lostPost) {
+        await firestore().collection('posts').add(lostPost.toJson());
+    }
     static async addFoundPost(foundPost) {
         console.log("in post services of found post");
         await firestore().collection('posts').add(foundPost.toJson());

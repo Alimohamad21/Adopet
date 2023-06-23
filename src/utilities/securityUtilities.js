@@ -27,6 +27,7 @@ export async function generateRSAKeyPair() {
 }
 
 export async function encryptRSA(publicKey, message) {
+
     return await RSA.encrypt(message, publicKey);
 }
 
@@ -54,7 +55,6 @@ export async function sign(privateKey,message){
 
 export async function verifySignature(signature,message,publicKey){
     let verified=false;
-    console.log("params",signature,message,publicKey)
     try{
         verified= await RSA.verify(signature,message,publicKey);
     }
