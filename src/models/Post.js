@@ -117,20 +117,21 @@ class FoundPost extends Post {
     /**
      * @param {Pet} pet
      */
-    constructor(id, pet, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type,foundLocation,foundDateAndTime) {
+    constructor(id, pet, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type, foundLocation,foundDateAndTime) {
         super(id, userThatPostedId, userThatPostedFullName, userThatPostedCity, userThatPostedProfilePicture, userThatPostedPhoneNumber, createdAt,type);
         this.pet = pet;
         this.foundLocation = foundLocation;
-        this.foundDateAndTime = foundDateAndTime.toDate().toDateString();
-
-
+        this.foundDateAndTime = foundDateAndTime;
+        console.log("in post.js");
     }
 
     static fromJson(json) {
         console.log(json.lostDateAndTime)
         return new FoundPost(json.id,
-          new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.foundLocation,json.foundDateAndTime);
+            new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate,
+                json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
+            json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,
+             json.foundLocation,json.foundDateAndTime.toDate().toString());
     }
 
     toJson() {
