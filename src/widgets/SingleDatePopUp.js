@@ -6,7 +6,7 @@ import TransparentLoadingIndicator from './TransparentLoadingIndicator';
 import Dialog from "react-native-dialog";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Calendar } from "react-native-calendars";
-import { appPurpleDark } from "../utilities/constants";
+import { appPurpleDark, borderGrey } from "../utilities/constants";
 import { ScrollView } from "native-base";
 
 
@@ -17,9 +17,15 @@ const SingleDatePopUp = ({pet, visible,confirmationText, onConfirm,onCancel}) =>
     const [isDateEmpty, setIsDateEmpty] = useState(false);
     const [chosenDate, setChosenDate] = useState('');
     const [showCalendar, setShowCalendar] = useState(false);
+    const [lostLocation, setLostLocation] = useState('');
+    const [isLostLocationEmpty,setIsLostLocationEmpty] = useState(false);
+    const handleLocationChange = (text) => {
+        setLostLocation(text);
+        setIsLostLocationEmpty(false);
+    };
     const handleConfirm = async () => {
         if (isValidInputs())
-            await onConfirm(pet, chosenDate);
+            await onConfirm(pet, chosenDate, lostLocation);
     };
     const handleCancel =()=>{
         onCancel();
@@ -50,9 +56,16 @@ const SingleDatePopUp = ({pet, visible,confirmationText, onConfirm,onCancel}) =>
         <View>
             <Dialog.Container visible={visible}>
                 <Dialog.Description>{confirmationText}</Dialog.Description>
-
+                <Text style={styles.titles} >Pet Location</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter the location you found the pet at"
+                  value={lostLocation}
+                  onChangeText={handleLocationChange}
+                />
+                {isLostLocationEmpty && <Text style={styles.wrongCredentialsText}>Please enter the location you lost the pet at</Text>}
                 <View style={styles.calendarComponent}>
-                    <Text>From</Text>
+                    <Text>Date Lost</Text>
                     <Text style={{left: 10}}> {chosenDate} </Text>
                 </View>
                 <TouchableHighlight
@@ -97,6 +110,23 @@ const styles = StyleSheet.create({
     wrongCredentialsText: {
         color: 'red',
         marginBottom: 10,
+    },
+    titles: {
+        fontFamily: 'sans-serif-medium',
+        fontSize: 15,
+        width: '85%',
+        margin: '3%',
+        marginBottom: -10,
+        padding: 10,
+    },
+    input: {
+        borderColor: borderGrey,
+        fontFamily: 'sans-serif-medium',
+        height: 40,
+        width: '85%',
+        margin: '3%',
+        borderWidth: 1,
+        padding: 10,
     },
 });
 

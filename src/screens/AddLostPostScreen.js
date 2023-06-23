@@ -222,12 +222,12 @@ const AddLostPostScreen = ({navigation}) => {
         }
         return isValidInputs;
     };
-    const handleAddPostFromUserPets = async (item,lostDate) => {
+    const handleAddPostFromUserPets = async (item,lostDate, lostAt) => {
         console.log("item ISSSSSSSSSSS",item)
         const date = new Date;
         const lostDateTimestamp = new Date(lostDate);
         //setIsLoading(true);
-        const lostPost = new LostPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, '', ''), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Lost',lostLocation,lostDateTimestamp);
+        const lostPost = new LostPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, '', ''), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Lost',lostAt,lostDateTimestamp);
         await PostServices.addLostPost(lostPost);
         // navigation.replace(ProfileScreenRoute);
         setSingleDatePopUp(false);
