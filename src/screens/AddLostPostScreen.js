@@ -34,6 +34,7 @@ import PostServices from "../services/PostServices";
 import UserServices from "../services/UserServices";
 import ConfirmationPopUp from '../widgets/ConfirmationPopUp';
 import SuccessPopUp from '../widgets/SuccessPopUp';
+import SingleDatePopUp from "../widgets/SingleDatePopUp";
 
 const AddLostPostScreen = ({navigation}) => {
 
@@ -48,9 +49,15 @@ const AddLostPostScreen = ({navigation}) => {
     const [breed, setBreed] = useState('');
     const [breedList, setBreedList] = useState('');
     const [gender, setGender] = useState('');
+    const [description, setDescription] = useState('');
+    const [lostLocation, setLostLocation] = useState('');
+    const [lostDateAndTime, setLostDateAndTime] = useState('');
     const [isSpayed, setIsSpayed] = useState('');
     const [vaccinations, setVaccinations] = useState('');
-    const [description, setDescription] = useState('');
+    const [showSingleDatePopUp, setSingleDatePopUp] = useState(false);
+
+
+
 
     const [isLoading, setIsLoading] = useState(false);
     const [isNameEmpty, setIsNameEmpty] = useState(false);
@@ -62,12 +69,15 @@ const AddLostPostScreen = ({navigation}) => {
     const [isGenderEmpty, setIsGenderEmpty] = useState(false);
     const [isSpayedEmpty, setIsSpayedEmpty] = useState(false);
     const [isVaccinationsEmpty, setIsVaccinationsEmpty] = useState(false);
-    const [showCalendar, setShowCalendar] = useState(false);
+     const [isLostLocationEmpty,setIsLostLocationEmpty] = useState(false);
+    const [isLostDateEmpty,setIsLostDateEmpty] = useState(false);
+    const [showAgeCalendar, setShowAgeCalendar] = useState(false);
+    const [showDateCalendar, setShowDateCalendar] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [showAddPet, setShowAddPet] = useState(false);
-    const [createPostPopUp, setCreatePostPopUp] = useState(false);
     const [selectedPet, setSelectedPet] =useState(null);
     const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+
 
     useEffect(   () => {
         const getUserPets = async () => {
@@ -114,34 +124,40 @@ const AddLostPostScreen = ({navigation}) => {
         setIsColorEmpty(false);
     };
 
-    const toggleCalendar = () => {
-        setShowCalendar(!showCalendar);
+    const toggleAgeCalendar = () => {
+        setShowAgeCalendar(!showAgeCalendar);
     };
 
+    const toggleDateCalendar = () => {
+        setShowDateCalendar(!showDateCalendar);
+    };
 
     const handleToggle = () => {
         setIsVisible(!isVisible);
     };
     const handleShowAddPet = (item) => {
         setSelectedPet(item);
-        setCreatePostPopUp(true);
+        setSingleDatePopUp(true);
     };
 
     const handleBreedChange = (value) => {
         setBreed(value);
         setIsBreedEmpty(false);
     };
+    const handleLocationChange = (text) => {
+        setLostLocation(text);
+        setIsLostLocationEmpty(false);
+    };
+    const handleDateChange = (date) => {
 
-
-    const handleVaccinationsChange = (text) => {
-        setVaccinations(text);
-        setIsVaccinationsEmpty(false);
+        setLostDateAndTime(date.dateString);
+        setIsLostDateEmpty(false);
+        toggleDateCalendar();
     };
 
     const handleDescriptionChange = (text) => {
         setDescription(text);
     };
-
 
     const handleTypeChange = (value) => {
         setType(value);
@@ -154,16 +170,10 @@ const AddLostPostScreen = ({navigation}) => {
         setIsGenderEmpty(false);
     };
 
-
-    const handleIsSpayedChange = (value) => {
-        setIsSpayed(value)
-        setIsSpayedEmpty(false);
-    };
-
     const handleAgeChange = (date) => {
         setAge(date.dateString);
         setIsAgeEmpty(false);
-        toggleCalendar();
+        toggleAgeCalendar();
     }
 
     const validateInputs = () => {
@@ -186,10 +196,10 @@ const AddLostPostScreen = ({navigation}) => {
             setIsPhotoEmpty(true);
         }
 
-        if (vaccinations === '') {
-            isValidInputs = false;
-            setIsVaccinationsEmpty(true);
-        }
+        // if (vaccinations === '') {
+        //     isValidInputs = false;
+        //     setIsVaccinationsEmpty(true);
+        // }
 
         if (type === '') {
             isValidInputs = false;
@@ -201,10 +211,10 @@ const AddLostPostScreen = ({navigation}) => {
             setIsGenderEmpty(true);
         }
 
-        if (isSpayed === '') {
-            isValidInputs = false;
-            setIsSpayedEmpty(true);
-        }
+        // if (isSpayed === '') {
+        //     isValidInputs = false;
+        //     setIsSpayedEmpty(true);
+        // }
 
         if (age === '') {
             isValidInputs = false;
@@ -212,29 +222,32 @@ const AddLostPostScreen = ({navigation}) => {
         }
         return isValidInputs;
     };
-    const handleAddPostFromUserPets = async (item) => {
+    const handleAddPostFromUserPets = async (item,lostDate) => {
+        console.log("item ISSSSSSSSSSS",item)
         const date = new Date;
+        const lostDateTimestamp = new Date(lostDate);
         //setIsLoading(true);
-        const adoptionPost = new AdoptionPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, item.pet.isNeutered, item.pet.vaccinations), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Adoption');
-        await PostServices.addAdoptionPost(adoptionPost);
+        const lostPost = new LostPost('', new Pet( item.pet.type, item.pet.image, item.pet.name, item.pet.description, item.pet.birthDate, item.pet.color, item.pet.breed, item.pet.gender, '', ''), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Lost',lostLocation,lostDateTimestamp);
+        await PostServices.addLostPost(lostPost);
         // navigation.replace(ProfileScreenRoute);
-        setCreatePostPopUp(false);
+        setSingleDatePopUp(false);
         setShowSuccessPopUp(true);
     }
 
     const handleAddPostManually = async () => {
         const isValidInputs = validateInputs();
+        const lostDateTimestamp = new Date(lostDateAndTime);
         const date = new Date();
         if (isValidInputs) {
             // setIsLoading(true);
             const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
-            const adoptionPost = new AdoptionPost('', new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value, isSpayed.value, vaccinations.value), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Adoption')
-            await PostServices.addAdoptionPost(adoptionPost);
+            const lostPost = new LostPost('', new Pet( type.value, photo, name, description, age, color.value, breed.value, gender.value,'', ''), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Lost',lostLocation,lostDateTimestamp)
+            await PostServices.addLostPost(lostPost);
             setShowSuccessPopUp(true);
         }
     }
-    const onCancelPutPetForAdoption = () => {
-        setCreatePostPopUp(false);
+    const onCancelPutPetLost = () => {
+        setSingleDatePopUp(false);
     };
     const onConfirmSuccess = () => {
         setShowSuccessPopUp(false);
@@ -259,15 +272,16 @@ const AddLostPostScreen = ({navigation}) => {
 
     return (
         <View style={styles.screen}>
-            {selectedPet && <ConfirmationPopUp
-                visible={createPostPopUp}
-                confirmationText={`Are you sure you want to put ${selectedPet.pet.name} up for adoption?`}
-                onConfirm={() => handleAddPostFromUserPets(selectedPet)}
-                onCancel={onCancelPutPetForAdoption}
+            {selectedPet && <SingleDatePopUp
+                pet = {selectedPet}
+                visible={showSingleDatePopUp}
+                confirmationText={`Are you sure you want to put ${selectedPet.pet.name} as lost pet?`}
+                onConfirm={handleAddPostFromUserPets}
+                onCancel={onCancelPutPetLost}
             />}
             {selectedPet && <SuccessPopUp
                 visible={showSuccessPopUp}
-                confirmationText={`${selectedPet.pet.name} was successfully placed for adoption`}
+                confirmationText={`${selectedPet.pet.name} was successfully added as a lost pet`}
                 onConfirm={onConfirmSuccess}
             />}
             <Text style={styles.option}>Choose from your pets</Text>
@@ -318,11 +332,11 @@ const AddLostPostScreen = ({navigation}) => {
 
                         <TouchableHighlight
                             underlayColor="rgba(128, 128, 128, 0.1)">
-                            <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleCalendar}/>
+                            <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleAgeCalendar}/>
                         </TouchableHighlight>
 
 
-                        {showCalendar && <Calendar style={styles.calendar}
+                        {showAgeCalendar && <Calendar style={styles.calendar}
                                                    onDayPress={handleAgeChange}
                                                    markedDates={{[age]: {selected: true}}}/>}
 
@@ -357,19 +371,19 @@ const AddLostPostScreen = ({navigation}) => {
                         {isGenderEmpty && <Text style={styles.wrongCredentialsText}>Please enter your pet's gender</Text>}
 
 
-                        <Text style={styles.titles} >Is your pet spayed? </Text>
-                        <RadioButtonComponent
-                            options={isSpayedOptions}
-                            selectedOption={isSpayed}
-                            onSelect={handleIsSpayedChange}
-                        />
-                        {isSpayedEmpty && <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or not.</Text>}
+                        {/*<Text style={styles.titles} >Is your pet spayed? </Text>*/}
+                        {/*<RadioButtonComponent*/}
+                        {/*    options={isSpayedOptions}*/}
+                        {/*    selectedOption={isSpayed}*/}
+                        {/*    onSelect={handleIsSpayedChange}*/}
+                        {/*/>*/}
+                        {/*{isSpayedEmpty && <Text style={styles.wrongCredentialsText}>Please select whether your pet is spayed or not.</Text>}*/}
 
 
-                        <Text style={styles.titles} >Vaccinations</Text>
-                        <DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions} placeholder={"Vaccinations"}/>
+                        {/*<Text style={styles.titles} >Vaccinations</Text>*/}
+                        {/*<DropdownComponent onSelect={handleVaccinationsChange} data={vaccinationOptions} placeholder={"Vaccinations"}/>*/}
 
-                        {isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}
+                        {/*{isVaccinationsEmpty && <Text style={styles.wrongCredentialsText}>Please write 'none' if your pet is not vaccinated.</Text>}*/}
 
                         <Text style={styles.titles} >Pet description</Text>
                         <TextInput
@@ -378,12 +392,39 @@ const AddLostPostScreen = ({navigation}) => {
                             value={description}
                             onChangeText={handleDescriptionChange}
                         />
+                        <Text style={styles.titles} >Pet Location</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter the location you found the pet at"
+                            value={lostLocation}
+                            onChangeText={handleLocationChange}
+                        />
+                        {isLostLocationEmpty && <Text style={styles.wrongCredentialsText}>Please enter the location you lost the pet at</Text>}
+
+
+
+                        <View style={styles.calendarComponent}>
+                            <Text>Date Lost</Text>
+                            <Text style={{left: 10}}> {lostDateAndTime} </Text>
+                        </View>
+
+                        <TouchableHighlight
+                            underlayColor="rgba(128, 128, 128, 0.1)">
+                            <FontAwesome name="calendar" size={23} style={styles.faIcons} icon="fa-solid fa-calendar-lines" onPress={toggleDateCalendar}/>
+                        </TouchableHighlight>
+
+
+                        {showDateCalendar && <Calendar style={styles.calendar}
+                                                   onDayPress={handleDateChange}
+                                                   markedDates={{[lostDateAndTime]: {selected: true}}}/>}
+
+                        {isLostDateEmpty && <Text style={styles.wrongCredentialsText}>Please select the date the pet was lost</Text>}
 
                     </View>
                     <View style={{alignItems: 'center'}}>
                         <SuccessPopUp
                             visible={showSuccessPopUp}
-                            confirmationText={`${name} was successfully placed for adoption`}
+                            confirmationText={`${name} was successfully added as a lost pet`}
                             onConfirm={onConfirmSuccess}
                         />
                         <View style={{marginBottom:"25%",flex: 1, width: '100%', alignItems: 'center'}}>

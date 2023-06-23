@@ -203,6 +203,9 @@ class PostServices {
     static async addHostingPost(hostingPost) {
         await firestore().collection('posts').add(hostingPost.toJson());
     }
+    static async addLostPost(lostPost) {
+        await firestore().collection('posts').add(lostPost.toJson());
+    }
 
     static async getUserPosts(userID) {
         const snapshot = await firestore()

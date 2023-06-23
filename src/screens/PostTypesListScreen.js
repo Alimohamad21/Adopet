@@ -14,7 +14,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
   AddAdoptionPostScreenRoute,
-  AddHostingPostScreenRoute,
+  AddHostingPostScreenRoute, AddLostPostScreenRoute,
   appPurpleDark, appPurpleLight,
   borderGrey,
   catAndDogColors,
@@ -27,6 +27,7 @@ import { StatusBar } from "native-base";
 import TransparentLoadingIndicator from "../widgets/TransparentLoadingIndicator";
 import RadioButtonComponent from "../widgets/RadioButtonComponent";
 import DropdownComponent from "../widgets/DropdownComponent";
+import AddLostPostScreen from "./AddLostPostScreen";
 const PostTypesListScreen = () => {
   const navigation = useNavigation();
   const [view,setView] = useState(1)
@@ -37,6 +38,9 @@ const PostTypesListScreen = () => {
   };
   const handleAddHostingPostPress=()=> {
     navigation.navigate(AddHostingPostScreenRoute)
+  };
+  const handleAddLostPostPress=()=> {
+    navigation.navigate(AddLostPostScreenRoute)
   };
   return (
     <View style={styles.screen}>
@@ -58,6 +62,14 @@ const PostTypesListScreen = () => {
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
             <TouchableOpacity style={styles.btnContainer} onPress={handleAddHostingPostPress}>
               <Text style={styles.btnText}>Hosting Post</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={{alignItems: 'center'}}>
+          <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
+            <TouchableOpacity style={styles.btnContainer} onPress={handleAddLostPostPress}>
+              <Text style={styles.btnText}>Lost Post</Text>
             </TouchableOpacity>
           </View>
         </View>

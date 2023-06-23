@@ -79,7 +79,7 @@ class LostPost extends Post {
         this.pet = pet;
         this.lostLocation = lostLocation;
         //const dateString = moment(date).format('YYYY-MM-DD HH:mm:ss')
-        this.lostDateAndTime = lostDateAndTime.toDate().toDateString();
+        this.lostDateAndTime = lostDateAndTime;
 
     }
 
@@ -87,7 +87,7 @@ class LostPost extends Post {
         console.log(json.lostDateAndTime)
         return new LostPost(json.id,
           new Pet(json.petType, json.petImage, json.petName, json.petDescription, json.petBirthDate, json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
-          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.lostLocation,json.lostDateAndTime);
+          json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity, json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,json.type,json.lostLocation,json.lostDateAndTime.toDate().toDateString());
     }
 
     toJson() {
