@@ -198,7 +198,7 @@ const EditPetDetailsScreen = ({navigation}) => {
         setIsLoading(true);
        await PetServices.deletePet(userPet.id);
         setIsLoading(false);
-        navigation.replace(ProfileScreenRoute);
+        navigation.replace(ProfileScreenRoute, {"userParam": null})
     }
     const handleCreatePetProfile = async () => {
         const isValidInputs = validateInputs();
@@ -209,7 +209,7 @@ const EditPetDetailsScreen = ({navigation}) => {
             const pet = new UserPet(userPet.id, currentUser.uid, new Pet(type.value, imageUri, name, description, age, color, breed, gender.value, isSpayed.value, vaccinations));
             console.log("editing pet!!!!",JSON.stringify(pet));
             await PetServices.editPet(pet);
-            navigation.replace(ProfileScreenRoute);
+            navigation.replace(ProfileScreenRoute, {"userParam": null})
         }
     }
 

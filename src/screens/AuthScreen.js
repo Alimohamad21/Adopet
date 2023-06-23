@@ -18,7 +18,7 @@ export function AuthScreen({navigation}) {
                 const fcmToken = await NotificationServices.getToken();
                 await UserServices.addFcmToken(authUser.uid,fcmToken);
                 UserServices.getUser(authUser.uid).then(async (user) => {
-                    if (user.publicKey === '') {
+                    if (user.publicKey === '' || user.publicKey==null) {
                         let pair = await generateRSAKeyPair()
                         storeKeyPair(user.uid,pair.privateKey,pair.publicKey)
                         user.publicKey=pair.publicKey;

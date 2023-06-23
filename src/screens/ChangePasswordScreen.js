@@ -114,7 +114,7 @@ const ChangePasswordScreen = () => {
         } else {
           //const user = new User(response.uid, fullName, city, phoneNumber, email, '', '',[]);
           //await UserServices.addUser(user, response.uid);
-          navigation.navigate(ProfileScreenRoute);
+          navigation.replace(ProfileScreenRoute, {"userParam": null})
           //navigation.navigate(ProfileScreenRoute);
         }
       //}
