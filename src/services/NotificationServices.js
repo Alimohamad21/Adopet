@@ -13,7 +13,7 @@ class NotificationServices {
             console.log('Error getting Token');
         }
 
-    }
+    }z
 
     static async requestNotificationsPermission() {
         const authStatus = await messaging().requestPermission();
