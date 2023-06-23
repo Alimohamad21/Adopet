@@ -120,19 +120,12 @@ export const services = [
     ,
     {serviceId: 2,
         name: "Hosting",
-        imageUri: require('../assets/neo.jpg')
+        imageUri: require('../assets/hosting.jpg')
     },
     {serviceId: 3,
         name: "Lost and Found",
         imageUri: require('../assets/lost.png')
     },
-    {serviceId: 4,
-        name: "Breeding",
-        imageUri: require('../assets/breeding.jpg')
-    },
-    {serviceId: 5,
-        name: "Market Place",
-        imageUri: require('../assets/market.png')
-    }
+
 ]
 

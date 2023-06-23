@@ -174,7 +174,7 @@ class HostingPost extends Post {
             json.petColor, json.petBreed, json.petGender, json.petIsNeutered, json.petVaccinations),
           json.userThatPostedId, json.userThatPostedFullName, json.userThatPostedCity,
           json.userThatPostedProfilePicture, json.userThatPostedPhoneNumber, json.createdAt,
-          json.type,json.startDate.toDate().toString(),json.endDate.toDate().toString(),json.duration);
+          json.type,json.startDate.toDate().toDateString(),json.endDate.toDate().toDateString(),json.duration);
     }
 
     toJson() {
