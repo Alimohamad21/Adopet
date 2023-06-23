@@ -27,7 +27,6 @@ export async function generateRSAKeyPair() {
 }
 
 export async function encryptRSA(publicKey, message) {
-
     return await RSA.encrypt(message, publicKey);
 }
 

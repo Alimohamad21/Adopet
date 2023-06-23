@@ -23,30 +23,34 @@ class Chat {
         const privateKey = await getPrivateKey();
         const decryptedMessages = [];
         for (const message of messages) {
-            let cipher = '';
-            for (let [id, cipherText] of Object.entries(message.text)) {
-                if (id === currentUserId) {
-                    cipher = cipherText;
+            if(message.image==null) {
+                let cipher = '';
+                for (let [id, cipherText] of Object.entries(message.text)) {
+                    if (id === currentUserId) {
+                        cipher = cipherText;
+                    }
                 }
-            }
 
-            let text=await decryptRSA(privateKey,cipher);
+                let text = await decryptRSA(privateKey, cipher);
 
-            if(message.uid!==currentUserId) {
-                const isVerified=await verifySignature(message.signature,text,otherUserPublicKey);
-                console.log("VERIFY SIGNATURE RESULT: ",isVerified);
-                if(!isVerified){
-                    text='Malicious Message: This message has been sent from an unknown source'
+                if (message.uid !== currentUserId) {
+                    const isVerified = await verifySignature(message.signature, text, otherUserPublicKey);
+                    console.log("VERIFY SIGNATURE RESULT: ", isVerified);
+                    if (!isVerified) {
+                        text = 'Malicious Message: This message has been sent from an unknown source'
+                    }
                 }
+                decryptedMessages.push({
+                    text: text,
+                    createdAt: message.createdAt,
+                    _id: message._id,
+                    uid: message.uid
+                })
             }
-            decryptedMessages.push({
-                text:text,
-                createdAt:message.createdAt,
-                _id:message._id,
-                uid:message.uid
-            })
+            else{
+                decryptedMessages.push(message)
+            }
         }
-        console.log('decryptedMessages: ',decryptedMessages);
         return decryptedMessages;
     }
 
