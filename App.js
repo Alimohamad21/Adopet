@@ -31,6 +31,7 @@ import {
     HostingScreenRoute,
     AddAdoptionPostScreenRoute,
     AddHostingPostScreenRoute,
+    AddFoundPostScreenRoute,
     PostTypesListScreenRoute,
     EditPetDetailsScreenRoute
 } from './src/utilities/constants';
@@ -57,6 +58,7 @@ import AddAdoptionPostScreen from "./src/screens/AddAdoptionPostScreen";
 import AddHostingPostScreen from "./src/screens/AddHostingPostScreen";
 import PostTypesListScreen from "./src/screens/PostTypesListScreen";
 import EditPetDetailsScreen from "./src/screens/EditPetDetailsScreen";
+import AddFoundPostScreen from "./src/screens/AddFoundPostScreen";
 
 
 const AppStack = createNativeStackNavigator();
@@ -100,6 +102,7 @@ function AppStackScreens() {
             <AppStack.Screen name={HostingScreenRoute} component={HostingScreen}/>
             <AppStack.Screen name={AddAdoptionPostScreenRoute} component={AddAdoptionPostScreen}/>
             <AppStack.Screen name={AddHostingPostScreenRoute} component={AddHostingPostScreen}/>
+            <AppStack.Screen name={AddFoundPostScreenRoute} component={AddFoundPostScreen}/>
             <AppStack.Screen name={PostTypesListScreenRoute} component={PostTypesListScreen}/>
             <AppStack.Screen name={FilterPostsScreenRoute} component={FilterPostsScreen} options={{
                 presentation: 'modal',

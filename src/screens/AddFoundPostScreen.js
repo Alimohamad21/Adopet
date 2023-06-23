@@ -32,6 +32,7 @@ import {pickImage} from "../utilities/imageUtilities";
 import StorageServices from "../services/StorageServices";
 import UserPet from '../models/UserPet';
 import PostServices from "../services/PostServices";
+import SuccessPopUp from "../widgets/SuccessPopUp";
 // import {Calendar} from "react-native-calendars";
 
 const AddFoundPostScreen = ({navigation}) => {
@@ -39,18 +40,24 @@ const AddFoundPostScreen = ({navigation}) => {
     const {currentUser} = useContext(CurrentUserContext);
 
     const [imageUri, setImageUri] = useState(null);
-    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
     const [dateFound, setDateFound] = useState('');
+    const [type, setType] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
     const [isPhotoEmpty, setIsPhotoEmpty] = useState(false);
-    const [isTitleEmpty, setIsTitleEmpty] = useState(false);
+    const [isDescriptionEmpty, setIsDescriptionEmpty] = useState(false);
     const [isLocationEmpty, setIsLocationEmpty] = useState(false);
     const [isDateFoundEmpty, setIsDateFoundEmpty] = useState(false);
+    const [isTypeEmpty, setIsTypeEmpty] = useState(false);
     const [showCalendar, setShowCalendar] = useState(false);
     const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
 
+    const types = [
+        { label: 'Cat', value: 'Cat' },
+        { label: 'Dog', value: 'Dog' },
+    ];
     const handleAddPhoto = async () => {
         const uri = await pickImage();
         if (!uri) return;
@@ -58,9 +65,9 @@ const AddFoundPostScreen = ({navigation}) => {
         setIsPhotoEmpty(false);
     }
 
-    const handleTitleChange = (text) => {
-        setTitle(text);
-        setIsTitleEmpty(false);
+    const handleDescriptionChange = (text) => {
+        setDescription(text);
+        setIsDescriptionEmpty(false);
     };
 
     const handleLocationChange = (text) => {
@@ -68,22 +75,32 @@ const AddFoundPostScreen = ({navigation}) => {
         setIsLocationEmpty(false);
     };
 
+    const onConfirmSuccess = () => {
+        setShowSuccessPopUp(false);
+        navigation.replace(ProfileScreenRoute);
+    };
 
     const toggleCalendar = () => {
         setShowCalendar(!showCalendar);
     }
 
-    const handleDateChange = (date) => {
-        setDateFound(date.dateString);
+    const handleDateChange = (value) => {
+        setDateFound(value.dateString);
+        console.log(dateFound);
         setIsDateFoundEmpty(false);
         toggleCalendar();
     }
 
+    const handleTypeChange = (value) => {
+        setType(value);
+        setIsTypeEmpty(false);
+    };
+
     const validateInputs = () => {
         let isValidInputs = true;
-        if (title === '') {
+        if (description === '') {
             isValidInputs = false;
-            setIsTitleEmpty(true);
+            setIsDescriptionEmpty(true);
         }
 
         if (imageUri === null) {
@@ -96,21 +113,29 @@ const AddFoundPostScreen = ({navigation}) => {
             setIsLocationEmpty(true);
         }
 
-        if (date === '') {
+        // if (dateFound === '') {
+        //     isValidInputs = false;
+        //     setIsDateFoundEmpty(true);
+        // }
+
+
+        if (type === '') {
             isValidInputs = false;
-            setIsDateFoundEmpty(true);
+            setIsTypeEmpty(true);
         }
+
         return isValidInputs;
     };
 
 
     const handleAddPost = async () => {
         const isValidInputs = validateInputs();
+        const dateFoundTimestamp = new Date(dateFound);
         const date = new Date();
         if (isValidInputs) {
             setIsLoading(true);
             const photo = await StorageServices.uploadImageToFirebase(fbStoragePetImagesDirectory, imageUri);
-            const foundPost = new FoundPost('', currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Found', photo, title, location, date)
+            const foundPost = new FoundPost('', new Pet( type.value, photo, description, '', '', '', '', '', '', ''), currentUser.uid, currentUser.fullName, currentUser.city, currentUser.profilePicture, currentUser.phoneNumber, date, 'Found', location, dateFoundTimestamp)
             await PostServices.addFoundPost(foundPost);
             setShowSuccessPopUp(true);
             console.log(showSuccessPopUp);
@@ -136,15 +161,23 @@ const AddFoundPostScreen = ({navigation}) => {
 
                     {isPhotoEmpty && <Text style={styles.wrongCredentialsText}>Please add a picture of the pet you found.</Text>}
 
+                    <Text style={styles.titles} >Pet Type </Text>
+                    <RadioButtonComponent
+                        options={types}
+                        selectedOption={type}
+                        onSelect={handleTypeChange}
+                    />
+                    {isTypeEmpty && <Text style={styles.wrongCredentialsText}>Please select whether you found a lost cat or dog.</Text>}
 
-                    <Text style={styles.titles} >Title</Text>
+
+                    <Text style={styles.titles} >Description</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Title"
-                        value={name}
-                        onChangeText={handleTitleChange}
+                        placeholder="Description"
+                        value={description}
+                        onChangeText={handleDescriptionChange}
                     />
-                    {isTitleEmpty && <Text style={styles.wrongCredentialsText}>Please enter a title describing the pet.</Text>}
+                    {isDescriptionEmpty && <Text style={styles.wrongCredentialsText}>Please enter a description of the pet.</Text>}
 
 
                     <Text style={styles.titles} >Pet location</Text>
@@ -178,6 +211,11 @@ const AddFoundPostScreen = ({navigation}) => {
                 </View>
 
                 <View style={{alignItems: 'center'}}>
+                    <SuccessPopUp
+                        visible={showSuccessPopUp}
+                        confirmationText={`The post for the missing ${type.value} was successfully placed.`}
+                        onConfirm={onConfirmSuccess}
+                    />
                     <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
                         <TouchableOpacity style={styles.createPetProfileBtnContainer} onPress={handleAddPost}>
                             <Text style={styles.createPetProfileBtnText}>Create Pet Profile</Text>

@@ -15,6 +15,7 @@ import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
   AddAdoptionPostScreenRoute,
   AddHostingPostScreenRoute,
+    AddFoundPostScreenRoute,
   appPurpleDark, appPurpleLight,
   borderGrey,
   catAndDogColors,
@@ -38,6 +39,9 @@ const PostTypesListScreen = () => {
   const handleAddHostingPostPress=()=> {
     navigation.navigate(AddHostingPostScreenRoute)
   };
+  const handleAddFoundPostPress=()=> {
+    navigation.navigate(AddFoundPostScreenRoute)
+  };
   return (
     <View style={styles.screen}>
 
@@ -58,6 +62,14 @@ const PostTypesListScreen = () => {
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
             <TouchableOpacity style={styles.btnContainer} onPress={handleAddHostingPostPress}>
               <Text style={styles.btnText}>Hosting Post</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={{alignItems: 'center'}}>
+          <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
+            <TouchableOpacity style={styles.btnContainer} onPress={handleAddFoundPostPress}>
+              <Text style={styles.btnText}>Found Post</Text>
             </TouchableOpacity>
           </View>
         </View>
