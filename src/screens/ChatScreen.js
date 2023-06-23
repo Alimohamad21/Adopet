@@ -218,6 +218,8 @@ export function ChatScreen() {
         }
         const message = messages[messages.length - 1];
         if (!message.image) {
+            console.log('receiver:',currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedId : chat.userThatPostedId)
+            console.log('receiver public key:', currentUser.publicKey === chat.userThatPostedId ? chat.userThatRequestedPublicKey : chat.userThatPostedPublicKey)
             ChatServices.sendMessage(chat.id, message._id, message.text, message.user._id, message.createdAt,
                 currentUser.uid === chat.userThatPostedId ? chat.userThatRequestedId : chat.userThatPostedId,
                 message.user.name,
