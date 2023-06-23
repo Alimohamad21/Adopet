@@ -29,7 +29,9 @@ class Chat {
                     cipher = cipherText;
                 }
             }
+
             let text=await decryptRSA(privateKey,cipher);
+
             if(message.uid!==currentUserId) {
                 const isVerified=await verifySignature(message.signature,text,otherUserPublicKey);
                 console.log("VERIFY SIGNATURE RESULT: ",isVerified);
@@ -49,7 +51,7 @@ class Chat {
     }
 
     static async fromJson(json, currentUserId) {
-        const otherUserPublicKey=currentUserId!==json.userThatPostedId?json.userThatRequestedPublicKey:json.userThatPostedPublicKey;
+        const otherUserPublicKey=currentUserId===json.userThatPostedId?json.userThatRequestedPublicKey:json.userThatPostedPublicKey;
         const decryptedMessages= await this.decrypt(json.messages,currentUserId,otherUserPublicKey)
         return new Chat(
             json.id,
@@ -65,8 +67,8 @@ class Chat {
             json.postId,
             json.userThatPostedUnReadMessagesCount,
             json.userThatRequestedUnReadMessagesCount,
-            json.userThatRequestedPublicKey,
             json.userThatPostedPublicKey,
+            json.userThatRequestedPublicKey,
         );
     }
 

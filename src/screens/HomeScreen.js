@@ -52,7 +52,7 @@ const HomeScreen = ({navigation}) => {
             {/*<StatusBar backgroundColor={appPurpleDark} barStyle="light-content"/>*/}
             <StatusBar translucent={true} backgroundColor="transparent" barStyle="dark-content" />
 
-            <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2}
+            <FlatList vertical showsVerticalScrollIndicator={false} numColumns={1}
                       data={services} renderItem={renderServices} keyExtractor={(item) => `${item.serviceId}`}/>
 
 
@@ -64,9 +64,9 @@ const {width, height} = Dimensions.get('window');
 // orientation must fixed
 const SCREEN_WIDTH = width < height ? width : height;
 
-const ServiceNumColums = 2;
+const ServiceNumColums = 1;
 // item size
-const SERVICE_ITEM_HEIGHT = 150;
+const SERVICE_ITEM_HEIGHT = 185;
 const SERVICE_ITEM_MARGIN = 15;
 const styles = StyleSheet.create({
 

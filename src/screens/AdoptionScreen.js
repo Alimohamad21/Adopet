@@ -148,6 +148,7 @@ const AdoptionScreen = ({route}) => {
                           extraData={route}
                 />
                 { isPaginating && <View style={styles.paginationIndicator}><ScreenLoadingIndicator/></View> }
+
             </SafeAreaView>
         );
     }
@@ -157,6 +158,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop:"5%"
     },
     paginationIndicator: {
         flex: 1,

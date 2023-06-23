@@ -247,18 +247,11 @@ const AddHostingPostScreen = ({navigation}) => {
   const getDuration = (from, to)=> {
     let duration = '';
     try {
-      const fromMonth = parseInt(from.split('-')[1]) - 1;
-      const fromYear = parseInt(to.split('-')[0]);
-      const toMonth = parseInt(from.split('-')[1]) - 1;
-      const toYear = parseInt(to.split('-')[0]);
-      const diffInMonths = (toMonth + 12 * toYear) - (fromMonth + 12 * fromYear);
-      const years = Math.floor(diffInMonths / 12);
-      const months = diffInMonths % 12;
-      if (years !== 0) {
-        duration = `${years} years and ${months} months`;
-      } else {
-        duration = `${months} months`;
-      }
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+      const diffInMilliseconds = toDate.getTime() - fromDate.getTime();
+      const diffInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+      duration = `${diffInDays} days`;
     } catch (error) {
       console.error(error);
       throw error;
@@ -310,7 +303,7 @@ const AddHostingPostScreen = ({navigation}) => {
 
   const onConfirmSuccess = () => {
     setShowSuccessPopUp(false);
-    navigation.replace(ProfileScreenRoute);
+    navigation.replace(ProfileScreenRoute, {"userParam": null})
   };
   const renderPet = ({ item }) => {
     return (

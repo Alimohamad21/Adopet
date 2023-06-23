@@ -67,7 +67,7 @@ const EditUserDetailsScreen = () => {
   const phoneRef = useRef("phone");
   const [imageUri, setImageUri] = useState(null);
   const goBack = () => {
-    navigation.navigate({name:ProfileScreenRoute,key:Date.now().toString()});
+    navigation.navigate(ProfileScreenRoute, {"userParam": null});
   };
 
   useLayoutEffect(() => {
@@ -230,7 +230,7 @@ const EditUserDetailsScreen = () => {
       await UserServices.updateUser(user, currentUser.uid).then(() => {
         setCurrentUser(user);
       }).then(() => {
-        navigation.navigate(ProfileScreenRoute);
+        navigation.navigate(ProfileScreenRoute, {"userParam": null});
       });
     }
     setIsLoading(false);

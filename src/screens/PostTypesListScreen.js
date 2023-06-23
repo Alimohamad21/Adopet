@@ -14,7 +14,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {CurrentUserContext} from "../providers/CurrentUserProvider";
 import {
   AddAdoptionPostScreenRoute,
-  AddHostingPostScreenRoute, AddLostPostScreenRoute,
+  AddHostingPostScreenRoute, AddLostPostScreenRoute,AddFoundPostScreenRoute,
   appPurpleDark, appPurpleLight,
   borderGrey,
   catAndDogColors,
@@ -39,8 +39,12 @@ const PostTypesListScreen = () => {
   const handleAddHostingPostPress=()=> {
     navigation.navigate(AddHostingPostScreenRoute)
   };
+
   const handleAddLostPostPress=()=> {
     navigation.navigate(AddLostPostScreenRoute)
+
+    const handleAddFoundPostPress=()=> {
+    navigation.navigate(AddFoundPostScreenRoute)
   };
   return (
     <View style={styles.screen}>
@@ -68,8 +72,13 @@ const PostTypesListScreen = () => {
 
         <View style={{alignItems: 'center'}}>
           <View style={{marginTop: 10, flex: 1, width: '100%', alignItems: 'center'}}>
+            
             <TouchableOpacity style={styles.btnContainer} onPress={handleAddLostPostPress}>
               <Text style={styles.btnText}>Lost Post</Text>
+
+            <TouchableOpacity style={styles.btnContainer} onPress={handleAddFoundPostPress}>
+              <Text style={styles.btnText}>Found Post</Text>
+
             </TouchableOpacity>
           </View>
         </View>
